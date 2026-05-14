@@ -13,7 +13,11 @@
     "start": "npm run dev",
     "setup": "npm install && npm install -C frontend && npm install -C backend"
   },
-  "keywords": ["auto-shop", "e-commerce", "automotive"],
+  "keywords": [
+    "auto-shop",
+    "e-commerce",
+    "automotive"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {

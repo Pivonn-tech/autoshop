@@ -3,6 +3,7 @@
 ## 📊 Current Status
 
 ### ✅ DONE
+
 - **PostgreSQL Database**: `autoshop_db` created and running
 - **Backend Server**: Express.js with all dependencies installed ✅
   - Dependencies: express, cors, dotenv, pg (86 packages)
@@ -13,6 +14,7 @@
 - **14 Product Images**: Your inventory in `pics/` folder ready to import
 
 ### ⚠️ IN PROGRESS
+
 - **Frontend**: npm install encountered network timeout (not critical - can retry)
 
 ---
@@ -20,25 +22,31 @@
 ## 🚀 How to Start Using Your Auto Shop
 
 ### 1. Start Backend Server (Ready Now!)
+
 ```bash
 cd /home/phil/projects/autoshop/backend
 npm run dev
 ```
+
 Backend will run on: **http://localhost:3001**
 
 Test endpoints:
+
 - http://localhost:3001/health → Health check
 - http://localhost:3001/api/products → Sample products
 
 ### 2. Start Frontend (Once npm resolves)
+
 ```bash
 cd /home/phil/projects/autoshop/frontend
 npm install  # May need retry if network issues
 npm run dev
 ```
+
 Frontend will run on: **http://localhost:3000**
 
 ### 3. Or Run Both Together
+
 ```bash
 cd /home/phil/projects/autoshop
 npm start
@@ -49,7 +57,9 @@ npm start
 ## 📋 Next Steps
 
 ### Immediate (Recommended)
+
 1. **Test Backend**
+
    ```bash
    cd backend
    npm run dev
@@ -57,6 +67,7 @@ npm start
    ```
 
 2. **Finish Frontend Installation** (if npm network issues resolved)
+
    ```bash
    cd ../frontend
    npm install --prefer-offline --no-audit
@@ -69,12 +80,14 @@ npm start
    - Create product data in database
 
 ### Database Setup (When Ready)
+
 ```bash
 cd backend
 npm run db:migrate  # Create tables
 ```
 
 ### Configuration
+
 - Frontend env: `frontend/.env.local` (API URL, Stripe key)
 - Backend env: `backend/.env` (Database, JWT, Stripe)
 - Update with your actual Stripe keys from https://stripe.com
@@ -84,17 +97,20 @@ npm run db:migrate  # Create tables
 ## 🛠️ Technology Stack Ready
 
 **Backend** ✅
+
 - Node.js 22.22.1
 - Express.js 4.22.1
 - PostgreSQL 18.1
 - cors, dotenv, pg
 
 **Frontend** (Waiting for npm completion)
+
 - Next.js 14
 - React 18
 - TailwindCSS (once installed)
 
 **Database** ✅
+
 - PostgreSQL running
 - Database created: `autoshop_db`
 - User: `phil`
@@ -175,6 +191,7 @@ npm install react-dom
 **The hard part is done.** Your backend is fully functional and ready to serve your auto shop. The frontend just needs a successful npm install.
 
 ### Start right now with:
+
 ```bash
 cd /home/phil/projects/autoshop/backend
 npm run dev

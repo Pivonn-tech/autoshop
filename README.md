@@ -17,12 +17,14 @@ A full-stack e-commerce platform for selling automotive parts, vehicles, and ser
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js 14** - React framework with SSR
 - **Tailwind CSS** - Utility-first styling
 - **TypeScript** - Type-safe development
 - **Stripe.js** - Payment integration
 
 ### Backend
+
 - **Express.js** - Node.js web framework
 - **PostgreSQL** - Relational database
 - **Stripe API** - Payment processing
@@ -31,11 +33,13 @@ A full-stack e-commerce platform for selling automotive parts, vehicles, and ser
 ## Getting Started
 
 ### 1. Clone & Install
+
 ```bash
 npm run setup
 ```
 
 ### 2. Setup Database
+
 ```bash
 # Create PostgreSQL database
 createdb autoshop_db
@@ -47,9 +51,11 @@ npm run db:migrate
 ```
 
 ### 3. Configure Payments
+
 Get your Stripe API keys from [stripe.com](https://stripe.com) and add to `.env` files
 
 ### 4. Start Development
+
 ```bash
 npm start
 ```
@@ -61,7 +67,7 @@ Backend API: http://localhost:3001
 
 ```
 frontend/          - Next.js storefront & shopping experience
-backend/           - Express API & database logic  
+backend/           - Express API & database logic
 backend/uploads/   - Product images storage
 pics/              - Your original inventory photos
 ```
@@ -75,12 +81,14 @@ pics/              - Your original inventory photos
 ## Environment Variables
 
 ### Frontend (.env.local)
+
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 NEXT_PUBLIC_STRIPE_KEY=pk_test_xxx
 ```
 
 ### Backend (.env)
+
 ```
 DATABASE_URL=postgresql://user:pass@localhost/autoshop_db
 STRIPE_SECRET_KEY=sk_test_xxx

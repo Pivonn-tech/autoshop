@@ -1,4 +1,4 @@
-import pool from './connection.js'
+import pool from "./connection.js";
 
 const createTables = async () => {
   try {
@@ -18,7 +18,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     // Categories table
     await pool.query(`
@@ -29,7 +29,7 @@ const createTables = async () => {
         icon VARCHAR(50),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     // Products table
     await pool.query(`
@@ -48,7 +48,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     // Product Images table
     await pool.query(`
@@ -60,7 +60,7 @@ const createTables = async () => {
         is_main BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     // Cart table
     await pool.query(`
@@ -72,7 +72,7 @@ const createTables = async () => {
         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(user_id, product_id)
       )
-    `)
+    `);
 
     // Orders table
     await pool.query(`
@@ -88,7 +88,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
     // Order Items table
     await pool.query(`
@@ -100,12 +100,12 @@ const createTables = async () => {
         unit_price DECIMAL(10, 2) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
-    `)
+    `);
 
-    console.log('✅ Database tables created successfully')
+    console.log("✅ Database tables created successfully");
   } catch (error) {
-    console.error('❌ Error creating tables:', error)
+    console.error("❌ Error creating tables:", error);
   }
-}
+};
 
-createTables()
+createTables();

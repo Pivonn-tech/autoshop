@@ -15,6 +15,7 @@ npm is currently experiencing dependency resolution timeouts. This is often a te
 ### Try These Solutions:
 
 #### Option 1: Update npm and retry (Recommended)
+
 ```bash
 # Update npm to latest version
 sudo npm install -g npm@latest
@@ -27,11 +28,12 @@ cd /home/phil/projects/autoshop/backend
 npm install
 
 # Then frontend
-cd /home/phil/projects/autoshop/frontend  
+cd /home/phil/projects/autoshop/frontend
 npm install
 ```
 
 #### Option 2: Use Yarn (if npm continues to fail)
+
 ```bash
 # Install yarn
 npm install -g yarn
@@ -42,8 +44,9 @@ yarn install
 ```
 
 #### Option 3: Use pnpm (fastest)
+
 ```bash
-# Install pnpm  
+# Install pnpm
 npm install -g pnpm
 
 # Install all packages
@@ -52,6 +55,7 @@ pnpm install
 ```
 
 #### Option 4: Try npm with different registry
+
 ```bash
 npm config set registry https://registry.npmmirror.com
 
@@ -69,7 +73,7 @@ Create `backend/node_modules` manually:
 cd backend
 npm install express --no-save
 npm install cors --no-save
-npm install dotenv --no-save  
+npm install dotenv --no-save
 npm install pg --no-save
 ```
 
@@ -116,6 +120,7 @@ npm start
 ## 🐛 Troubleshooting
 
 **If npm still hangs:**
+
 - Check internet connection: `ping registry.npmjs.org`
 - Try different registry (see Option 4 above)
 - Restart npm daemon: `npm daemon off && npm daemon on`
@@ -123,6 +128,7 @@ npm start
 - Try in a new terminal session
 
 **Database connection issues:**
+
 ```bash
 # Test connection
 psql autoshop_db
