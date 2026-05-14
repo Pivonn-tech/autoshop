@@ -1,0 +1,22 @@
+{
+  "name": "autoshop",
+  "version": "1.0.0",
+  "description": "Professional online auto shop for selling automotive parts, vehicles, and services",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "start": "npm run dev",
+    "setup": "npm install && npm install -C frontend && npm install -C backend"
+  },
+  "keywords": ["auto-shop", "e-commerce", "automotive"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
