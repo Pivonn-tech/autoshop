@@ -1,7 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState } from 'react';
+import { useSession, signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface Service {
   id: number;
@@ -13,10 +15,12 @@ interface Service {
 }
 
 export default function Services() {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [selectedService, setSelectedService] = useState<number | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
 
   // Cyber/Sport Color Palette
   const colors = {
@@ -295,17 +299,27 @@ export default function Services() {
                       {formatKES(service.price)}
                     </p>
                   </div>
-                </div>
-                <button
+                </onClick={(e) => {
+                    e.stopPropagation();
+                    if (!session) {
+                      signIn(undefined, {
+                        callbackUrl: `/services?service=${service.id}`,
+                      });
+                    } else {
+                      setSelectedService(service.id);
+                    }
+                  }}
                   style={{
-                    width: "100%",
+                    width: '100%',
                     backgroundColor: colors.accent,
                     color: colors.background,
-                    border: "none",
-                    padding: "0.75rem",
-                    borderRadius: "2px",
+                    border: 'none',
+                    padding: '0.75rem',
+                    borderRadius: '2px',
                     fontWeight: 900,
-                    cursor: "pointer",
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
                   }}
