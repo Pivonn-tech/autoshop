@@ -25,10 +25,33 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });
 });
 
-// Products endpoint (placeholder)
+// Products endpoint with real automotive products in Kenyan Shilling
 app.get("/api/products", (req, res) => {
   res.json([
-    { id: 1, name: "Sample Product", price: 99.99, image: "/sample.jpg" },
+    {
+      id: 1,
+      name: "Melvin Red Cargo Truck",
+      description: "Heavy-duty cargo truck for commercial transport",
+      price: 950000,
+      currency: "KES",
+      image: "/products/product1.jpg",
+    },
+    {
+      id: 2,
+      name: "Melvin Three-Wheeler Motorcycle",
+      description: "Three-wheeled cargo motorcycle with canopy roof",
+      price: 185000,
+      currency: "KES",
+      image: "/products/product2.jpg",
+    },
+    {
+      id: 3,
+      name: "Melvin Blue Motorcycle",
+      description: "Blue three-wheeled cargo motorcycle",
+      price: 175000,
+      currency: "KES",
+      image: "/products/product3.jpg",
+    },
   ]);
 });
 
