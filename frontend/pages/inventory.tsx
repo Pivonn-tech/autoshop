@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 interface Product {
   id: number;
@@ -36,78 +37,7 @@ export default function Inventory() {
 
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
-  // Cyber/Sport Color Palette
-  const colors = {
-    background: "#0A0A0A",
-    surface: "#1A1A1A",
-    text: "#FFFFFF",
-    accent: "#FFD700",
-    textSecondary: "#666666",
-  };
-
-  useEffect(() => {
-    fetch("http://localhost:3001/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-        applyFilters(data, filters);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch products:", error);
-        setLoading(false);
-      });
-  }, []);
-
-  const applyFilters = (
-    productsToFilter: Product[],
-    filterState: FilterState,
-  ) => {
-    let result = productsToFilter.filter(
-      (p) => p.price >= filterState.priceMin && p.price <= filterState.priceMax,
-    );
-
-    if (filterState.sortBy === "price-low") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (filterState.sortBy === "price-high") {
-      result.sort((a, b) => b.price - a.price);
-    }
-
-    setFilteredProducts(result);
-  };
-
-  const handleFilterChange = (key: string, value: any) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
-    applyFilters(products, newFilters);
-  };
-
-  const formatKES = (price: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
-  return (
-    <div
-      style={{
-        backgroundColor: colors.background,
-        color: colors.text,
-        minHeight: "100vh",
-      }}
-    >
-      {/* Navigation */}
-      <nav
-        style={{
-          backgroundColor: colors.surface,
-          padding: "1rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
-          position: "sticky",
+      <SiteHeader />
           top: 0,
           zIndex: 100,
         }}

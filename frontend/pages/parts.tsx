@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 interface Part {
   id: number;
@@ -19,78 +20,7 @@ export default function Parts() {
   const [selectedSystem, setSelectedSystem] = useState("");
   const [parts, setParts] = useState<Part[]>([]);
 
-  // Cyber/Sport Color Palette
-  const colors = {
-    background: "#0A0A0A",
-    surface: "#1A1A1A",
-    text: "#FFFFFF",
-    accent: "#FFD700",
-    textSecondary: "#666666",
-  };
-
-  // Mock parts data
-  const allParts: Part[] = [
-    {
-      id: 1,
-      name: "Brake Pads Premium",
-      system: "Braking",
-      oem: "BP-2024-01",
-      price: 15000,
-      stock: 12,
-      fitment: "Universal",
-      description: "High-performance ceramic brake pads",
-    },
-    {
-      id: 2,
-      name: "Oil Filter Pro",
-      system: "Engine",
-      oem: "OF-2024-02",
-      price: 3500,
-      stock: 25,
-      fitment: "Universal",
-      description: "Premium synthetic oil filter",
-    },
-    {
-      id: 3,
-      name: "Air Filter Ultra",
-      system: "Engine",
-      oem: "AF-2024-03",
-      price: 4200,
-      stock: 18,
-      fitment: "Universal",
-      description: "High-flow air intake filter",
-    },
-    {
-      id: 4,
-      name: "Suspension Springs",
-      system: "Suspension",
-      oem: "SS-2024-04",
-      price: 45000,
-      stock: 8,
-      fitment: "Universal",
-      description: "Reinforced coil springs",
-    },
-    {
-      id: 5,
-      name: "Battery 100Ah",
-      system: "Electrical",
-      oem: "BAT-2024-05",
-      price: 28000,
-      stock: 6,
-      fitment: "Universal",
-      description: "High-capacity automotive battery",
-    },
-    {
-      id: 6,
-      name: "Alternator 120A",
-      system: "Electrical",
-      oem: "ALT-2024-06",
-      price: 35000,
-      stock: 5,
-      fitment: "Universal",
-      description: "Heavy-duty alternator",
-    },
-  ];
+      <SiteHeader />
 
   useEffect(() => {
     // Filter parts based on system selection

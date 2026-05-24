@@ -11,7 +11,8 @@ const colors = {
 
 export default function AuthErrorPage() {
   const router = useRouter();
-  const error = typeof router.query.error === "string" ? router.query.error : undefined;
+  const error =
+    typeof router.query.error === "string" ? router.query.error : undefined;
 
   const errorMessages: Record<string, string> = {
     Callback: "There was a problem signing in. Please try again.",
@@ -25,7 +26,9 @@ export default function AuthErrorPage() {
     AccessDenied: "Access was denied.",
   };
 
-  const errorMessage = error ? errorMessages[error] || "An error occurred. Please try again." : "An error occurred. Please try again.";
+  const errorMessage = error
+    ? errorMessages[error] || "An error occurred. Please try again."
+    : "An error occurred. Please try again.";
 
   return (
     <div

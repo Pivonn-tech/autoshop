@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import SiteHeader from '../components/SiteHeader';
 
 interface Service {
   id: number;
@@ -198,75 +199,7 @@ export default function Services() {
         <p
           style={{
             color: colors.textSecondary,
-            fontSize: "1.1rem",
-            marginBottom: "3rem",
-          }}
-        >
-          Expert technicians ready to service your vehicle with precision
-        </p>
-
-        {selectedService === null ? (
-          // Service Selection View
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-              gap: "2rem",
-            }}
-          >
-            {services.map((service) => (
-              <div
-                key={service.id}
-                style={{
-                  backgroundColor: colors.surface,
-                  padding: "2rem",
-                  borderRadius: "2px",
-                  border: `1px solid ${colors.accent}`,
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "scale(1.02)";
-                  e.currentTarget.style.boxShadow = `0 12px 40px rgba(255, 215, 0, 0.2)`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-                onClick={() => setSelectedService(service.id)}
-              >
-                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>
-                  {service.icon}
-                </div>
-                <h3
-                  style={{
-                    fontSize: "1.3rem",
-                    fontWeight: 900,
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  {service.title}
-                </h3>
-                <p
-                  style={{
-                    color: colors.textSecondary,
-                    marginBottom: "1.5rem",
-                    fontSize: "0.95rem",
-                    minHeight: "3rem",
-                  }}
-                >
-                  {service.description}
-                </p>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "1.5rem",
-                    paddingTop: "1rem",
-                    borderTop: `1px solid ${colors.textSecondary}`,
-                  }}
-                >
+              <SiteHeader />
                   <div>
                     <p
                       style={{

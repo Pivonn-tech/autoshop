@@ -15,9 +15,23 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/logo-icon-512.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/logo-icon-32.png" />
-        <link rel="icon" type="image/png" sizes="128x128" href="/logo-icon-128.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/logo-icon-512.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/logo-icon-32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="128x128"
+          href="/logo-icon-128.png"
+        />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0A0A0A" />
         <meta name="theme-color" content="#0A0A0A" />
       </head>

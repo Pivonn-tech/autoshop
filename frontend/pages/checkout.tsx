@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 interface CartItem {
   id: number;
@@ -40,78 +41,7 @@ export default function Checkout() {
           color: "#FFFFFF",
         }}
       >
-        <p>Redirecting to login...</p>
-      </div>
-    );
-  }
-
-  const [cartItems] = useState<CartItem[]>([
-    { id: 1, name: "Brake Pads Premium", price: 15000, quantity: 2 },
-    { id: 2, name: "Oil Filter Pro", price: 3500, quantity: 1 },
-  ]);
-
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    postalCode: "",
-  });
-
-  // Cyber/Sport Color Palette
-  const colors = {
-    background: "#0A0A0A",
-    surface: "#1A1A1A",
-    text: "#FFFFFF",
-    accent: "#FFD700",
-    textSecondary: "#666666",
-  };
-
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
-  const shipping = 2500;
-  const tax = Math.round(subtotal * 0.16);
-  const total = subtotal + shipping + tax;
-
-  const formatKES = (price: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
-  return (
-    <div
-      style={{
-        backgroundColor: colors.background,
-        color: colors.text,
-        minHeight: "100vh",
-      }}
-    >
-      {/* Navigation */}
-      <nav
-        style={{
-          backgroundColor: colors.surface,
-          padding: "1rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <div
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: "bold",
+        <SiteHeader />
               color: colors.accent,
               cursor: "pointer",
             }}

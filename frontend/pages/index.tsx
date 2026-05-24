@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 interface Product {
   id: number;
@@ -226,75 +227,7 @@ export default function Home() {
         minHeight: "100vh",
       }}
     >
-      {/* Navigation */}
-      <nav
-        style={{
-          backgroundColor: colors.surface,
-          padding: "1rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <div
-          style={{
-            fontSize: "1.5rem",
-            fontWeight: "bold",
-            color: colors.accent,
-          }}
-        >
-          AUTOFIX KENYA
-        </div>
-        <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-          <a
-            href="#inventory"
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Inventory
-          </a>
-          <a
-            href="#parts"
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Parts
-          </a>
-          <a
-            href="#services"
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Services
-          </a>
-          <button
-            style={{
-              backgroundColor: colors.accent,
-              color: colors.background,
-              border: "none",
-              padding: "0.5rem 1.5rem",
-              borderRadius: "4px",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            Contact
-          </button>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Hero Section - Split Screen Layout */}
       <section
