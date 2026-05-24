@@ -3,8 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: false,
-    domains: ['localhost'],
+    domains: ["localhost"],
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

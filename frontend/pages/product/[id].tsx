@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 interface Product {
   id: number;
@@ -26,61 +26,89 @@ export default function ProductDetails() {
   useEffect(() => {
     if (!id) return;
 
-    fetch('http://localhost:3001/api/products')
+    fetch("http://localhost:3001/api/products")
       .then((res) => res.json())
       .then((data) => {
-        const found = data.find((p: Product) => p.id === parseInt(id as string));
+        const found = data.find(
+          (p: Product) => p.id === parseInt(id as string),
+        );
         setProduct(found);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Failed to fetch product:', error);
+        console.error("Failed to fetch product:", error);
         setLoading(false);
       });
   }, [id]);
 
   const formatKES = (price: number) => {
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
       minimumFractionDigits: 0,
     }).format(price);
   };
 
   // Cyber/Sport Color Palette
   const colors = {
-    background: '#0A0A0A',
-    surface: '#1A1A1A',
-    text: '#FFFFFF',
-    accent: '#FFD700',
-    textSecondary: '#666666',
+    background: "#0A0A0A",
+    surface: "#1A1A1A",
+    text: "#FFFFFF",
+    accent: "#FFD700",
+    textSecondary: "#666666",
   };
 
   if (loading) {
     return (
-      <div style={{ backgroundColor: colors.background, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: colors.text, fontSize: '1.25rem' }}>Loading product details...</p>
+      <div
+        style={{
+          backgroundColor: colors.background,
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <p style={{ color: colors.text, fontSize: "1.25rem" }}>
+          Loading product details...
+        </p>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div style={{ backgroundColor: colors.background, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: colors.accent, fontSize: '1.25rem' }}>Product not found</p>
+      <div
+        style={{
+          backgroundColor: colors.background,
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <p style={{ color: colors.accent, fontSize: "1.25rem" }}>
+          Product not found
+        </p>
       </div>
     );
   }
 
   return (
-    <div style={{ backgroundColor: colors.background, color: colors.text, minHeight: '100vh' }}>
+    <div
+      style={{
+        backgroundColor: colors.background,
+        color: colors.text,
+        minHeight: "100vh",
+      }}
+    >
       {/* Header */}
       <nav
         style={{
           backgroundColor: colors.surface,
-          padding: '1rem 2rem',
-          display: 'flex',
-          alignItems: 'center',
+          padding: "1rem 2rem",
+          display: "flex",
+          alignItems: "center",
           boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
         }}
       >
@@ -89,24 +117,24 @@ export default function ProductDetails() {
           style={{
             backgroundColor: colors.accent,
             color: colors.background,
-            border: 'none',
-            padding: '0.5rem 1rem',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
+            border: "none",
+            padding: "0.5rem 1rem",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
           ← Back
         </button>
       </nav>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem" }}>
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '3rem',
-            alignItems: 'start',
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "3rem",
+            alignItems: "start",
           }}
         >
           {/* Product Gallery */}
@@ -115,14 +143,14 @@ export default function ProductDetails() {
             <div
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: '8px',
-                padding: '2rem',
-                marginBottom: '1.5rem',
-                height: '400px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '8rem',
+                borderRadius: "8px",
+                padding: "2rem",
+                marginBottom: "1.5rem",
+                height: "400px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "8rem",
               }}
             >
               {product.icon}
@@ -131,9 +159,9 @@ export default function ProductDetails() {
             {/* Image Thumbnails */}
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '0.5rem',
+                display: "grid",
+                gridTemplateColumns: "repeat(4, 1fr)",
+                gap: "0.5rem",
               }}
             >
               {product.views.map((_, index) => (
@@ -141,12 +169,15 @@ export default function ProductDetails() {
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
                   style={{
-                    backgroundColor: selectedImageIndex === index ? colors.accent : colors.surface,
-                    border: `2px solid ${selectedImageIndex === index ? colors.accent : 'transparent'}`,
-                    borderRadius: '4px',
-                    padding: '0.75rem',
-                    cursor: 'pointer',
-                    fontSize: '1.5rem',
+                    backgroundColor:
+                      selectedImageIndex === index
+                        ? colors.accent
+                        : colors.surface,
+                    border: `2px solid ${selectedImageIndex === index ? colors.accent : "transparent"}`,
+                    borderRadius: "4px",
+                    padding: "0.75rem",
+                    cursor: "pointer",
+                    fontSize: "1.5rem",
                   }}
                 >
                   📷
@@ -157,45 +188,89 @@ export default function ProductDetails() {
 
           {/* Product Details */}
           <div>
-            <div style={{ marginBottom: '1rem' }}>
-              <span style={{ color: colors.accent, fontWeight: 'bold', fontSize: '0.9rem' }}>
+            <div style={{ marginBottom: "1rem" }}>
+              <span
+                style={{
+                  color: colors.accent,
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                }}
+              >
                 {product.category}
               </span>
             </div>
 
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+            <h1
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: "bold",
+                marginBottom: "1rem",
+              }}
+            >
               {product.name}
             </h1>
 
-            <p style={{ color: colors.textSecondary, fontSize: '1.1rem', marginBottom: '2rem', lineHeight: '1.6' }}>
+            <p
+              style={{
+                color: colors.textSecondary,
+                fontSize: "1.1rem",
+                marginBottom: "2rem",
+                lineHeight: "1.6",
+              }}
+            >
               {product.description}
             </p>
 
             {/* Price */}
-            <div style={{ marginBottom: '2rem' }}>
-              <p style={{ color: colors.textSecondary, marginBottom: '0.5rem' }}>Price</p>
-              <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: colors.accent }}>
+            <div style={{ marginBottom: "2rem" }}>
+              <p
+                style={{ color: colors.textSecondary, marginBottom: "0.5rem" }}
+              >
+                Price
+              </p>
+              <p
+                style={{
+                  fontSize: "2.5rem",
+                  fontWeight: "bold",
+                  color: colors.accent,
+                }}
+              >
                 {formatKES(product.price)}
               </p>
             </div>
 
             {/* Availability */}
-            <div style={{ marginBottom: '2rem' }}>
-              <p style={{ color: colors.textSecondary, marginBottom: '0.5rem' }}>Availability</p>
-              <p style={{ color: product.stock > 0 ? '#10b981' : '#ef4444', fontWeight: 'bold' }}>
-                {product.stock > 0 ? `In Stock - ${product.stock} units available` : 'Out of Stock'}
+            <div style={{ marginBottom: "2rem" }}>
+              <p
+                style={{ color: colors.textSecondary, marginBottom: "0.5rem" }}
+              >
+                Availability
+              </p>
+              <p
+                style={{
+                  color: product.stock > 0 ? "#10b981" : "#ef4444",
+                  fontWeight: "bold",
+                }}
+              >
+                {product.stock > 0
+                  ? `In Stock - ${product.stock} units available`
+                  : "Out of Stock"}
               </p>
             </div>
 
             {/* Quantity Selector */}
-            <div style={{ marginBottom: '2rem' }}>
-              <p style={{ color: colors.textSecondary, marginBottom: '0.5rem' }}>Quantity</p>
+            <div style={{ marginBottom: "2rem" }}>
+              <p
+                style={{ color: colors.textSecondary, marginBottom: "0.5rem" }}
+              >
+                Quantity
+              </p>
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  marginBottom: '1rem',
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1rem",
                 }}
               >
                 <button
@@ -204,29 +279,37 @@ export default function ProductDetails() {
                   style={{
                     backgroundColor: colors.surface,
                     color: colors.text,
-                    border: 'none',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
+                    border: "none",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
                   }}
                 >
                   −
                 </button>
-                <span style={{ fontSize: '1.1rem', minWidth: '2rem', textAlign: 'center' }}>
+                <span
+                  style={{
+                    fontSize: "1.1rem",
+                    minWidth: "2rem",
+                    textAlign: "center",
+                  }}
+                >
                   {quantity}
                 </span>
                 <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  onClick={() =>
+                    setQuantity(Math.min(product.stock, quantity + 1))
+                  }
                   disabled={quantity >= product.stock}
                   style={{
                     backgroundColor: colors.surface,
                     color: colors.text,
-                    border: 'none',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
+                    border: "none",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
                   }}
                 >
                   +
@@ -237,9 +320,9 @@ export default function ProductDetails() {
             {/* Action Buttons */}
             <div
               style={{
-                display: 'flex',
-                gap: '1rem',
-                marginBottom: '2rem',
+                display: "flex",
+                gap: "1rem",
+                marginBottom: "2rem",
               }}
             >
               <button
@@ -247,12 +330,12 @@ export default function ProductDetails() {
                 style={{
                   backgroundColor: colors.accent,
                   color: colors.background,
-                  border: 'none',
-                  padding: '1rem 2rem',
-                  borderRadius: '4px',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                  cursor: product.stock > 0 ? 'pointer' : 'not-allowed',
+                  border: "none",
+                  padding: "1rem 2rem",
+                  borderRadius: "4px",
+                  fontWeight: "bold",
+                  fontSize: "1rem",
+                  cursor: product.stock > 0 ? "pointer" : "not-allowed",
                   opacity: product.stock > 0 ? 1 : 0.5,
                   flex: 1,
                 }}
@@ -261,14 +344,14 @@ export default function ProductDetails() {
               </button>
               <button
                 style={{
-                  backgroundColor: 'transparent',
+                  backgroundColor: "transparent",
                   color: colors.accent,
                   border: `2px solid ${colors.accent}`,
-                  padding: '1rem 2rem',
-                  borderRadius: '4px',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
+                  padding: "1rem 2rem",
+                  borderRadius: "4px",
+                  fontWeight: "bold",
+                  fontSize: "1rem",
+                  cursor: "pointer",
                   flex: 1,
                 }}
               >
@@ -280,32 +363,54 @@ export default function ProductDetails() {
             <div
               style={{
                 backgroundColor: colors.surface,
-                padding: '1.5rem',
-                borderRadius: '8px',
-                marginBottom: '2rem',
+                padding: "1.5rem",
+                borderRadius: "8px",
+                marginBottom: "2rem",
                 border: `1px solid ${colors.accent}`,
               }}
             >
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: colors.accent }}>
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                  color: colors.accent,
+                }}
+              >
                 Key Features
               </h3>
               <ul
                 style={{
-                  listStyle: 'none',
+                  listStyle: "none",
                   padding: 0,
                   margin: 0,
                 }}
               >
-                <li style={{ padding: '0.5rem 0', borderBottom: `1px solid ${colors.textSecondary}` }}>
+                <li
+                  style={{
+                    padding: "0.5rem 0",
+                    borderBottom: `1px solid ${colors.textSecondary}`,
+                  }}
+                >
                   ✓ Premium Build Quality
                 </li>
-                <li style={{ padding: '0.5rem 0', borderBottom: `1px solid ${colors.primary60}` }}>
+                <li
+                  style={{
+                    padding: "0.5rem 0",
+                    borderBottom: `1px solid ${colors.primary60}`,
+                  }}
+                >
                   ✓ Comprehensive Warranty
                 </li>
-                <li style={{ padding: '0.5rem 0', borderBottom: `1px solid ${colors.primary60}` }}>
+                <li
+                  style={{
+                    padding: "0.5rem 0",
+                    borderBottom: `1px solid ${colors.primary60}`,
+                  }}
+                >
                   ✓ Professional Installation Available
                 </li>
-                <li style={{ padding: '0.5rem 0' }}>✓ 24/7 Customer Support</li>
+                <li style={{ padding: "0.5rem 0" }}>✓ 24/7 Customer Support</li>
               </ul>
             </div>
 
@@ -313,27 +418,33 @@ export default function ProductDetails() {
             <div
               style={{
                 backgroundColor: colors.dark,
-                padding: '1.5rem',
-                borderRadius: '8px',
+                padding: "1.5rem",
+                borderRadius: "8px",
                 border: `2px solid ${colors.accent10}`,
               }}
             >
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+              <h3
+                style={{
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                }}
+              >
                 Have Questions?
               </h3>
-              <p style={{ color: colors.textSecondary, marginBottom: '1rem' }}>
+              <p style={{ color: colors.textSecondary, marginBottom: "1rem" }}>
                 Our sales team is ready to help. Contact us today!
               </p>
               <button
                 style={{
                   backgroundColor: colors.accent10,
                   color: colors.primary60,
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '4px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  width: '100%',
+                  border: "none",
+                  padding: "0.75rem 1.5rem",
+                  borderRadius: "4px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  width: "100%",
                 }}
               >
                 📞 Contact Sales Team
@@ -343,8 +454,20 @@ export default function ProductDetails() {
         </div>
 
         {/* Related Products Placeholder */}
-        <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: `1px solid ${colors.secondary30}` }}>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '2rem' }}>
+        <div
+          style={{
+            marginTop: "4rem",
+            paddingTop: "2rem",
+            borderTop: `1px solid ${colors.secondary30}`,
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "1.75rem",
+              fontWeight: "bold",
+              marginBottom: "2rem",
+            }}
+          >
             Related Products
           </h2>
           <p style={{ color: colors.textSecondary }}>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
+import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 
 interface Product {
   id: number;
@@ -40,42 +40,46 @@ interface Review {
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [ymmFilter, setYMMFilter] = useState<YMMFilter>({ year: '', make: '', model: '' });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [ymmFilter, setYMMFilter] = useState<YMMFilter>({
+    year: "",
+    make: "",
+    model: "",
+  });
   const [reviews] = useState<Review[]>([
     {
       id: 1,
-      name: 'James Kipchoge',
+      name: "James Kipchoge",
       rating: 5,
-      text: 'Excellent service and competitive prices. The team was professional and courteous.',
-      vehicle: 'Toyota Corolla 2020',
+      text: "Excellent service and competitive prices. The team was professional and courteous.",
+      vehicle: "Toyota Corolla 2020",
     },
     {
       id: 2,
-      name: 'Amara Okonkwo',
+      name: "Amara Okonkwo",
       rating: 5,
-      text: 'Purchased a vehicle here. Great condition, transparent pricing, and honest staff.',
-      vehicle: 'Nissan X-Trail 2019',
+      text: "Purchased a vehicle here. Great condition, transparent pricing, and honest staff.",
+      vehicle: "Nissan X-Trail 2019",
     },
     {
       id: 3,
-      name: 'David Mwangi',
+      name: "David Mwangi",
       rating: 4,
-      text: 'Quick service appointment booking. Very convenient and efficient.',
-      vehicle: 'Maintenance Service',
+      text: "Quick service appointment booking. Very convenient and efficient.",
+      vehicle: "Maintenance Service",
     },
   ]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/products')
+    fetch("http://localhost:3001/api/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Failed to fetch products:', error);
+        console.error("Failed to fetch products:", error);
         setLoading(false);
       });
   }, []);
@@ -84,7 +88,7 @@ export default function Home() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = canvas.offsetWidth;
@@ -98,17 +102,22 @@ export default function Home() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Create animated gradient background with dark theme colors
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, '#121212');          // Deep Asphalt
-      gradient.addColorStop(0.5, '#1E1E24');        // Gunmetal
-      gradient.addColorStop(1, '#121212');          // Deep Asphalt
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      );
+      gradient.addColorStop(0, "#121212"); // Deep Asphalt
+      gradient.addColorStop(0.5, "#1E1E24"); // Gunmetal
+      gradient.addColorStop(1, "#121212"); // Deep Asphalt
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Add animated geometric shapes with Electric Blue
       ctx.save();
       ctx.globalAlpha = 0.15;
-      ctx.fillStyle = '#0050FF';  // Electric Blue
+      ctx.fillStyle = "#0050FF"; // Electric Blue
 
       // Rotating circles
       for (let i = 0; i < 5; i++) {
@@ -131,115 +140,153 @@ export default function Home() {
   const services: Service[] = [
     {
       id: 1,
-      title: 'Vehicle Maintenance',
-      description: 'Regular servicing, oil changes, filter replacements, and preventive care',
-      icon: 'Maintenance',
-      price: 'From Ksh 5,000',
+      title: "Vehicle Maintenance",
+      description:
+        "Regular servicing, oil changes, filter replacements, and preventive care",
+      icon: "Maintenance",
+      price: "From Ksh 5,000",
     },
     {
       id: 2,
-      title: 'Brake Service',
-      description: 'Brake pad replacement, rotor resurfacing, fluid flush, and inspection',
-      icon: 'Brakes',
-      price: 'From Ksh 8,000',
+      title: "Brake Service",
+      description:
+        "Brake pad replacement, rotor resurfacing, fluid flush, and inspection",
+      icon: "Brakes",
+      price: "From Ksh 8,000",
     },
     {
       id: 3,
-      title: 'Engine Diagnostics',
-      description: 'Computer diagnostics, troubleshooting, and engine health checks',
-      icon: 'Diagnostics',
-      price: 'From Ksh 3,500',
+      title: "Engine Diagnostics",
+      description:
+        "Computer diagnostics, troubleshooting, and engine health checks",
+      icon: "Diagnostics",
+      price: "From Ksh 3,500",
     },
     {
       id: 4,
-      title: 'Tire Services',
-      description: 'Tire mounting, balancing, rotation, repair, and replacement',
-      icon: 'Tires',
-      price: 'From Ksh 2,000',
+      title: "Tire Services",
+      description:
+        "Tire mounting, balancing, rotation, repair, and replacement",
+      icon: "Tires",
+      price: "From Ksh 2,000",
     },
     {
       id: 5,
-      title: 'Electrical Repair',
-      description: 'Battery, alternator, starter motor, and wiring system repairs',
-      icon: 'Electrical',
-      price: 'From Ksh 4,500',
+      title: "Electrical Repair",
+      description:
+        "Battery, alternator, starter motor, and wiring system repairs",
+      icon: "Electrical",
+      price: "From Ksh 4,500",
     },
     {
       id: 6,
-      title: 'Transmission Service',
-      description: 'Fluid replacement, filter service, and transmission repair',
-      icon: 'Transmission',
-      price: 'From Ksh 12,000',
+      title: "Transmission Service",
+      description: "Fluid replacement, filter service, and transmission repair",
+      icon: "Transmission",
+      price: "From Ksh 12,000",
     },
   ];
 
   const getServiceIcon = (label: string) => {
     const icons: { [key: string]: string } = {
-      Maintenance: '▼',
-      Brakes: '●',
-      Diagnostics: '◆',
-      Tires: '◯',
-      Electrical: '✦',
-      Transmission: '⬟',
+      Maintenance: "▼",
+      Brakes: "●",
+      Diagnostics: "◆",
+      Tires: "◯",
+      Electrical: "✦",
+      Transmission: "⬟",
     };
-    return icons[label] || '▶';
+    return icons[label] || "▶";
   };
 
   const formatKES = (price: number) => {
-    return new Intl.NumberFormat('en-KE', {
-      style: 'currency',
-      currency: 'KES',
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
       minimumFractionDigits: 0,
     }).format(price);
   };
 
   // Cyber/Sport Color Palette
   const colors = {
-    background: '#0A0A0A',      // Deep Black - main page background
-    surface: '#1A1A1A',         // Dark Gray - cards and surfaces
-    text: '#FFFFFF',            // Crisp White - primary typography
-    accent: '#FFD700',          // High-Octane Yellow - CTAs and highlights
-    textSecondary: '#666666',   // Muted Gray - secondary text
+    background: "#0A0A0A", // Deep Black - main page background
+    surface: "#1A1A1A", // Dark Gray - cards and surfaces
+    text: "#FFFFFF", // Crisp White - primary typography
+    accent: "#FFD700", // High-Octane Yellow - CTAs and highlights
+    textSecondary: "#666666", // Muted Gray - secondary text
   };
 
   return (
-    <div style={{ backgroundColor: colors.background, color: colors.text, minHeight: '100vh' }}>
+    <div
+      style={{
+        backgroundColor: colors.background,
+        color: colors.text,
+        minHeight: "100vh",
+      }}
+    >
       {/* Navigation */}
       <nav
         style={{
           backgroundColor: colors.surface,
-          padding: '1rem 2rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          padding: "1rem 2rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
-          position: 'sticky',
+          position: "sticky",
           top: 0,
           zIndex: 100,
         }}
       >
-        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: colors.accent }}>
+        <div
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: "bold",
+            color: colors.accent,
+          }}
+        >
           AUTOFIX KENYA
         </div>
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <a href="#inventory" style={{ color: colors.text, textDecoration: 'none', cursor: 'pointer' }}>
+        <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+          <a
+            href="#inventory"
+            style={{
+              color: colors.text,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
             Inventory
           </a>
-          <a href="#parts" style={{ color: colors.text, textDecoration: 'none', cursor: 'pointer' }}>
+          <a
+            href="#parts"
+            style={{
+              color: colors.text,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
             Parts
           </a>
-          <a href="#services" style={{ color: colors.text, textDecoration: 'none', cursor: 'pointer' }}>
+          <a
+            href="#services"
+            style={{
+              color: colors.text,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
             Services
           </a>
           <button
             style={{
               backgroundColor: colors.accent,
               color: colors.background,
-              border: 'none',
-              padding: '0.5rem 1.5rem',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
+              border: "none",
+              padding: "0.5rem 1.5rem",
+              borderRadius: "4px",
+              fontWeight: "bold",
+              cursor: "pointer",
             }}
           >
             Contact
@@ -250,50 +297,50 @@ export default function Home() {
       {/* Hero Section - Split Screen Layout */}
       <section
         style={{
-          position: 'relative',
-          height: '800px',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
+          position: "relative",
+          height: "800px",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
           backgroundColor: colors.background,
         }}
       >
         <canvas
           ref={canvasRef}
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             right: 0,
-            width: '60%',
-            height: '100%',
+            width: "60%",
+            height: "100%",
             zIndex: 1,
-            display: 'block',
+            display: "block",
           }}
         />
 
         {/* Left Side - Business Content (40%) */}
         <div
           style={{
-            position: 'relative',
+            position: "relative",
             zIndex: 2,
-            width: '40%',
-            padding: '6rem 4rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: '3rem',
+            width: "40%",
+            padding: "6rem 4rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: "3rem",
           }}
         >
           {/* Main Headline */}
           <div>
             <h1
               style={{
-                fontSize: '3.5rem',
+                fontSize: "3.5rem",
                 fontWeight: 900,
-                letterSpacing: '-0.02em',
+                letterSpacing: "-0.02em",
                 lineHeight: 1.1,
                 color: colors.text,
-                marginBottom: '1.5rem',
+                marginBottom: "1.5rem",
                 fontFamily: "'Helvetica Neue', 'Arial Black', sans-serif",
               }}
             >
@@ -301,22 +348,23 @@ export default function Home() {
             </h1>
             <p
               style={{
-                fontSize: '1rem',
+                fontSize: "1rem",
                 color: colors.textSecondary,
                 lineHeight: 1.7,
-                maxWidth: '450px',
+                maxWidth: "450px",
               }}
             >
-              Experience premium vehicles, expert services, and quality parts. Engineered for performance. Built for passion.
+              Experience premium vehicles, expert services, and quality parts.
+              Engineered for performance. Built for passion.
             </p>
           </div>
 
           {/* Price Section with Hand-Drawn Arrow */}
           <div
             style={{
-              position: 'relative',
-              display: 'inline-block',
-              width: 'fit-content',
+              position: "relative",
+              display: "inline-block",
+              width: "fit-content",
             }}
           >
             {/* Hand-drawn arrow SVG */}
@@ -324,9 +372,9 @@ export default function Home() {
               width="100"
               height="70"
               style={{
-                position: 'absolute',
-                top: '-50px',
-                left: '-30px',
+                position: "absolute",
+                top: "-50px",
+                left: "-30px",
                 zIndex: 3,
               }}
               viewBox="0 0 100 70"
@@ -339,27 +387,24 @@ export default function Home() {
                 strokeLinecap="round"
                 strokeDasharray="8,4"
               />
-              <polygon
-                points="75,2 80,10 70,8"
-                fill={colors.accent}
-              />
+              <polygon points="75,2 80,10 70,8" fill={colors.accent} />
             </svg>
 
             <div
               style={{
-                fontSize: '3rem',
+                fontSize: "3rem",
                 fontWeight: 900,
                 color: colors.accent,
-                letterSpacing: '-0.01em',
+                letterSpacing: "-0.01em",
               }}
             >
               From Ksh 185,000
             </div>
             <p
               style={{
-                fontSize: '0.9rem',
+                fontSize: "0.9rem",
                 color: colors.textSecondary,
-                marginTop: '0.75rem',
+                marginTop: "0.75rem",
               }}
             >
               Melvin Three-Wheeler Motorcycle
@@ -367,28 +412,28 @@ export default function Home() {
           </div>
 
           {/* CTA Buttons */}
-          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
             <button
               style={{
                 backgroundColor: colors.accent,
                 color: colors.background,
-                border: 'none',
-                padding: '1rem 2.5rem',
-                borderRadius: '2px',
+                border: "none",
+                padding: "1rem 2.5rem",
+                borderRadius: "2px",
                 fontWeight: 900,
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                transition: 'all 0.3s ease',
+                fontSize: "0.95rem",
+                cursor: "pointer",
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                transition: "all 0.3s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.transform = "scale(1.05)";
                 e.currentTarget.style.boxShadow = `0 12px 40px rgba(255, 215, 0, 0.3)`;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
               Explore Now
@@ -396,24 +441,24 @@ export default function Home() {
             <Link href="#products">
               <button
                 style={{
-                  backgroundColor: 'transparent',
+                  backgroundColor: "transparent",
                   color: colors.accent,
                   border: `2px solid ${colors.accent}`,
-                  padding: '0.85rem 2rem',
-                  borderRadius: '2px',
+                  padding: "0.85rem 2rem",
+                  borderRadius: "2px",
                   fontWeight: 700,
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  transition: 'all 0.3s ease',
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  transition: "all 0.3s ease",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = colors.accent;
                   e.currentTarget.style.color = colors.background;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.backgroundColor = "transparent";
                   e.currentTarget.style.color = colors.accent;
                 }}
               >
@@ -430,39 +475,53 @@ export default function Home() {
       <section
         style={{
           backgroundColor: colors.background,
-          padding: '3rem 4rem',
+          padding: "3rem 4rem",
           borderTop: `1px solid ${colors.surface}`,
         }}
       >
         <div
           style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '2rem',
+            maxWidth: "1200px",
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "2rem",
           }}
         >
           {[
-            { label: 'Top Speed', value: '165 km/h' },
-            { label: 'Fuel Consumption', value: '3.5 L/100km' },
-            { label: 'Engine Power', value: '185 bhp' },
-            { label: 'Acceleration 0-100', value: '7.2 seconds' },
+            { label: "Top Speed", value: "165 km/h" },
+            { label: "Fuel Consumption", value: "3.5 L/100km" },
+            { label: "Engine Power", value: "185 bhp" },
+            { label: "Acceleration 0-100", value: "7.2 seconds" },
           ].map((spec, idx) => (
             <div
               key={idx}
               style={{
                 backgroundColor: colors.surface,
-                padding: '1.5rem',
-                borderRadius: '2px',
+                padding: "1.5rem",
+                borderRadius: "2px",
                 border: `1px solid ${colors.surface}`,
-                textAlign: 'center',
+                textAlign: "center",
               }}
             >
-              <div style={{ fontSize: '0.8rem', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.75rem' }}>
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  color: colors.textSecondary,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.15em",
+                  marginBottom: "0.75rem",
+                }}
+              >
                 {spec.label}
               </div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 900, color: colors.accent }}>
+              <div
+                style={{
+                  fontSize: "1.75rem",
+                  fontWeight: 900,
+                  color: colors.accent,
+                }}
+              >
                 {spec.value}
               </div>
             </div>
@@ -475,25 +534,39 @@ export default function Home() {
         id="products"
         style={{
           backgroundColor: colors.background,
-          padding: '4rem 2rem',
+          padding: "4rem 2rem",
           borderTop: `1px solid ${colors.surface}`,
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '3rem', textAlign: 'center', color: colors.text }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <h2
+            style={{
+              fontSize: "2.5rem",
+              fontWeight: "bold",
+              marginBottom: "3rem",
+              textAlign: "center",
+              color: colors.text,
+            }}
+          >
             Featured Vehicles
           </h2>
 
           {loading ? (
-            <div style={{ textAlign: 'center', fontSize: '1.25rem', color: colors.textSecondary }}>
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "1.25rem",
+                color: colors.textSecondary,
+              }}
+            >
               Loading vehicles...
             </div>
           ) : (
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '2rem',
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                gap: "2rem",
               }}
             >
               {products.map((product) => (
@@ -501,20 +574,20 @@ export default function Home() {
                   key={product.id}
                   style={{
                     backgroundColor: colors.surface,
-                    borderRadius: '2px',
-                    overflow: 'hidden',
+                    borderRadius: "2px",
+                    overflow: "hidden",
                     boxShadow: `0 4px 24px rgba(0,0,0,0.7)`,
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer',
+                    transition: "all 0.3s ease",
+                    cursor: "pointer",
                     border: `1px solid ${colors.surface}`,
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.03)';
+                    e.currentTarget.style.transform = "scale(1.03)";
                     e.currentTarget.style.boxShadow = `0 12px 40px rgba(255, 215, 0, 0.2)`;
                     e.currentTarget.style.borderColor = colors.accent;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.transform = "scale(1)";
                     e.currentTarget.style.boxShadow = `0 4px 24px rgba(0,0,0,0.7)`;
                     e.currentTarget.style.borderColor = colors.surface;
                   }}
@@ -522,40 +595,74 @@ export default function Home() {
                   <div
                     style={{
                       backgroundColor: colors.background,
-                      height: '240px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '4rem',
+                      height: "240px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "4rem",
                     }}
                   >
                     {product.icon}
                   </div>
 
-                  <div style={{ padding: '1.5rem' }}>
-                    <div style={{ color: colors.accent, fontWeight: 900, marginBottom: '0.5rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                  <div style={{ padding: "1.5rem" }}>
+                    <div
+                      style={{
+                        color: colors.accent,
+                        fontWeight: 900,
+                        marginBottom: "0.5rem",
+                        fontSize: "0.8rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                      }}
+                    >
                       {product.category}
                     </div>
-                    <h3 style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '0.5rem', color: colors.text }}>
+                    <h3
+                      style={{
+                        fontSize: "1.3rem",
+                        fontWeight: "bold",
+                        marginBottom: "0.5rem",
+                        color: colors.text,
+                      }}
+                    >
                       {product.name}
                     </h3>
-                    <p style={{ color: colors.textSecondary, marginBottom: '1rem', fontSize: '0.9rem' }}>
+                    <p
+                      style={{
+                        color: colors.textSecondary,
+                        marginBottom: "1rem",
+                        fontSize: "0.9rem",
+                      }}
+                    >
                       {product.description}
                     </p>
 
-                    <div style={{ color: colors.textSecondary, marginBottom: '1rem', fontSize: '0.85rem' }}>
+                    <div
+                      style={{
+                        color: colors.textSecondary,
+                        marginBottom: "1rem",
+                        fontSize: "0.85rem",
+                      }}
+                    >
                       Stock: {product.stock} | In Stock
                     </div>
 
                     <div
                       style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: '1rem',
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: "1rem",
                       }}
                     >
-                      <span style={{ fontSize: '1.5rem', fontWeight: 900, color: colors.accent }}>
+                      <span
+                        style={{
+                          fontSize: "1.5rem",
+                          fontWeight: 900,
+                          color: colors.accent,
+                        }}
+                      >
                         {formatKES(product.price)}
                       </span>
                       <Link href={`/product/${product.id}`}>
@@ -563,21 +670,21 @@ export default function Home() {
                           style={{
                             backgroundColor: colors.accent,
                             color: colors.background,
-                            border: 'none',
-                            padding: '0.75rem 1.5rem',
-                            borderRadius: '2px',
+                            border: "none",
+                            padding: "0.75rem 1.5rem",
+                            borderRadius: "2px",
                             fontWeight: 900,
-                            fontSize: '0.85rem',
-                            cursor: 'pointer',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.08em',
-                            transition: 'all 0.2s ease',
+                            fontSize: "0.85rem",
+                            cursor: "pointer",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em",
+                            transition: "all 0.2s ease",
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'scale(1.05)';
+                            e.currentTarget.style.transform = "scale(1.05)";
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'scale(1)';
+                            e.currentTarget.style.transform = "scale(1)";
                           }}
                         >
                           Details
@@ -596,21 +703,29 @@ export default function Home() {
       <section
         style={{
           backgroundColor: colors.background,
-          padding: '4rem 2rem',
+          padding: "4rem 2rem",
           borderTop: `1px solid ${colors.surface}`,
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '3rem', textAlign: 'center', color: colors.text }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <h2
+            style={{
+              fontSize: "2.5rem",
+              fontWeight: "bold",
+              marginBottom: "3rem",
+              textAlign: "center",
+              color: colors.text,
+            }}
+          >
             Trusted by Kenya
           </h2>
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '2rem',
-              marginBottom: '3rem',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "2rem",
+              marginBottom: "3rem",
             }}
           >
             {reviews.map((review) => (
@@ -618,25 +733,53 @@ export default function Home() {
                 key={review.id}
                 style={{
                   backgroundColor: colors.surface,
-                  padding: '2rem',
-                  borderRadius: '2px',
+                  padding: "2rem",
+                  borderRadius: "2px",
                   border: `1px solid ${colors.accent}`,
                 }}
               >
-                <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "0.25rem",
+                    marginBottom: "1rem",
+                  }}
+                >
                   {Array(review.rating)
                     .fill(0)
                     .map((_, i) => (
-                      <span key={i} style={{ color: colors.accent, fontSize: '1.2rem' }}>
+                      <span
+                        key={i}
+                        style={{ color: colors.accent, fontSize: "1.2rem" }}
+                      >
                         ★
                       </span>
                     ))}
                 </div>
-                <p style={{ color: colors.textSecondary, marginBottom: '1rem', fontStyle: 'italic', fontSize: '0.95rem' }}>
+                <p
+                  style={{
+                    color: colors.textSecondary,
+                    marginBottom: "1rem",
+                    fontStyle: "italic",
+                    fontSize: "0.95rem",
+                  }}
+                >
                   "{review.text}"
                 </p>
-                <div style={{ fontWeight: 900, marginBottom: '0.25rem', color: colors.text }}>{review.name}</div>
-                <div style={{ color: colors.textSecondary, fontSize: '0.85rem' }}>{review.vehicle}</div>
+                <div
+                  style={{
+                    fontWeight: 900,
+                    marginBottom: "0.25rem",
+                    color: colors.text,
+                  }}
+                >
+                  {review.name}
+                </div>
+                <div
+                  style={{ color: colors.textSecondary, fontSize: "0.85rem" }}
+                >
+                  {review.vehicle}
+                </div>
               </div>
             ))}
           </div>
@@ -645,36 +788,97 @@ export default function Home() {
           <div
             style={{
               backgroundColor: colors.surface,
-              borderRadius: '2px',
-              padding: '3rem 2rem',
-              textAlign: 'center',
+              borderRadius: "2px",
+              padding: "3rem 2rem",
+              textAlign: "center",
               border: `1px solid ${colors.accent}`,
             }}
           >
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '2rem', color: colors.text }}>
+            <h3
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: 900,
+                marginBottom: "2rem",
+                color: colors.text,
+              }}
+            >
               Quality Assured
             </h3>
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '2rem',
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                gap: "2rem",
               }}
             >
-              <div style={{ padding: '1rem' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: colors.accent }}>✓</div>
-                <div style={{ fontWeight: 900, color: colors.text }}>OEM Parts</div>
-                <div style={{ color: colors.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Genuine components</div>
+              <div style={{ padding: "1rem" }}>
+                <div
+                  style={{
+                    fontSize: "2.5rem",
+                    marginBottom: "0.5rem",
+                    color: colors.accent,
+                  }}
+                >
+                  ✓
+                </div>
+                <div style={{ fontWeight: 900, color: colors.text }}>
+                  OEM Parts
+                </div>
+                <div
+                  style={{
+                    color: colors.textSecondary,
+                    fontSize: "0.85rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Genuine components
+                </div>
               </div>
-              <div style={{ padding: '1rem' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: colors.accent }}>✓</div>
-                <div style={{ fontWeight: 900, color: colors.text }}>Certified Mechanics</div>
-                <div style={{ color: colors.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Expert technicians</div>
+              <div style={{ padding: "1rem" }}>
+                <div
+                  style={{
+                    fontSize: "2.5rem",
+                    marginBottom: "0.5rem",
+                    color: colors.accent,
+                  }}
+                >
+                  ✓
+                </div>
+                <div style={{ fontWeight: 900, color: colors.text }}>
+                  Certified Mechanics
+                </div>
+                <div
+                  style={{
+                    color: colors.textSecondary,
+                    fontSize: "0.85rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Expert technicians
+                </div>
               </div>
-              <div style={{ padding: '1rem' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: colors.accent }}>✓</div>
-                <div style={{ fontWeight: 900, color: colors.text }}>Secure Checkout</div>
-                <div style={{ color: colors.textSecondary, fontSize: '0.85rem', marginTop: '0.5rem' }}>Safe transactions</div>
+              <div style={{ padding: "1rem" }}>
+                <div
+                  style={{
+                    fontSize: "2.5rem",
+                    marginBottom: "0.5rem",
+                    color: colors.accent,
+                  }}
+                >
+                  ✓
+                </div>
+                <div style={{ fontWeight: 900, color: colors.text }}>
+                  Secure Checkout
+                </div>
+                <div
+                  style={{
+                    color: colors.textSecondary,
+                    fontSize: "0.85rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Safe transactions
+                </div>
               </div>
             </div>
           </div>
@@ -686,46 +890,190 @@ export default function Home() {
         style={{
           backgroundColor: colors.surface,
           color: colors.textSecondary,
-          padding: '3rem 2rem',
+          padding: "3rem 2rem",
           borderTop: `1px solid ${colors.accent}`,
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto', marginBottom: '2rem' }}>
+        <div
+          style={{ maxWidth: "1200px", margin: "0 auto", marginBottom: "2rem" }}
+        >
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '2rem',
-              marginBottom: '2rem',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "2rem",
+              marginBottom: "2rem",
             }}
           >
             <div>
-              <h4 style={{ color: colors.accent, fontWeight: 900, marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.9rem' }}>Company</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>About Us</a>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Careers</a>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Contact</a>
+              <h4
+                style={{
+                  color: colors.accent,
+                  fontWeight: 900,
+                  marginBottom: "1rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Company
+              </h4>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  About Us
+                </a>
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Careers
+                </a>
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Contact
+                </a>
               </div>
             </div>
             <div>
-              <h4 style={{ color: colors.accent, fontWeight: 900, marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.9rem' }}>Services</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Maintenance</a>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Repairs</a>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Parts</a>
+              <h4
+                style={{
+                  color: colors.accent,
+                  fontWeight: 900,
+                  marginBottom: "1rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Services
+              </h4>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Maintenance
+                </a>
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Repairs
+                </a>
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Parts
+                </a>
               </div>
             </div>
             <div>
-              <h4 style={{ color: colors.accent, fontWeight: 900, marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.9rem' }}>Legal</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Privacy</a>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Terms</a>
-                <a href="#" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '0.9rem' }}>Warranty</a>
+              <h4
+                style={{
+                  color: colors.accent,
+                  fontWeight: 900,
+                  marginBottom: "1rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Legal
+              </h4>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                }}
+              >
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Privacy
+                </a>
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Terms
+                </a>
+                <a
+                  href="#"
+                  style={{
+                    color: colors.textSecondary,
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Warranty
+                </a>
               </div>
             </div>
           </div>
-          <div style={{ borderTop: `1px solid ${colors.accent}`, paddingTop: '2rem', textAlign: 'center', fontSize: '0.85rem' }}>
-            <p>&copy; 2026 AUTOFIX KENYA. All rights reserved. | Performance. Excellence. Innovation.</p>
+          <div
+            style={{
+              borderTop: `1px solid ${colors.accent}`,
+              paddingTop: "2rem",
+              textAlign: "center",
+              fontSize: "0.85rem",
+            }}
+          >
+            <p>
+              &copy; 2026 AUTOFIX KENYA. All rights reserved. | Performance.
+              Excellence. Innovation.
+            </p>
           </div>
         </div>
       </footer>
