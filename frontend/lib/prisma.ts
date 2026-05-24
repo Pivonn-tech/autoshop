@@ -1,7 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+// Use require to avoid TypeScript resolution issues with the generated client
+// @ts-ignore
+const { PrismaClient } = require("@prisma/client");
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({
+    datasourceUrl: process.env.DATABASE_URL,
+  });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

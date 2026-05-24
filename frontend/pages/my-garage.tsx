@@ -1,7 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface Vehicle {
   id: number;
@@ -30,6 +32,38 @@ interface ServiceRecord {
 }
 
 export default function MyGarage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (status === 'unauthenticated') {
+      router.push(`/auth/login?callbackUrl=/my-garage`);
+      return;
+    }
+
+    setIsLoading(false);
+  }, [status, router]);
+
+  if (isLoading || !session) {
+    return (
+      <div
+        style={{
+          backgroundColor: '#0A0A0A',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#FFFFFF',
+        }}
+      >
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   const [vehicles] = useState<Vehicle[]>([
     {
       id: 1,
@@ -201,20 +235,70 @@ export default function MyGarage() {
       <div
         style={{ maxWidth: "1200px", margin: "0 auto", padding: "3rem 2rem" }}
       >
-        {/* Header */}
-        <div style={{ marginBottom: "3rem" }}>
-          <h1
+        {/* Header with Links */}
+        <div style={{ marginBottom: '3rem' }}>
+          <div
             style={{
-              fontSize: "2.5rem",
-              fontWeight: 900,
-              marginBottom: "0.5rem",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem',
             }}
           >
-            My Garage
-          </h1>
-          <p style={{ color: colors.textSecondary, fontSize: "1.1rem" }}>
-            Manage your vehicles, order history, and maintenance records
-          </p>
+            <div>
+              <h1
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 900,
+                  marginBottom: '0.5rem',
+                }}
+              >
+                My Garage
+              </h1>
+              <p style={{ color: colors.textSecondary, fontSize: '1.1rem', margin: 0 }}>
+                Welcome back, {session?.user?.name || 'Customer'}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <Link href="/service-history" style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: colors.accent,
+                    color: colors.background,
+                    border: 'none',
+                    borderRadius: '2px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Service History
+                </button>
+              </Link>
+              <Link href="/order-tracking" style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: colors.accent,
+                    color: colors.background,
+                    border: 'none',
+                    borderRadius: '2px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Track Orders
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Tab Navigation */}

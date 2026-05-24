@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
+import { useEffect, useState, useRef } from 'react';
+import { useSession, signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 interface Product {
   id: number;
@@ -38,6 +39,7 @@ interface Review {
 }
 
 export default function Home() {
+  const { data: session } = useSession();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -650,46 +652,82 @@ export default function Home() {
 
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "1rem",
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '1rem',
                       }}
                     >
                       <span
                         style={{
-                          fontSize: "1.5rem",
+                          fontSize: '1.5rem',
                           fontWeight: 900,
                           color: colors.accent,
                         }}
                       >
                         {formatKES(product.price)}
                       </span>
-                      <Link href={`/product/${product.id}`}>
+                      <div style={{ display: 'flex', gap: '0.75rem' }}>
+                        <Link href={`/product/${product.id}`}>
+                          <button
+                            style={{
+                              backgroundColor: colors.accent,
+                              color: colors.background,
+                              border: 'none',
+                              padding: '0.75rem 1.5rem',
+                              borderRadius: '2px',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.08em',
+                              transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'scale(1.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                          >
+                            Details
+                          </button>
+                        </Link>
                         <button
+                          onClick={() => {
+                            if (!session) {
+                              signIn(undefined, {
+                                callbackUrl: '/inventory',
+                              });
+                            } else {
+                              alert('Schedule test drive for ' + product.name);
+                            }
+                          }}
                           style={{
-                            backgroundColor: colors.accent,
-                            color: colors.background,
-                            border: "none",
-                            padding: "0.75rem 1.5rem",
-                            borderRadius: "2px",
-                            fontWeight: 900,
-                            fontSize: "0.85rem",
-                            cursor: "pointer",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.08em",
-                            transition: "all 0.2s ease",
+                            backgroundColor: 'transparent',
+                            color: colors.accent,
+                            border: `1px solid ${colors.accent}`,
+                            padding: '0.75rem 1.5rem',
+                            borderRadius: '2px',
+                            fontWeight: 700,
+                            fontSize: '0.85rem',
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.08em',
+                            transition: 'all 0.2s ease',
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = "scale(1.05)";
+                            e.currentTarget.style.backgroundColor = colors.accent;
+                            e.currentTarget.style.color = colors.background;
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = "scale(1)";
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = colors.accent;
                           }}
                         >
-                          Details
+                          Test Drive
                         </button>
-                      </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
