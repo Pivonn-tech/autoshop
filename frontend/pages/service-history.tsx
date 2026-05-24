@@ -4,84 +4,14 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 const colors = {
   background: "#0A0A0A",
   surface: "#1A1A1A",
   text: "#FFFFFF",
   accent: "#FFD700",
-  textSecondary: "#666666",
-};
-
-interface ServiceRecord {
-  id: string;
-  date: string;
-  service: string;
-  cost: number;
-  nextDue: string;
-  mileage: number;
-}
-
-export default function ServiceHistoryPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (status === "loading") return;
-
-    if (status === "unauthenticated") {
-      router.push(`/auth/login?callbackUrl=/service-history`);
-      return;
-    }
-
-    setIsLoading(false);
-  }, [status, router]);
-
-  if (isLoading || !session) {
-    return (
-      <div
-        style={{
-          backgroundColor: colors.background,
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: colors.text,
-        }}
-      >
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  // Mock service history data
-  const serviceHistory: ServiceRecord[] = [
-    {
-      id: "SVC001",
-      date: "2024-05-15",
-      service: "Oil Change",
-      cost: 3500,
-      nextDue: "2024-08-15",
-      mileage: 45230,
-    },
-    {
-      id: "SVC002",
-      date: "2024-03-20",
-      service: "Brake Service",
-      cost: 8500,
-      nextDue: "2025-03-20",
-      mileage: 44100,
-    },
-    {
-      id: "SVC003",
-      date: "2024-01-10",
-      service: "Engine Diagnostics",
-      cost: 2500,
-      nextDue: "2025-01-10",
-      mileage: 42500,
-    },
-    {
+      <SiteHeader />
       id: "SVC004",
       date: "2023-11-05",
       service: "AC Service",

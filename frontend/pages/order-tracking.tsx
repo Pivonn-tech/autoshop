@@ -4,84 +4,14 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 const colors = {
   background: "#0A0A0A",
   surface: "#1A1A1A",
   text: "#FFFFFF",
   accent: "#FFD700",
-  textSecondary: "#666666",
-};
-
-interface OrderItem {
-  id: string;
-  product: string;
-  quantity: number;
-  price: number;
-}
-
-interface Order {
-  id: string;
-  date: string;
-  items: OrderItem[];
-  total: number;
-  status: "pending" | "processing" | "shipped" | "delivered";
-  estimatedDelivery?: string;
-}
-
-export default function OrderTrackingPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (status === "loading") return;
-
-    if (status === "unauthenticated") {
-      router.push(`/auth/login?callbackUrl=/order-tracking`);
-      return;
-    }
-
-    setIsLoading(false);
-  }, [status, router]);
-
-  if (isLoading || !session) {
-    return (
-      <div
-        style={{
-          backgroundColor: colors.background,
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: colors.text,
-        }}
-      >
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  // Mock orders data
-  const orders: Order[] = [
-    {
-      id: "ORD-001",
-      date: "2024-05-20",
-      items: [
-        { id: "1", product: "Brake Pads Premium", quantity: 2, price: 15000 },
-      ],
-      total: 35000,
-      status: "delivered",
-      estimatedDelivery: "2024-05-25",
-    },
-    {
-      id: "ORD-002",
-      date: "2024-05-18",
-      items: [
-        { id: "2", product: "Oil Filter Pro", quantity: 1, price: 3500 },
-        { id: "3", product: "Air Filter", quantity: 1, price: 2500 },
-      ],
-      total: 8500,
+      <SiteHeader />
       status: "shipped",
       estimatedDelivery: "2024-05-26",
     },

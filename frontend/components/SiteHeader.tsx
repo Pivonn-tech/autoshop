@@ -50,24 +50,46 @@ export default function SiteHeader({
           {isMobile ? (
             <img src="/logo-icon.svg" alt="AutoShop" style={{ height: 36 }} />
           ) : (
-            <img src="/logo-clean-full.svg" alt="AutoShop" style={{ height: 40 }} />
+            <img
+              src="/logo-clean-full.svg"
+              alt="AutoShop"
+              style={{ height: 40 }}
+            />
           )}
         </a>
       </Link>
 
       <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
         <Link href="/inventory">
-          <a style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+          <a
+            style={{
+              color: colors.text,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
             Inventory
           </a>
         </Link>
         <Link href="/parts">
-          <a style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+          <a
+            style={{
+              color: colors.text,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
             Parts
           </a>
         </Link>
         <Link href="/services">
-          <a style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+          <a
+            style={{
+              color: colors.text,
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
             Services
           </a>
         </Link>

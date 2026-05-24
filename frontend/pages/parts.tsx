@@ -20,7 +20,7 @@ export default function Parts() {
   const [selectedSystem, setSelectedSystem] = useState("");
   const [parts, setParts] = useState<Part[]>([]);
 
-      <SiteHeader />
+  <SiteHeader />;
 
   useEffect(() => {
     // Filter parts based on system selection

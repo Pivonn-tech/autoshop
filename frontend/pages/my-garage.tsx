@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import SiteHeader from "../components/SiteHeader";
 
 interface Vehicle {
   id: number;
@@ -70,78 +71,7 @@ export default function MyGarage() {
       year: 2020,
       make: "Toyota",
       model: "Corolla",
-      vin: "JT2BF18K1X0000001",
-      mileage: 45230,
-    },
-    {
-      id: 2,
-      year: 2018,
-      make: "Nissan",
-      model: "X-Trail",
-      vin: "JN1BF18J18X123456",
-      mileage: 78540,
-    },
-  ]);
-
-  const [orders] = useState<Order[]>([
-    {
-      id: "ORD-001",
-      date: "2024-05-10",
-      items: "2x Brake Pads, 1x Oil Filter",
-      total: 36500,
-      status: "Delivered",
-    },
-    {
-      id: "ORD-002",
-      date: "2024-05-05",
-      items: "1x Air Filter",
-      total: 4200,
-      status: "Delivered",
-    },
-  ]);
-
-  const [serviceRecords] = useState<ServiceRecord[]>([
-    {
-      id: "SRV-001",
-      date: "2024-04-15",
-      service: "Oil Change",
-      cost: 5500,
-      nextDue: "2024-07-15",
-      mileage: 45000,
-    },
-    {
-      id: "SRV-002",
-      date: "2024-03-20",
-      service: "Brake Service",
-      cost: 12000,
-      nextDue: "2025-03-20",
-      mileage: 44500,
-    },
-  ]);
-
-  const [activeTab, setActiveTab] = useState<
-    "vehicles" | "orders" | "services"
-  >("vehicles");
-
-  // Cyber/Sport Color Palette
-  const colors = {
-    background: "#0A0A0A",
-    surface: "#1A1A1A",
-    text: "#FFFFFF",
-    accent: "#FFD700",
-    textSecondary: "#666666",
-  };
-
-  const formatKES = (price: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
+      <SiteHeader />
       case "Delivered":
         return "#10b981";
       case "Shipped":
