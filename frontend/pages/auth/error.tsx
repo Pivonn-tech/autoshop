@@ -1,6 +1,4 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 const colors = {
@@ -12,8 +10,8 @@ const colors = {
 };
 
 export default function AuthErrorPage() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+  const router = useRouter();
+  const error = typeof router.query.error === "string" ? router.query.error : undefined;
 
   const errorMessages: Record<string, string> = {
     Callback: "There was a problem signing in. Please try again.",
@@ -21,15 +19,13 @@ export default function AuthErrorPage() {
     OAuthCallback: "The OAuth callback failed. Please try again.",
     EmailCreateAccount: "Could not create an account with that email.",
     EmailSignin: "The email provider is not available.",
-    Callback: "There was an unexpected error. Please try again.",
     EmailSignInError: "Could not sign in with that email.",
     CredentialsSignin: "Email or password is incorrect.",
     SessionCallback: "Your session is invalid.",
     AccessDenied: "Access was denied.",
   };
 
-  const errorMessage =
-    errorMessages[error as string] || "An error occurred. Please try again.";
+  const errorMessage = error ? errorMessages[error] || "An error occurred. Please try again." : "An error occurred. Please try again.";
 
   return (
     <div

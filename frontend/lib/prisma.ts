@@ -1,11 +1,12 @@
-// Use require to avoid TypeScript resolution issues with the generated client
-// @ts-ignore
+import { PrismaPg } from "@prisma/adapter-pg";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { PrismaClient } = require("@prisma/client");
 
+const connectionString = process.env.DATABASE_URL;
+
 const prismaClientSingleton = () => {
-  return new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL,
-  });
+  const adapter = new PrismaPg(connectionString ?? "");
+  return new PrismaClient({ adapter });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

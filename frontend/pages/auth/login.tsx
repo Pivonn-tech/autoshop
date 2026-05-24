@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 const colors = {
@@ -15,8 +15,10 @@ const colors = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/my-garage";
+  const callbackUrl =
+    typeof router.query.callbackUrl === "string"
+      ? router.query.callbackUrl
+      : "/my-garage";
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
