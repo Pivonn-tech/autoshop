@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface CartItem {
   id: number;
@@ -18,9 +18,9 @@ export default function Checkout() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'loading') return;
+    if (status === "loading") return;
 
-    if (status === 'unauthenticated') {
+    if (status === "unauthenticated") {
       router.push(`/auth/login?callbackUrl=/checkout`);
       return;
     }
@@ -32,12 +32,12 @@ export default function Checkout() {
     return (
       <div
         style={{
-          backgroundColor: '#0A0A0A',
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#FFFFFF',
+          backgroundColor: "#0A0A0A",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#FFFFFF",
         }}
       >
         <p>Redirecting to login...</p>
@@ -46,8 +46,8 @@ export default function Checkout() {
   }
 
   const [cartItems] = useState<CartItem[]>([
-    { id: 1, name: 'Brake Pads Premium', price: 15000, quantity: 2 },
-    { id: 2, name: 'Oil Filter Pro', price: 3500, quantity: 1 },
+    { id: 1, name: "Brake Pads Premium", price: 15000, quantity: 2 },
+    { id: 2, name: "Oil Filter Pro", price: 3500, quantity: 1 },
   ]);
 
   const [formData, setFormData] = useState({

@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const colors = {
-  background: '#0A0A0A',
-  surface: '#1A1A1A',
-  text: '#FFFFFF',
-  accent: '#FFD700',
-  textSecondary: '#666666',
+  background: "#0A0A0A",
+  surface: "#1A1A1A",
+  text: "#FFFFFF",
+  accent: "#FFD700",
+  textSecondary: "#666666",
 };
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/my-garage';
+  const callbackUrl = searchParams.get("callbackUrl") || "/my-garage";
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [isSignUp, setIsSignUp] = useState(false);
 
@@ -36,7 +36,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn("credentials", {
         email: formData.email,
         password: formData.password,
         redirect: false,
@@ -48,7 +48,7 @@ export default function LoginPage() {
         router.push(callbackUrl);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -58,35 +58,35 @@ export default function LoginPage() {
     <div
       style={{
         backgroundColor: colors.background,
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
       }}
     >
       {/* Modal Container */}
       <div
         style={{
           backgroundColor: colors.surface,
-          borderRadius: '1rem',
-          padding: '3rem',
-          maxWidth: '500px',
-          width: '100%',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
+          borderRadius: "1rem",
+          padding: "3rem",
+          maxWidth: "500px",
+          width: "100%",
+          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.8)",
           border: `1px solid ${colors.accent}40`,
         }}
       >
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <Link href="/" style={{ textDecoration: "none" }}>
             <h1
               style={{
-                fontSize: '1.5rem',
-                fontWeight: '900',
+                fontSize: "1.5rem",
+                fontWeight: "900",
                 color: colors.accent,
-                margin: '0 0 0.5rem 0',
-                cursor: 'pointer',
+                margin: "0 0 0.5rem 0",
+                cursor: "pointer",
               }}
             >
               AUTOFIX KENYA
@@ -96,10 +96,10 @@ export default function LoginPage() {
             style={{
               color: colors.textSecondary,
               margin: 0,
-              fontSize: '0.875rem',
+              fontSize: "0.875rem",
             }}
           >
-            {isSignUp ? 'Create your account' : 'Welcome back'}
+            {isSignUp ? "Create your account" : "Welcome back"}
           </p>
         </div>
 
@@ -107,13 +107,13 @@ export default function LoginPage() {
         {error && (
           <div
             style={{
-              backgroundColor: '#7f1d1d',
-              color: '#fecaca',
-              padding: '0.75rem',
-              borderRadius: '0.5rem',
-              marginBottom: '1rem',
-              fontSize: '0.875rem',
-              textAlign: 'center',
+              backgroundColor: "#7f1d1d",
+              color: "#fecaca",
+              padding: "0.75rem",
+              borderRadius: "0.5rem",
+              marginBottom: "1rem",
+              fontSize: "0.875rem",
+              textAlign: "center",
             }}
           >
             {error}
@@ -121,24 +121,24 @@ export default function LoginPage() {
         )}
 
         {/* OAuth Buttons */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
           <button
-            onClick={() => signIn('google', { callbackUrl })}
+            onClick={() => signIn("google", { callbackUrl })}
             style={{
               flex: 1,
-              padding: '0.75rem',
+              padding: "0.75rem",
               backgroundColor: colors.surface,
               border: `1px solid ${colors.textSecondary}`,
-              borderRadius: '0.5rem',
+              borderRadius: "0.5rem",
               color: colors.text,
-              cursor: 'pointer',
-              fontWeight: '500',
-              transition: 'all 0.3s ease',
-              fontSize: '0.875rem',
+              cursor: "pointer",
+              fontWeight: "500",
+              transition: "all 0.3s ease",
+              fontSize: "0.875rem",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.accent;
-              e.currentTarget.style.backgroundColor = colors.accent + '10';
+              e.currentTarget.style.backgroundColor = colors.accent + "10";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = colors.textSecondary;
@@ -148,22 +148,22 @@ export default function LoginPage() {
             Google
           </button>
           <button
-            onClick={() => signIn('github', { callbackUrl })}
+            onClick={() => signIn("github", { callbackUrl })}
             style={{
               flex: 1,
-              padding: '0.75rem',
+              padding: "0.75rem",
               backgroundColor: colors.surface,
               border: `1px solid ${colors.textSecondary}`,
-              borderRadius: '0.5rem',
+              borderRadius: "0.5rem",
               color: colors.text,
-              cursor: 'pointer',
-              fontWeight: '500',
-              transition: 'all 0.3s ease',
-              fontSize: '0.875rem',
+              cursor: "pointer",
+              fontWeight: "500",
+              transition: "all 0.3s ease",
+              fontSize: "0.875rem",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.accent;
-              e.currentTarget.style.backgroundColor = colors.accent + '10';
+              e.currentTarget.style.backgroundColor = colors.accent + "10";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = colors.textSecondary;
@@ -177,27 +177,44 @@ export default function LoginPage() {
         {/* Divider */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            marginBottom: '1.5rem',
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+            marginBottom: "1.5rem",
           }}
         >
-          <div style={{ flex: 1, height: '1px', backgroundColor: colors.textSecondary + '40' }} />
-          <span style={{ color: colors.textSecondary, fontSize: '0.875rem' }}>or</span>
-          <div style={{ flex: 1, height: '1px', backgroundColor: colors.textSecondary + '40' }} />
+          <div
+            style={{
+              flex: 1,
+              height: "1px",
+              backgroundColor: colors.textSecondary + "40",
+            }}
+          />
+          <span style={{ color: colors.textSecondary, fontSize: "0.875rem" }}>
+            or
+          </span>
+          <div
+            style={{
+              flex: 1,
+              height: "1px",
+              backgroundColor: colors.textSecondary + "40",
+            }}
+          />
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form
+          onSubmit={handleSignIn}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
           <div>
             <label
               style={{
-                display: 'block',
-                marginBottom: '0.5rem',
+                display: "block",
+                marginBottom: "0.5rem",
                 color: colors.text,
-                fontSize: '0.875rem',
-                fontWeight: '500',
+                fontSize: "0.875rem",
+                fontWeight: "500",
               }}
             >
               Email
@@ -209,23 +226,23 @@ export default function LoginPage() {
               onChange={handleChange}
               required
               style={{
-                width: '100%',
-                padding: '0.75rem',
+                width: "100%",
+                padding: "0.75rem",
                 backgroundColor: colors.background,
                 border: `1px solid ${colors.textSecondary}40`,
-                borderRadius: '0.5rem',
+                borderRadius: "0.5rem",
                 color: colors.text,
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-                transition: 'all 0.3s ease',
+                fontSize: "1rem",
+                boxSizing: "border-box",
+                transition: "all 0.3s ease",
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = colors.accent;
                 e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.accent}20`;
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = colors.textSecondary + '40';
-                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = colors.textSecondary + "40";
+                e.currentTarget.style.boxShadow = "none";
               }}
             />
           </div>
@@ -233,11 +250,11 @@ export default function LoginPage() {
           <div>
             <label
               style={{
-                display: 'block',
-                marginBottom: '0.5rem',
+                display: "block",
+                marginBottom: "0.5rem",
                 color: colors.text,
-                fontSize: '0.875rem',
-                fontWeight: '500',
+                fontSize: "0.875rem",
+                fontWeight: "500",
               }}
             >
               Password
@@ -249,23 +266,23 @@ export default function LoginPage() {
               onChange={handleChange}
               required
               style={{
-                width: '100%',
-                padding: '0.75rem',
+                width: "100%",
+                padding: "0.75rem",
                 backgroundColor: colors.background,
                 border: `1px solid ${colors.textSecondary}40`,
-                borderRadius: '0.5rem',
+                borderRadius: "0.5rem",
                 color: colors.text,
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-                transition: 'all 0.3s ease',
+                fontSize: "1rem",
+                boxSizing: "border-box",
+                transition: "all 0.3s ease",
               }}
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = colors.accent;
                 e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.accent}20`;
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = colors.textSecondary + '40';
-                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = colors.textSecondary + "40";
+                e.currentTarget.style.boxShadow = "none";
               }}
             />
           </div>
@@ -274,50 +291,50 @@ export default function LoginPage() {
             type="submit"
             disabled={isLoading}
             style={{
-              padding: '0.75rem',
+              padding: "0.75rem",
               backgroundColor: colors.accent,
               color: colors.background,
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontWeight: '700',
-              fontSize: '1rem',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
+              border: "none",
+              borderRadius: "0.5rem",
+              fontWeight: "700",
+              fontSize: "1rem",
+              cursor: isLoading ? "not-allowed" : "pointer",
               opacity: isLoading ? 0.6 : 1,
-              transition: 'all 0.3s ease',
-              marginTop: '0.5rem',
+              transition: "all 0.3s ease",
+              marginTop: "0.5rem",
             }}
             onMouseEnter={(e) => {
               if (!isLoading) {
                 e.currentTarget.style.boxShadow = `0 0 20px ${colors.accent}60`;
-                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.transform = "translateY(-2px)";
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'none';
-              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = "none";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         {/* Sign Up Link */}
         <p
           style={{
-            textAlign: 'center',
+            textAlign: "center",
             color: colors.textSecondary,
-            marginTop: '1rem',
-            fontSize: '0.875rem',
+            marginTop: "1rem",
+            fontSize: "0.875rem",
           }}
         >
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <Link
             href="/auth/signup"
             style={{
               color: colors.accent,
-              textDecoration: 'none',
-              fontWeight: '600',
-              cursor: 'pointer',
+              textDecoration: "none",
+              fontWeight: "600",
+              cursor: "pointer",
             }}
           >
             Sign up here

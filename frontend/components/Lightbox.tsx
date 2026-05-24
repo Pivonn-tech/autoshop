@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface LightboxProps {
   images: {
@@ -29,17 +29,17 @@ export default function Lightbox({
     if (!isOpen) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === "ArrowLeft") {
         handlePrev();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === "ArrowRight") {
         handleNext();
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [isOpen, currentIndex]);
 
   const handleNext = () => {
@@ -55,14 +55,14 @@ export default function Lightbox({
   return (
     <div
       style={{
-        position: 'fixed',
+        position: "fixed",
         inset: 0,
-        backgroundColor: '#000000',
+        backgroundColor: "#000000",
         zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -73,20 +73,20 @@ export default function Lightbox({
       {/* Main Image */}
       <div
         style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: '90vw',
-          aspectRatio: '16 / 9',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          position: "relative",
+          width: "100%",
+          maxWidth: "90vw",
+          aspectRatio: "16 / 9",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Image
           src={images[currentIndex]?.url}
           alt={images[currentIndex]?.alt}
           fill
-          style={{ objectFit: 'contain' }}
+          style={{ objectFit: "contain" }}
           priority
           sizes="90vw"
         />
@@ -96,27 +96,27 @@ export default function Lightbox({
       <button
         onClick={onClose}
         style={{
-          position: 'absolute',
-          top: '1rem',
-          right: '1rem',
-          backgroundColor: '#FFFFFF20',
-          border: 'none',
-          borderRadius: '50%',
-          width: '2.5rem',
-          height: '2.5rem',
-          color: '#FFFFFF',
-          fontSize: '1.5rem',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'all 0.3s ease',
+          position: "absolute",
+          top: "1rem",
+          right: "1rem",
+          backgroundColor: "#FFFFFF20",
+          border: "none",
+          borderRadius: "50%",
+          width: "2.5rem",
+          height: "2.5rem",
+          color: "#FFFFFF",
+          fontSize: "1.5rem",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.3s ease",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#FFFFFF40';
+          e.currentTarget.style.backgroundColor = "#FFFFFF40";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#FFFFFF20';
+          e.currentTarget.style.backgroundColor = "#FFFFFF20";
         }}
       >
         ✕
@@ -127,28 +127,28 @@ export default function Lightbox({
         <button
           onClick={handlePrev}
           style={{
-            position: 'absolute',
-            left: '1rem',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            backgroundColor: '#FFFFFF20',
-            border: 'none',
-            borderRadius: '50%',
-            width: '3rem',
-            height: '3rem',
-            color: '#FFFFFF',
-            fontSize: '1.5rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s ease',
+            position: "absolute",
+            left: "1rem",
+            top: "50%",
+            transform: "translateY(-50%)",
+            backgroundColor: "#FFFFFF20",
+            border: "none",
+            borderRadius: "50%",
+            width: "3rem",
+            height: "3rem",
+            color: "#FFFFFF",
+            fontSize: "1.5rem",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.3s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#FFFFFF40';
+            e.currentTarget.style.backgroundColor = "#FFFFFF40";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#FFFFFF20';
+            e.currentTarget.style.backgroundColor = "#FFFFFF20";
           }}
         >
           ◀
@@ -160,28 +160,28 @@ export default function Lightbox({
         <button
           onClick={handleNext}
           style={{
-            position: 'absolute',
-            right: '1rem',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            backgroundColor: '#FFFFFF20',
-            border: 'none',
-            borderRadius: '50%',
-            width: '3rem',
-            height: '3rem',
-            color: '#FFFFFF',
-            fontSize: '1.5rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s ease',
+            position: "absolute",
+            right: "1rem",
+            top: "50%",
+            transform: "translateY(-50%)",
+            backgroundColor: "#FFFFFF20",
+            border: "none",
+            borderRadius: "50%",
+            width: "3rem",
+            height: "3rem",
+            color: "#FFFFFF",
+            fontSize: "1.5rem",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.3s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#FFFFFF40';
+            e.currentTarget.style.backgroundColor = "#FFFFFF40";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#FFFFFF20';
+            e.currentTarget.style.backgroundColor = "#FFFFFF20";
           }}
         >
           ▶
@@ -191,14 +191,14 @@ export default function Lightbox({
       {/* Counter & Info */}
       <div
         style={{
-          position: 'absolute',
-          bottom: '1rem',
-          left: '1rem',
-          color: '#FFFFFF',
-          fontSize: '0.875rem',
-          backgroundColor: '#000000cc',
-          padding: '0.75rem 1rem',
-          borderRadius: '0.25rem',
+          position: "absolute",
+          bottom: "1rem",
+          left: "1rem",
+          color: "#FFFFFF",
+          fontSize: "0.875rem",
+          backgroundColor: "#000000cc",
+          padding: "0.75rem 1rem",
+          borderRadius: "0.25rem",
         }}
       >
         {currentIndex + 1} of {images.length}
@@ -207,15 +207,15 @@ export default function Lightbox({
       {/* Keyboard Help */}
       <div
         style={{
-          position: 'absolute',
-          bottom: '1rem',
-          right: '1rem',
-          color: '#FFFFFF80',
-          fontSize: '0.75rem',
-          backgroundColor: '#000000cc',
-          padding: '0.75rem 1rem',
-          borderRadius: '0.25rem',
-          textAlign: 'right',
+          position: "absolute",
+          bottom: "1rem",
+          right: "1rem",
+          color: "#FFFFFF80",
+          fontSize: "0.75rem",
+          backgroundColor: "#000000cc",
+          padding: "0.75rem 1rem",
+          borderRadius: "0.25rem",
+          textAlign: "right",
         }}
       >
         <div>← → to navigate</div>

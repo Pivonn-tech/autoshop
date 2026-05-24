@@ -6,7 +6,7 @@ export const middleware = withAuth(
     // Protected routes that require authentication
     const protectedRoutes = ["/dashboard", "/checkout", "/my-garage"];
     const isProtectedRoute = protectedRoutes.some((route) =>
-      req.nextUrl.pathname.startsWith(route)
+      req.nextUrl.pathname.startsWith(route),
     );
 
     if (isProtectedRoute && !req.nextauth.token) {
@@ -21,7 +21,7 @@ export const middleware = withAuth(
     callbacks: {
       authorized: ({ token }) => !!token,
     },
-  }
+  },
 );
 
 export const config = {
