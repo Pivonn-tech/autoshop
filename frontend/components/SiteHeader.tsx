@@ -67,13 +67,34 @@ export default function SiteHeader({
       </Link>
 
       <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-        <Link href="/inventory" style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+        <Link
+          href="/inventory"
+          style={{
+            color: colors.text,
+            textDecoration: "none",
+            cursor: "pointer",
+          }}
+        >
           Inventory
         </Link>
-        <Link href="/parts" style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+        <Link
+          href="/parts"
+          style={{
+            color: colors.text,
+            textDecoration: "none",
+            cursor: "pointer",
+          }}
+        >
           Parts
         </Link>
-        <Link href="/services" style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+        <Link
+          href="/services"
+          style={{
+            color: colors.text,
+            textDecoration: "none",
+            cursor: "pointer",
+          }}
+        >
           Services
         </Link>
         <button
