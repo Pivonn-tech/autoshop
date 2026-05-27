@@ -50,23 +50,12 @@
         height: 40px;
       }
 
-      .site-icon {
+      .site-fallback {
         display: none;
-        height: 36px;
-      }
-      .site-wordmark {
-        display: block;
-        height: 40px;
-      }
-
-      @media (max-width: 768px) {
-        .site-icon {
-          display: block;
-          height: 32px;
-        }
-        .site-wordmark {
-          display: none;
-        }
+        color: #ffd700;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        font-size: 1.05rem;
       }
 
       .cart-badge {
@@ -533,12 +522,8 @@
     <header>
       <div class="header-content">
         <a href="/" class="site-brand">
-          <img src="/logo-icon.svg" class="site-icon" alt="AutoShop" />
-          <img
-            src="/logo-clean-full.svg"
-            class="site-wordmark"
-            alt="AutoShop"
-          />
+          <img src="/logo.png" alt="AutoShop" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+          <span class="site-fallback">AUTOFIX KENYA</span>
         </a>
         <div class="cart-badge" onclick="toggleCart()">
           🛒 Cart (<span id="cartCount">0</span>)

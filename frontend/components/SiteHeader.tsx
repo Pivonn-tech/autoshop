@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 type Colors = {
   background?: string;
@@ -21,15 +20,7 @@ export default function SiteHeader({
 }: {
   colors?: Colors;
 }) {
-  const { data: session } = useSession();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 768);
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
+  const [logoFailed, setLogoFailed] = useState(false);
 
   return (
     <nav
@@ -45,53 +36,45 @@ export default function SiteHeader({
         zIndex: 100,
       }}
     >
-      <Link href="/" style={{ textDecoration: "none" }}>
-        <a style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          {isMobile ? (
-            <img src="/logo-icon.svg" alt="AutoShop" style={{ height: 36 }} />
-          ) : (
-            <img
-              src="/logo-clean-full.svg"
-              alt="AutoShop"
-              style={{ height: 40 }}
-            />
-          )}
-        </a>
+      <Link
+        href="/"
+        style={{
+          textDecoration: "none",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+        }}
+      >
+        {logoFailed ? (
+          <span
+            style={{
+              color: colors.accent,
+              fontSize: "1.25rem",
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+            }}
+          >
+            AUTOFIX KENYA
+          </span>
+        ) : (
+          <img
+            src="/logo.png"
+            alt="AutoShop"
+            style={{ height: 40, width: "auto", maxWidth: "100%" }}
+            onError={() => setLogoFailed(true)}
+          />
+        )}
       </Link>
 
       <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-        <Link href="/inventory">
-          <a
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Inventory
-          </a>
+        <Link href="/inventory" style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+          Inventory
         </Link>
-        <Link href="/parts">
-          <a
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Parts
-          </a>
+        <Link href="/parts" style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+          Parts
         </Link>
-        <Link href="/services">
-          <a
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Services
-          </a>
+        <Link href="/services" style={{ color: colors.text, textDecoration: "none", cursor: "pointer" }}>
+          Services
         </Link>
         <button
           style={{
