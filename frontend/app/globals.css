@@ -2,10 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 60/30/10 color system variables:
+   - 60%: primary/background (white)
+   - 30%: secondary/text (black)
+   - 10%: accent (brand color)
+*/
+:root {
+  --color-60: #ffffff; /* primary / background */
+  --color-30: #111111; /* secondary / text */
+  --color-accent: #0ea5e9; /* default accent (sky-500) */
+  --color-muted: #f8fafc; /* subtle surfaces */
+  --bg-color: var(--color-60);
+  --text-color: var(--color-30);
+  --accent-color: var(--color-accent);
+  --surface-color: var(--color-muted);
+  --surface-strong-color: #e2e8f0;
+  --text-secondary-color: #475569;
+  --text-secondary-color-40: rgba(71, 85, 105, 0.25);
+  --accent-color-10: rgba(14, 165, 233, 0.1);
+  --accent-color-20: rgba(14, 165, 233, 0.18);
+  --accent-color-80: rgba(14, 165, 233, 0.8);
+  color-scheme: light;
+}
+
+/* Dark theme overrides (applied when `class="dark"` is on <html>) */
+.dark {
+  --color-60: #0A0A0A; /* dark background */
+  --color-30: #F8FAFC; /* light text */
+  --color-accent: #FFD700; /* amber accent */
+  --color-muted: #1A1A1A; /* dark subtle surfaces */
+  --bg-color: var(--color-60);
+  --text-color: var(--color-30);
+  --accent-color: var(--color-accent);
+  --surface-color: var(--color-muted);
+  --surface-strong-color: #000000;
+  --text-secondary-color: #9CA3AF;
+  --text-secondary-color-40: rgba(156, 163, 175, 0.25);
+  --accent-color-10: rgba(255, 215, 0, 0.1);
+  --accent-color-20: rgba(255, 215, 0, 0.18);
+  --accent-color-80: rgba(255, 215, 0, 0.8);
+  color-scheme: dark;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body, #__next {
+  height: 100%;
 }
 
 body {
@@ -14,4 +60,578 @@ body {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+/* Accent utilities */
+.btn-accent {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+a {
+  color: var(--accent-color);
+}
+
+/* Navbar refinements inspired by Kai & Karo */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* match Tailwind gap-8 */
+}
+
+.nav-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 0.25rem 0;
+  transition: color 150ms ease;
+  font-size: 0.95rem;
+}
+
+/* rely on flex gap for spacing; add subtle separator using border when desired */
+.nav-links a + a {
+  border-left: 1px solid rgba(0,0,0,0.06);
+  padding-left: 1rem;
+  margin-left: 1rem;
+}
+
+.dark .nav-links a + a {
+  border-left: 1px solid rgba(255,255,255,0.04);
+}
+
+.nav-links a:hover {
+  color: var(--accent-color);
+}
+
+.contact-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-color);
+  color: var(--bg-color);
+  border-radius: 9999px;
+  padding: 0.45rem 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.contact-cta:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.95);
+}
+
+/* Slight glass effect for spacious header */
+.site-header {
+  backdrop-filter: saturate(1.05) blur(4px);
+  background-color: color-mix(in srgb, var(--bg-color) 88%, transparent);
+}
+
+.business-page {
+  min-height: 100vh;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.business-container {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.business-band {
+  padding: 72px 0;
+  background: var(--bg-color);
+  border-top: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+}
+
+.business-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+  gap: 32px;
+  align-items: center;
+  padding: 80px 0 64px;
+}
+
+.business-hero h1,
+.business-action-grid h2,
+.business-section-header h2 {
+  margin: 0;
+  color: var(--text-color);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.business-hero h1 {
+  max-width: 850px;
+  font-size: clamp(2.25rem, 6vw, 4.8rem);
+  font-weight: 900;
+}
+
+.business-hero p,
+.business-action-grid p,
+.business-section-header p,
+.business-card p,
+.business-card span,
+.business-card small {
+  color: var(--text-secondary-color);
+}
+
+.business-hero p,
+.business-action-grid p {
+  max-width: 680px;
+  margin: 18px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.business-eyebrow,
+.business-section-header span {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: var(--accent-color);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.business-section-header {
+  margin-bottom: 32px;
+}
+
+.business-section-header h2 {
+  max-width: 900px;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 900;
+}
+
+.business-section-header p {
+  max-width: 720px;
+  margin: 12px 0 0;
+  line-height: 1.7;
+}
+
+.business-action-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(260px, 340px);
+  gap: 28px;
+  align-items: center;
+}
+
+.business-action-grid h2 {
+  max-width: 650px;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 900;
+}
+
+.business-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.business-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid var(--accent-color);
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.business-button:hover {
+  transform: translateY(-2px);
+}
+
+.business-button.primary {
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+.business-button.secondary {
+  background: transparent;
+  color: var(--accent-color);
+}
+
+.business-card-grid,
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.business-card {
+  border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+  border-radius: 8px;
+  background: var(--surface-color);
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.business-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-color);
+}
+
+.business-card h2,
+.business-card h3 {
+  margin: 0 0 12px;
+  color: var(--text-color);
+}
+
+.service-category,
+.notification-row span,
+.admin-card span {
+  color: var(--accent-color);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.service-card p {
+  line-height: 1.65;
+}
+
+.service-card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.service-card dt {
+  color: var(--text-secondary-color);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.service-card dd {
+  margin: 4px 0 0;
+  color: var(--text-color);
+  font-weight: 800;
+}
+
+.business-text-link {
+  color: var(--accent-color);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.business-hours-card {
+  align-self: stretch;
+}
+
+.business-hours-row,
+.data-row,
+.notification-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+}
+
+.business-hours-row strong,
+.data-row strong,
+.data-row b,
+.notification-row strong {
+  color: var(--text-color);
+}
+
+.business-hours-card p {
+  margin: 14px 0 0;
+  line-height: 1.6;
+}
+
+.booking-layout,
+.contact-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+  gap: 24px;
+  align-items: start;
+}
+
+.business-form {
+  display: grid;
+  gap: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.business-form label,
+.vehicle-add-form {
+  display: grid;
+  gap: 8px;
+  color: var(--text-color);
+  font-weight: 800;
+}
+
+.business-form input,
+.business-form select,
+.business-form textarea,
+.vehicle-add-form input,
+.vehicle-add-form textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--text-color) 16%, transparent);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  padding: 0.85rem;
+  font: inherit;
+}
+
+.business-form textarea,
+.vehicle-add-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.form-success {
+  margin: 0;
+  color: #10b981;
+  font-weight: 800;
+}
+
+.business-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--text-secondary-color);
+  line-height: 1.8;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.dashboard-panel-body {
+  display: grid;
+  gap: 12px;
+}
+
+.data-row {
+  align-items: center;
+}
+
+.data-row div {
+  display: grid;
+  gap: 4px;
+}
+
+.vehicle-manager,
+.vehicle-add-form {
+  display: grid;
+  gap: 14px;
+}
+
+.vehicle-add-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vehicle-add-form textarea,
+.vehicle-add-form button {
+  grid-column: 1 / -1;
+}
+
+.vehicle-card {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+  padding-top: 14px;
+}
+
+.vehicle-card div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vehicle-card p {
+  margin: 0;
+}
+
+.tracker {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.tracker-step {
+  position: relative;
+  min-height: 120px;
+  border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
+  border-radius: 8px;
+  background: var(--surface-color);
+  padding: 18px;
+}
+
+.tracker-step span {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  color: var(--text-color);
+  font-weight: 900;
+}
+
+.tracker-step strong {
+  display: block;
+  margin-top: 18px;
+  color: var(--text-color);
+}
+
+.tracker-step.active {
+  border-color: var(--accent-color);
+  background: var(--accent-color-10);
+}
+
+.tracker-step.active span {
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+.business-stars {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  letter-spacing: 0;
+}
+
+.review-card {
+  display: grid;
+  gap: 10px;
+}
+
+.review-card p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.notifications-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.notifications-panel.compact {
+  align-self: start;
+}
+
+.notification-row {
+  display: grid;
+  justify-content: stretch;
+  gap: 6px;
+}
+
+.notification-row p {
+  margin: 0;
+}
+
+.contact-details {
+  display: grid;
+  gap: 16px;
+}
+
+.contact-details p {
+  margin: 0;
+}
+
+.map-placeholder {
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  border: 1px dashed var(--accent-color);
+  border-radius: 8px;
+  background: var(--accent-color-10);
+  color: var(--text-color);
+  font-weight: 900;
+  text-align: center;
+}
+
+.map-placeholder span {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-secondary-color);
+  font-weight: 600;
+}
+
+.admin-card {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-card strong {
+  color: var(--text-color);
+  font-size: 2rem;
+}
+
+.admin-card p {
+  margin: 0;
+}
+
+.admin-table {
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .business-hero,
+  .business-action-grid,
+  .booking-layout,
+  .contact-grid,
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracker {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .business-band {
+    padding: 48px 0;
+  }
+
+  .form-grid,
+  .vehicle-add-form,
+  .service-card dl {
+    grid-template-columns: 1fr;
+  }
+
+  .business-cta-row,
+  .data-row,
+  .business-hours-row,
+  .vehicle-card div {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .business-button {
+    width: 100%;
+  }
 }

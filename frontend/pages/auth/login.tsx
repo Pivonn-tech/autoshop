@@ -6,11 +6,17 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 const colors = {
-  background: "#0A0A0A",
-  surface: "#1A1A1A",
-  text: "#FFFFFF",
-  accent: "#FFD700",
-  textSecondary: "#666666",
+  background: "var(--bg-color)",
+  surface: "var(--surface-color)",
+  text: "var(--text-color)",
+  accent: "var(--accent-color)",
+  textSecondary: "var(--text-secondary-color)",
+  accent10: "var(--accent-color-10)",
+  accent20: "var(--accent-color-20)",
+  accent80: "var(--accent-color-80)",
+  textSecondary40: "var(--text-secondary-color-40)",
+  primary60: "var(--bg-color)",
+  dark: "var(--surface-strong-color)",
 };
 
 export default function LoginPage() {
@@ -140,7 +146,7 @@ export default function LoginPage() {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.accent;
-              e.currentTarget.style.backgroundColor = colors.accent + "10";
+              e.currentTarget.style.backgroundColor = colors.accent10;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = colors.textSecondary;
@@ -165,7 +171,7 @@ export default function LoginPage() {
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.accent;
-              e.currentTarget.style.backgroundColor = colors.accent + "10";
+              e.currentTarget.style.backgroundColor = colors.accent10;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = colors.textSecondary;
@@ -189,7 +195,7 @@ export default function LoginPage() {
             style={{
               flex: 1,
               height: "1px",
-              backgroundColor: colors.textSecondary + "40",
+              backgroundColor: colors.textSecondary40,
             }}
           />
           <span style={{ color: colors.textSecondary, fontSize: "0.875rem" }}>
@@ -199,7 +205,7 @@ export default function LoginPage() {
             style={{
               flex: 1,
               height: "1px",
-              backgroundColor: colors.textSecondary + "40",
+              backgroundColor: colors.textSecondary40,
             }}
           />
         </div>
@@ -243,7 +249,7 @@ export default function LoginPage() {
                 e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.accent}20`;
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = colors.textSecondary + "40";
+                e.currentTarget.style.borderColor = colors.textSecondary40;
                 e.currentTarget.style.boxShadow = "none";
               }}
             />
@@ -283,7 +289,7 @@ export default function LoginPage() {
                 e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.accent}20`;
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = colors.textSecondary + "40";
+                e.currentTarget.style.borderColor = colors.textSecondary40;
                 e.currentTarget.style.boxShadow = "none";
               }}
             />

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
+import { BusinessHomeSections } from "../components/BusinessFeatures";
 
 interface Product {
   id: number;
@@ -212,11 +213,17 @@ export default function Home() {
 
   // Cyber/Sport Color Palette
   const colors = {
-    background: "#0A0A0A", // Deep Black - main page background
-    surface: "#1A1A1A", // Dark Gray - cards and surfaces
-    text: "#FFFFFF", // Crisp White - primary typography
-    accent: "#FFD700", // High-Octane Yellow - CTAs and highlights
-    textSecondary: "#666666", // Muted Gray - secondary text
+    background: "var(--bg-color)", // Deep Black - main page background
+    surface: "var(--surface-color)", // Dark Gray - cards and surfaces
+    text: "var(--text-color)", // Crisp White - primary typography
+    accent: "var(--accent-color)", // High-Octane Yellow - CTAs and highlights
+    textSecondary: "var(--text-secondary-color)",
+  accent10: "var(--accent-color-10)",
+  accent20: "var(--accent-color-20)",
+  accent80: "var(--accent-color-80)",
+  textSecondary40: "var(--text-secondary-color-40)",
+  primary60: "var(--bg-color)",
+  dark: "var(--surface-strong-color)", // Muted Gray - secondary text
   };
 
   return (
@@ -463,6 +470,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <BusinessHomeSections />
 
       {/* Featured Vehicles */}
       <section

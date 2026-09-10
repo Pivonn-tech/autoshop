@@ -1,387 +1,145 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import SiteHeader from "../components/SiteHeader";
 
 interface Part {
-  id: number;
+  id: string;
   name: string;
   system: string;
   oem: string;
-  price: number;
+  price: string;
   stock: number;
   fitment: string;
   description: string;
 }
 
+const parts: Part[] = [
+  {
+    id: "prt-001",
+    name: "Premium Brake Pad Set",
+    system: "Braking",
+    oem: "BP-4421",
+    price: "KSh 8,500",
+    stock: 18,
+    fitment: "Toyota Corolla, Axio, Fielder",
+    description: "Low-dust ceramic pads for daily driving and city braking.",
+  },
+  {
+    id: "prt-002",
+    name: "Synthetic Oil Filter",
+    system: "Engine",
+    oem: "OF-1108",
+    price: "KSh 1,800",
+    stock: 42,
+    fitment: "Toyota, Nissan, Mazda petrol engines",
+    description: "High-flow filter for clean oil circulation and longer service intervals.",
+  },
+  {
+    id: "prt-003",
+    name: "Front Shock Absorber Pair",
+    system: "Suspension",
+    oem: "SH-9082",
+    price: "KSh 18,900",
+    stock: 7,
+    fitment: "Subaru Forester 2014-2019",
+    description: "Balanced ride-control replacement for worn front suspension.",
+  },
+  {
+    id: "prt-004",
+    name: "Maintenance Battery",
+    system: "Electrical",
+    oem: "BT-650N",
+    price: "KSh 14,500",
+    stock: 12,
+    fitment: "Most compact and mid-size vehicles",
+    description: "Reliable cold starts with full charging-system test included.",
+  },
+];
+
 export default function Parts() {
-  const [selectedVehicle, setSelectedVehicle] = useState("All Vehicles");
-  const [selectedSystem, setSelectedSystem] = useState("");
-  const [parts, setParts] = useState<Part[]>([]);
-
-  <SiteHeader />;
-
-  useEffect(() => {
-    // Filter parts based on system selection
-    if (selectedSystem) {
-      setParts(allParts.filter((p) => p.system === selectedSystem));
-    } else {
-      setParts(allParts);
-    }
-  }, [selectedSystem]);
-
-  const systemCategories = ["Braking", "Engine", "Suspension", "Electrical"];
-
-  const formatKES = (price: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const [selectedSystem, setSelectedSystem] = useState("All");
+  const systems = ["All", "Braking", "Engine", "Suspension", "Electrical"];
+  const filteredParts = useMemo(
+    () =>
+      selectedSystem === "All"
+        ? parts
+        : parts.filter((part) => part.system === selectedSystem),
+    [selectedSystem],
+  );
 
   return (
-    <div
-      style={{
-        backgroundColor: colors.background,
-        color: colors.text,
-        minHeight: "100vh",
-      }}
-    >
-      {/* Navigation */}
-      <nav
-        style={{
-          backgroundColor: colors.surface,
-          padding: "1rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <div
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: "bold",
-              color: colors.accent,
-              cursor: "pointer",
-            }}
-          >
-            AUTOFIX KENYA
-          </div>
-        </Link>
-        <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-          <Link
-            href="/inventory"
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Inventory
-          </Link>
-          <Link
-            href="/parts"
-            style={{
-              color: colors.accent,
-              textDecoration: "none",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            Parts
-          </Link>
-          <Link
-            href="/services"
-            style={{
-              color: colors.text,
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            Services
-          </Link>
-        </div>
-      </nav>
-
-      {/* Garage Banner */}
-      <div
-        style={{
-          backgroundColor: colors.surface,
-          padding: "2rem",
-          margin: "2rem",
-          borderRadius: "2px",
-          border: `2px solid ${colors.accent}`,
-          textAlign: "center",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "0.9rem",
-            color: colors.textSecondary,
-            marginBottom: "0.5rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Currently Shopping For:
-        </p>
-        <p
-          style={{
-            fontSize: "1.8rem",
-            fontWeight: 900,
-            color: colors.accent,
-            marginBottom: "1rem",
-          }}
-        >
-          {selectedVehicle}
-        </p>
-        <select
-          value={selectedVehicle}
-          onChange={(e) => setSelectedVehicle(e.target.value)}
-          style={{
-            padding: "0.75rem 1.5rem",
-            backgroundColor: colors.background,
-            color: colors.text,
-            border: `1px solid ${colors.accent}`,
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          <option>All Vehicles</option>
-          <option>Melvin Red Cargo Truck</option>
-          <option>Melvin Three-Wheeler Motorcycle</option>
-          <option>Melvin Blue Motorcycle</option>
-        </select>
-      </div>
-
-      {/* System Categories */}
-      <div
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "0 2rem 2rem",
-        }}
-      >
-        <h2 style={{ fontSize: "2rem", fontWeight: 900, marginBottom: "2rem" }}>
-          Parts by System
-        </h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "1rem",
-            marginBottom: "3rem",
-          }}
-        >
-          <button
-            onClick={() => setSelectedSystem("")}
-            style={{
-              backgroundColor:
-                selectedSystem === "" ? colors.accent : colors.surface,
-              color: selectedSystem === "" ? colors.background : colors.text,
-              border: `2px solid ${colors.accent}`,
-              padding: "1rem",
-              borderRadius: "2px",
-              fontWeight: 900,
-              cursor: "pointer",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              if (selectedSystem !== "") {
-                e.currentTarget.style.backgroundColor = colors.accent;
-                e.currentTarget.style.color = colors.background;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (selectedSystem !== "") {
-                e.currentTarget.style.backgroundColor = colors.surface;
-                e.currentTarget.style.color = colors.text;
-              }
-            }}
-          >
-            All Parts
-          </button>
-
-          {systemCategories.map((system) => (
-            <button
-              key={system}
-              onClick={() => setSelectedSystem(system)}
-              style={{
-                backgroundColor:
-                  selectedSystem === system ? colors.accent : colors.surface,
-                color:
-                  selectedSystem === system ? colors.background : colors.text,
-                border: `2px solid ${colors.accent}`,
-                padding: "1rem",
-                borderRadius: "2px",
-                fontWeight: 900,
-                cursor: "pointer",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                if (selectedSystem !== system) {
-                  e.currentTarget.style.backgroundColor = colors.accent;
-                  e.currentTarget.style.color = colors.background;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (selectedSystem !== system) {
-                  e.currentTarget.style.backgroundColor = colors.surface;
-                  e.currentTarget.style.color = colors.text;
-                }
-              }}
-            >
-              {system}
-            </button>
-          ))}
-        </div>
-
-        {/* Parts Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: "2rem",
-          }}
-        >
-          {parts.map((part) => (
-            <div
-              key={part.id}
-              style={{
-                backgroundColor: colors.surface,
-                padding: "1.5rem",
-                borderRadius: "2px",
-                border: `1px solid ${colors.accent}`,
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.03)";
-                e.currentTarget.style.boxShadow = `0 8px 24px rgba(255, 215, 0, 0.15)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <div
-                style={{
-                  color: colors.accent,
-                  fontWeight: 900,
-                  marginBottom: "0.5rem",
-                  fontSize: "0.8rem",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                {part.system}
-              </div>
-              <h3
-                style={{
-                  fontSize: "1.2rem",
-                  fontWeight: 900,
-                  marginBottom: "0.5rem",
-                }}
-              >
-                {part.name}
-              </h3>
-              <p
-                style={{
-                  color: colors.textSecondary,
-                  marginBottom: "1rem",
-                  fontSize: "0.9rem",
-                }}
-              >
-                {part.description}
-              </p>
-              <div
-                style={{
-                  borderTop: `1px solid ${colors.textSecondary}`,
-                  paddingTop: "1rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <p
-                  style={{
-                    color: colors.textSecondary,
-                    fontSize: "0.85rem",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  OEM: {part.oem}
-                </p>
-                <p
-                  style={{
-                    color: colors.textSecondary,
-                    fontSize: "0.85rem",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Stock: {part.stock} units
-                </p>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "1.3rem",
-                      fontWeight: 900,
-                      color: colors.accent,
-                    }}
-                  >
-                    {formatKES(part.price)}
-                  </span>
-                  <button
-                    style={{
-                      backgroundColor: colors.accent,
-                      color: colors.background,
-                      border: "none",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "2px",
-                      fontWeight: 900,
-                      fontSize: "0.8rem",
-                      cursor: "pointer",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-              <div
-                style={{
-                  padding: "0.75rem",
-                  backgroundColor: colors.background,
-                  borderRadius: "2px",
-                  textAlign: "center",
-                  fontSize: "0.8rem",
-                  color: colors.accent,
-                  fontWeight: 900,
-                }}
-              >
-                Guaranteed to Fit Your {selectedVehicle}
-              </div>
+    <>
+      <SiteHeader />
+      <main className="business-page">
+        <section className="business-hero business-container">
+          <div>
+            <span className="business-eyebrow">Parts catalog</span>
+            <h1>Quality automotive parts with service-ready fitment notes.</h1>
+            <p>
+              Browse common workshop parts, check stock, and continue to
+              checkout or book installation.
+            </p>
+            <div className="business-cta-row">
+              <Link className="business-button primary" href="/checkout">
+                Checkout
+              </Link>
+              <Link className="business-button secondary" href="/appointments">
+                Book Installation
+              </Link>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+          </div>
+        </section>
+
+        <section className="business-band">
+          <div className="business-container">
+            <div className="business-cta-row" style={{ marginBottom: "24px" }}>
+              {systems.map((system) => (
+                <button
+                  className={`business-button ${system === selectedSystem ? "primary" : "secondary"}`}
+                  key={system}
+                  type="button"
+                  onClick={() => setSelectedSystem(system)}
+                >
+                  {system}
+                </button>
+              ))}
+            </div>
+
+            <div className="business-card-grid">
+              {filteredParts.map((part) => (
+                <article className="business-card service-card" key={part.id}>
+                  <span className="service-category">{part.system}</span>
+                  <h3>{part.name}</h3>
+                  <p>{part.description}</p>
+                  <dl>
+                    <div>
+                      <dt>OEM</dt>
+                      <dd>{part.oem}</dd>
+                    </div>
+                    <div>
+                      <dt>Stock</dt>
+                      <dd>{part.stock} available</dd>
+                    </div>
+                    <div>
+                      <dt>Fitment</dt>
+                      <dd>{part.fitment}</dd>
+                    </div>
+                    <div>
+                      <dt>Price</dt>
+                      <dd>{part.price}</dd>
+                    </div>
+                  </dl>
+                  <Link className="business-text-link" href="/checkout">
+                    Add to checkout
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }

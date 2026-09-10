@@ -1,115 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import ThemeToggle from "./ThemeToggle";
 
-type Colors = {
-  background?: string;
-  surface?: string;
-  text?: string;
-  accent?: string;
-};
-
-export default function SiteHeader({
-  colors = {
-    background: "#0A0A0A",
-    surface: "#1A1A1A",
-    text: "#FFFFFF",
-    accent: "#FFD700",
-  },
-}: {
-  colors?: Colors;
-}) {
-  const [logoFailed, setLogoFailed] = useState(false);
-
+export default function SiteHeader() {
   return (
-    <nav
-      style={{
-        backgroundColor: colors.surface,
-        padding: "1rem 2rem",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        boxShadow: `0 4px 6px rgba(0,0,0,0.3)`,
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-      }}
-    >
-      <Link
-        href="/"
-        style={{
-          textDecoration: "none",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem",
-        }}
-      >
-        {logoFailed ? (
-          <span
-            style={{
-              color: colors.accent,
-              fontSize: "1.25rem",
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-            }}
-          >
-            AUTOFIX KENYA
-          </span>
-        ) : (
-          <img
-            src="/logo.png"
-            alt="AutoShop"
-            style={{ height: 40, width: "auto", maxWidth: "100%" }}
-            onError={() => setLogoFailed(true)}
-          />
-        )}
-      </Link>
+    <nav className="site-header sticky top-0 z-50 bg-brand-primary border-b border-gray-200 dark:border-gray-800">
+      <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between gap-6">
+        <Link href="/" className="text-brand-secondary no-underline text-base md:text-lg font-semibold tracking-wide">
+          AUTOFIX KENYA
+        </Link>
 
-      <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-        <Link
-          href="/inventory"
-          style={{
-            color: colors.text,
-            textDecoration: "none",
-            cursor: "pointer",
-          }}
-        >
-          Inventory
-        </Link>
-        <Link
-          href="/parts"
-          style={{
-            color: colors.text,
-            textDecoration: "none",
-            cursor: "pointer",
-          }}
-        >
-          Parts
-        </Link>
-        <Link
-          href="/services"
-          style={{
-            color: colors.text,
-            textDecoration: "none",
-            cursor: "pointer",
-          }}
-        >
-          Services
-        </Link>
-        <button
-          style={{
-            backgroundColor: colors.accent,
-            color: colors.background,
-            border: "none",
-            padding: "0.5rem 1.5rem",
-            borderRadius: "4px",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
-        >
-          Contact
-        </button>
+        <div className="hidden md:flex items-center gap-8 nav-links">
+          <Link href="/inventory" className="text-sm text-brand-secondary hover:text-brand-accent no-underline">Vehicles</Link>
+          <Link href="/parts" className="text-sm text-brand-secondary hover:text-brand-accent no-underline">Parts</Link>
+          <Link href="/services" className="text-sm text-brand-secondary hover:text-brand-accent no-underline">Services</Link>
+          <Link href="/appointments" className="text-sm text-brand-secondary hover:text-brand-accent no-underline">Book</Link>
+          <Link href="/dashboard" className="text-sm text-brand-secondary hover:text-brand-accent no-underline">Dashboard</Link>
+          <Link href="/admin" className="text-sm text-brand-secondary hover:text-brand-accent no-underline">Admin</Link>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <Link href="/contact" className="contact-cta hidden md:inline-flex no-underline">
+            Contact
+          </Link>
+        </div>
       </div>
     </nav>
   );

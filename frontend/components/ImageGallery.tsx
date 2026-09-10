@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
+import type { Swiper as SwiperInstance } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -19,11 +20,17 @@ interface GalleryProps {
 }
 
 const colors = {
-  background: "#0A0A0A",
-  surface: "#1A1A1A",
-  text: "#FFFFFF",
-  accent: "#FFD700",
-  textSecondary: "#666666",
+  background: "var(--bg-color)",
+  surface: "var(--surface-color)",
+  text: "var(--text-color)",
+  accent: "var(--accent-color)",
+  textSecondary: "var(--text-secondary-color)",
+  accent10: "var(--accent-color-10)",
+  accent20: "var(--accent-color-20)",
+  accent80: "var(--accent-color-80)",
+  textSecondary40: "var(--text-secondary-color-40)",
+  primary60: "var(--bg-color)",
+  dark: "var(--surface-strong-color)",
 };
 
 export default function ImageGallery({
@@ -31,7 +38,7 @@ export default function ImageGallery({
   title,
   onLightboxOpen,
 }: GalleryProps) {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperInstance | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   if (!images || images.length === 0) {
@@ -180,7 +187,7 @@ export default function ImageGallery({
             position: "absolute",
             bottom: "1rem",
             right: "1rem",
-            backgroundColor: colors.accent + "cc",
+            backgroundColor: colors.accent80,
             color: colors.background,
             padding: "0.5rem 0.75rem",
             borderRadius: "0.25rem",
@@ -273,7 +280,7 @@ export default function ImageGallery({
           onClick={() => onLightboxOpen?.(activeIndex)}
           style={{
             padding: "0.5rem 1rem",
-            backgroundColor: colors.accent + "20",
+            backgroundColor: colors.accent20,
             border: `1px solid ${colors.accent}`,
             borderRadius: "0.25rem",
             color: colors.accent,
@@ -287,7 +294,7 @@ export default function ImageGallery({
             e.currentTarget.style.color = colors.background;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = colors.accent + "20";
+            e.currentTarget.style.backgroundColor = colors.accent20;
             e.currentTarget.style.color = colors.accent;
           }}
         >

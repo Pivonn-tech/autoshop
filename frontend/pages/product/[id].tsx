@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { getProductImages } from "../../lib/productImages";
 
 interface Product {
   id: number;
@@ -12,8 +14,28 @@ interface Product {
   currency: string;
   stock: number;
   icon: string;
-  views: string[];
+  image?: string;
+  gallery?: string[];
 }
+
+const colors = {
+  background: "var(--bg-color)",
+  surface: "var(--surface-color)",
+  text: "var(--text-color)",
+  accent: "var(--accent-color)",
+  textSecondary: "var(--text-secondary-color)",
+  accent10: "var(--accent-color-10)",
+  primary60: "var(--bg-color)",
+  dark: "var(--surface-strong-color)",
+};
+
+const formatKES = (price: number) => {
+  return new Intl.NumberFormat("en-KE", {
+    style: "currency",
+    currency: "KES",
+    minimumFractionDigits: 0,
+  }).format(price);
+};
 
 export default function ProductDetails() {
   const router = useRouter();
@@ -26,37 +48,23 @@ export default function ProductDetails() {
   useEffect(() => {
     if (!id) return;
 
-    fetch("http://localhost:3001/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        const found = data.find(
-          (p: Product) => p.id === parseInt(id as string),
-        );
-        setProduct(found);
+    fetch(`http://localhost:3001/api/products/${id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Product ${id} not found`);
+        }
+        return res.json();
+      })
+      .then((data: Product) => {
+        setProduct(data);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Failed to fetch product:", error);
+        setProduct(null);
         setLoading(false);
       });
   }, [id]);
-
-  const formatKES = (price: number) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
-
-  // Cyber/Sport Color Palette
-  const colors = {
-    background: "#0A0A0A",
-    surface: "#1A1A1A",
-    text: "#FFFFFF",
-    accent: "#FFD700",
-    textSecondary: "#666666",
-  };
 
   if (loading) {
     return (
@@ -94,6 +102,11 @@ export default function ProductDetails() {
     );
   }
 
+  const gallery =
+    product.gallery?.map((src) => src.replace(/^\/images/, "")) ??
+    getProductImages(product.id);
+  const activeImage = gallery[selectedImageIndex] ?? gallery[0];
+
   return (
     <div
       style={{
@@ -102,7 +115,6 @@ export default function ProductDetails() {
         minHeight: "100vh",
       }}
     >
-      {/* Header */}
       <nav
         style={{
           backgroundColor: colors.surface,
@@ -118,13 +130,13 @@ export default function ProductDetails() {
             backgroundColor: colors.accent,
             color: colors.background,
             border: "none",
-            padding: "0.5rem 1rem",
-            borderRadius: "4px",
+            padding: "0.65rem 1.1rem",
+            borderRadius: "0.75rem",
             cursor: "pointer",
             fontWeight: "bold",
           }}
         >
-          ← Back
+          ← Back to inventory
         </button>
       </nav>
 
@@ -132,68 +144,76 @@ export default function ProductDetails() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "3rem",
+            gridTemplateColumns: "1.1fr 0.9fr",
+            gap: "2.5rem",
             alignItems: "start",
           }}
         >
-          {/* Product Gallery */}
           <div>
-            {/* Main Image */}
             <div
               style={{
                 backgroundColor: colors.surface,
-                borderRadius: "8px",
-                padding: "2rem",
-                marginBottom: "1.5rem",
-                height: "400px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "8rem",
+                borderRadius: "1rem",
+                overflow: "hidden",
+                marginBottom: "1rem",
+                minHeight: "420px",
+                position: "relative",
               }}
             >
-              {product.icon}
+              <Image
+                src={activeImage}
+                alt={`${product.name} image ${selectedImageIndex + 1}`}
+                width={1200}
+                height={800}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
             </div>
 
-            {/* Image Thumbnails */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "0.5rem",
+                gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+                gap: "0.75rem",
               }}
             >
-              {product.views.map((_, index) => (
+              {gallery.map((src, index) => (
                 <button
-                  key={index}
+                  key={src}
                   onClick={() => setSelectedImageIndex(index)}
                   style={{
-                    backgroundColor:
+                    borderRadius: "0.85rem",
+                    overflow: "hidden",
+                    border:
                       selectedImageIndex === index
-                        ? colors.accent
-                        : colors.surface,
-                    border: `2px solid ${selectedImageIndex === index ? colors.accent : "transparent"}`,
-                    borderRadius: "4px",
-                    padding: "0.75rem",
+                        ? `2px solid ${colors.accent}`
+                        : "2px solid transparent",
+                    backgroundColor: colors.surface,
                     cursor: "pointer",
-                    fontSize: "1.5rem",
+                    minHeight: "100px",
+                    padding: 0,
                   }}
                 >
-                  📷
+                  <Image
+                    src={src}
+                    alt={`${product.name} thumbnail ${index + 1}`}
+                    width={320}
+                    height={220}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Product Details */}
           <div>
             <div style={{ marginBottom: "1rem" }}>
               <span
                 style={{
                   color: colors.accent,
-                  fontWeight: "bold",
+                  fontWeight: 700,
                   fontSize: "0.9rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.14em",
                 }}
               >
                 {product.category}
@@ -202,8 +222,8 @@ export default function ProductDetails() {
 
             <h1
               style={{
-                fontSize: "2.5rem",
-                fontWeight: "bold",
+                fontSize: "2.6rem",
+                fontWeight: 900,
                 marginBottom: "1rem",
               }}
             >
@@ -213,131 +233,144 @@ export default function ProductDetails() {
             <p
               style={{
                 color: colors.textSecondary,
-                fontSize: "1.1rem",
-                marginBottom: "2rem",
-                lineHeight: "1.6",
+                fontSize: "1.05rem",
+                marginBottom: "1.75rem",
+                lineHeight: 1.75,
               }}
             >
               {product.description}
             </p>
 
-            {/* Price */}
-            <div style={{ marginBottom: "2rem" }}>
-              <p
-                style={{ color: colors.textSecondary, marginBottom: "0.5rem" }}
-              >
-                Price
-              </p>
-              <p
-                style={{
-                  fontSize: "2.5rem",
-                  fontWeight: "bold",
-                  color: colors.accent,
-                }}
-              >
-                {formatKES(product.price)}
-              </p>
-            </div>
-
-            {/* Availability */}
-            <div style={{ marginBottom: "2rem" }}>
-              <p
-                style={{ color: colors.textSecondary, marginBottom: "0.5rem" }}
-              >
-                Availability
-              </p>
-              <p
-                style={{
-                  color: product.stock > 0 ? "#10b981" : "#ef4444",
-                  fontWeight: "bold",
-                }}
-              >
-                {product.stock > 0
-                  ? `In Stock - ${product.stock} units available`
-                  : "Out of Stock"}
-              </p>
-            </div>
-
-            {/* Quantity Selector */}
-            <div style={{ marginBottom: "2rem" }}>
-              <p
-                style={{ color: colors.textSecondary, marginBottom: "0.5rem" }}
-              >
-                Quantity
-              </p>
+            <div
+              style={{
+                backgroundColor: colors.surface,
+                padding: "1.5rem",
+                borderRadius: "1rem",
+                border: `1px solid ${colors.accent}`,
+                marginBottom: "1.75rem",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
+                  justifyContent: "space-between",
                   gap: "1rem",
                   marginBottom: "1rem",
                 }}
               >
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
+                <div>
+                  <p
+                    style={{
+                      fontSize: "0.9rem",
+                      color: colors.textSecondary,
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Price
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "2rem",
+                      fontWeight: 900,
+                      color: colors.accent,
+                    }}
+                  >
+                    {formatKES(product.price)}
+                  </p>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <p
+                    style={{
+                      fontSize: "0.9rem",
+                      color: colors.textSecondary,
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Availability
+                  </p>
+                  <p
+                    style={{
+                      fontWeight: 700,
+                      color: product.stock > 0 ? "#10b981" : "#ef4444",
+                    }}
+                  >
+                    {product.stock > 0
+                      ? `In stock (${product.stock})`
+                      : "Out of stock"}
+                  </p>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "auto auto",
+                  gap: "1rem",
+                  alignItems: "center",
+                }}
+              >
+                <div
                   style={{
-                    backgroundColor: colors.surface,
-                    color: colors.text,
-                    border: "none",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
                   }}
                 >
-                  −
-                </button>
-                <span
-                  style={{
-                    fontSize: "1.1rem",
-                    minWidth: "2rem",
-                    textAlign: "center",
-                  }}
-                >
-                  {quantity}
-                </span>
-                <button
-                  onClick={() =>
-                    setQuantity(Math.min(product.stock, quantity + 1))
-                  }
-                  disabled={quantity >= product.stock}
-                  style={{
-                    backgroundColor: colors.surface,
-                    color: colors.text,
-                    border: "none",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                  }}
-                >
-                  +
-                </button>
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                    style={{
+                      backgroundColor: colors.background,
+                      color: colors.text,
+                      border: `1px solid ${colors.accent}`,
+                      borderRadius: "0.75rem",
+                      padding: "0.8rem 1rem",
+                      cursor: quantity <= 1 ? "not-allowed" : "pointer",
+                      fontWeight: 700,
+                    }}
+                  >
+                    −
+                  </button>
+                  <span style={{ fontSize: "1.1rem", width: "2rem", textAlign: "center" }}>
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    disabled={quantity >= product.stock}
+                    style={{
+                      backgroundColor: colors.background,
+                      color: colors.text,
+                      border: `1px solid ${colors.accent}`,
+                      borderRadius: "0.75rem",
+                      padding: "0.8rem 1rem",
+                      cursor: quantity >= product.stock ? "not-allowed" : "pointer",
+                      fontWeight: 700,
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div style={{ textAlign: "right", color: colors.textSecondary }}>
+                  <p style={{ margin: 0 }}>Max available units</p>
+                  <p style={{ margin: 0, fontWeight: 700 }}>{product.stock}</p>
+                </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div
-              style={{
-                display: "flex",
-                gap: "1rem",
-                marginBottom: "2rem",
-              }}
-            >
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "2rem" }}>
               <button
                 disabled={product.stock === 0}
                 style={{
                   backgroundColor: colors.accent,
                   color: colors.background,
                   border: "none",
-                  padding: "1rem 2rem",
-                  borderRadius: "4px",
-                  fontWeight: "bold",
-                  fontSize: "1rem",
+                  padding: "1rem 1.75rem",
+                  borderRadius: "0.85rem",
+                  fontWeight: 900,
                   cursor: product.stock > 0 ? "pointer" : "not-allowed",
-                  opacity: product.stock > 0 ? 1 : 0.5,
                   flex: 1,
+                  minWidth: "150px",
                 }}
               >
                 🛒 Add to Cart
@@ -347,131 +380,60 @@ export default function ProductDetails() {
                   backgroundColor: "transparent",
                   color: colors.accent,
                   border: `2px solid ${colors.accent}`,
-                  padding: "1rem 2rem",
-                  borderRadius: "4px",
-                  fontWeight: "bold",
-                  fontSize: "1rem",
+                  padding: "1rem 1.75rem",
+                  borderRadius: "0.85rem",
+                  fontWeight: 900,
                   cursor: "pointer",
                   flex: 1,
+                  minWidth: "150px",
                 }}
               >
                 ❤️ Wishlist
               </button>
             </div>
 
-            {/* Specifications */}
             <div
               style={{
                 backgroundColor: colors.surface,
                 padding: "1.5rem",
-                borderRadius: "8px",
-                marginBottom: "2rem",
+                borderRadius: "1rem",
                 border: `1px solid ${colors.accent}`,
               }}
             >
               <h3
                 style={{
                   fontSize: "1.25rem",
-                  fontWeight: "bold",
+                  fontWeight: 900,
                   marginBottom: "1rem",
                   color: colors.accent,
                 }}
               >
-                Key Features
+                Product Highlights
               </h3>
-              <ul
-                style={{
-                  listStyle: "none",
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
-                <li
-                  style={{
-                    padding: "0.5rem 0",
-                    borderBottom: `1px solid ${colors.textSecondary}`,
-                  }}
-                >
-                  ✓ Premium Build Quality
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, color: colors.textSecondary }}>
+                <li style={{ padding: "0.65rem 0", borderBottom: `1px solid ${colors.textSecondary}` }}>
+                  ✓ Durable cargo design built for Kenyan roads
                 </li>
-                <li
-                  style={{
-                    padding: "0.5rem 0",
-                    borderBottom: `1px solid ${colors.primary60}`,
-                  }}
-                >
-                  ✓ Comprehensive Warranty
+                <li style={{ padding: "0.65rem 0", borderBottom: `1px solid ${colors.textSecondary}` }}>
+                  ✓ Excellent low-end torque and maneuverability
                 </li>
-                <li
-                  style={{
-                    padding: "0.5rem 0",
-                    borderBottom: `1px solid ${colors.primary60}`,
-                  }}
-                >
-                  ✓ Professional Installation Available
+                <li style={{ padding: "0.65rem 0", borderBottom: `1px solid ${colors.textSecondary}` }}>
+                  ✓ Easy maintenance and affordable service.
                 </li>
-                <li style={{ padding: "0.5rem 0" }}>✓ 24/7 Customer Support</li>
+                <li style={{ padding: "0.65rem 0" }}>
+                  ✓ Ready for business or personal transport.
+                </li>
               </ul>
-            </div>
-
-            {/* Contact Section */}
-            <div
-              style={{
-                backgroundColor: colors.dark,
-                padding: "1.5rem",
-                borderRadius: "8px",
-                border: `2px solid ${colors.accent10}`,
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                  marginBottom: "1rem",
-                }}
-              >
-                Have Questions?
-              </h3>
-              <p style={{ color: colors.textSecondary, marginBottom: "1rem" }}>
-                Our sales team is ready to help. Contact us today!
-              </p>
-              <button
-                style={{
-                  backgroundColor: colors.accent10,
-                  color: colors.primary60,
-                  border: "none",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "4px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  width: "100%",
-                }}
-              >
-                📞 Contact Sales Team
-              </button>
             </div>
           </div>
         </div>
 
-        {/* Related Products Placeholder */}
-        <div
-          style={{
-            marginTop: "4rem",
-            paddingTop: "2rem",
-            borderTop: `1px solid ${colors.secondary30}`,
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "1.75rem",
-              fontWeight: "bold",
-              marginBottom: "2rem",
-            }}
-          >
-            Related Products
+        <div style={{ marginTop: "3rem", paddingTop: "2rem", borderTop: `1px solid ${colors.surface}` }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 900, marginBottom: "1rem" }}>
+            More Details
           </h2>
-          <p style={{ color: colors.textSecondary }}>
-            More premium vehicles and services coming soon!
+          <p style={{ color: colors.textSecondary, lineHeight: 1.75 }}>
+            These photos were captured from the actual vehicles in your showroom. Flip between gallery thumbnails to view styling, cargo space, and ride comfort.
           </p>
         </div>
       </div>
