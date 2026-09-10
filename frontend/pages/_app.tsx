@@ -3,6 +3,7 @@
 import "../app/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
+import SiteHeader from "../components/SiteHeader";
 
 export default function App({
   Component,
@@ -10,6 +11,7 @@ export default function App({
 }: AppProps) {
   return (
     <SessionProvider session={session}>
+      <SiteHeader />
       <Component {...pageProps} />
     </SessionProvider>
   );

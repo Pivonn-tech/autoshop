@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import SiteHeader from "../components/SiteHeader";
 
 const orderItems = [
   { name: "Brake Pad Set", qty: 1, price: "KSh 8,500" },
@@ -11,7 +10,6 @@ const orderItems = [
 export default function Checkout() {
   return (
     <>
-      <SiteHeader />
       <main className="business-page">
         <section className="business-hero business-container">
           <div>
