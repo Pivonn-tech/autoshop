@@ -355,6 +355,37 @@ export default function SiteHeader() {
                 )}
               </div>
             ))}
+
+            {/* AI Assistant pill */}
+            <Link
+              href="/contact"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                height: 34,
+                paddingInline: 14,
+                borderRadius: 999,
+                background: "linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%)",
+                color: "white",
+                fontSize: "0.8rem",
+                fontWeight: 700,
+                textDecoration: "none",
+                letterSpacing: "0.01em",
+                flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(109,40,217,0.35)",
+                transition: "all 180ms ease",
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(109,40,217,0.5)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(109,40,217,0.35)"; (e.currentTarget as HTMLElement).style.transform = "none"; }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/>
+                <path d="M9 21h6M12 17v4"/>
+                <path d="M5 9a7 7 0 0014 0"/>
+              </svg>
+              AI Assistant
+            </Link>
           </nav>
 
           {/* Right actions */}
@@ -797,6 +828,32 @@ export default function SiteHeader() {
                     {link.label}
                   </Link>
                 ))}
+                {/* AI Assistant */}
+                <Link
+                  href="/contact"
+                  onClick={() => setDrawerOpen(false)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    margin: "10px 20px 4px",
+                    padding: "10px 16px",
+                    borderRadius: 999,
+                    background: "linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%)",
+                    color: "white",
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    textDecoration: "none",
+                    width: "fit-content",
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/>
+                    <path d="M9 21h6M12 17v4"/>
+                    <path d="M5 9a7 7 0 0014 0"/>
+                  </svg>
+                  AI Assistant
+                </Link>
               </div>
             </nav>
 

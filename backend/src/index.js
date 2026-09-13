@@ -127,6 +127,43 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });
 });
 
+// ── In-memory appointments store ─────────────────────────────────────────────
+const appointmentsStore = [];
+
+app.post("/api/appointments", (req, res) => {
+  const { name, phone, email, make, model, year, licensePlate, serviceId, date, time, notes } = req.body;
+
+  // Basic validation
+  if (!name || !email || !make || !model || !serviceId || !date || !time) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const appointment = {
+    id: `APT-${Date.now()}`,
+    customerName: name,
+    phone: phone || "",
+    email,
+    vehicle: `${year} ${make} ${model}`,
+    licensePlate: licensePlate || "",
+    serviceId,
+    preferredDate: date,
+    preferredTime: time,
+    notes: notes || "",
+    status: "Pending",
+    createdAt: new Date().toISOString(),
+  };
+
+  appointmentsStore.push(appointment);
+
+  console.log(`📅 New appointment: ${appointment.id} — ${appointment.customerName} for ${appointment.serviceId} on ${appointment.preferredDate}`);
+
+  res.status(201).json({ success: true, appointment });
+});
+
+app.get("/api/appointments", (req, res) => {
+  res.json(appointmentsStore);
+});
+
 // Products endpoint - NOW SERVES YOUR ACTUAL IMAGES!
 app.get("/api/products", (req, res) => {
   const products = getProductsFromImages();
@@ -174,30 +211,45 @@ app.get("/api/cart", (req, res) => {
 });
 
 app.post("/api/cart/add", (req, res) => {
-  const { productId, quantity } = req.body;
-  const product = getProductWithGallery(productId);
-
-  if (!product) {
-    return res.status(404).json({ error: "Product not found" });
-  }
-
-  if (quantity > product.stock) {
-    return res.status(400).json({ error: "Insufficient stock" });
-  }
-
+  const { productId, quantity, name, price } = req.body;
   const cart = carts.get(req.cartId) || [];
-  const existingItem = cart.find((item) => item.id === productId);
 
-  if (existingItem) {
-    existingItem.quantity += quantity;
+  // Try to find a known product first
+  const product = getProductWithGallery(parseInt(productId));
+
+  if (product) {
+    // Vehicle/known product
+    if (quantity > product.stock) {
+      return res.status(400).json({ error: "Insufficient stock" });
+    }
+    const existingItem = cart.find((item) => item.id === productId);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.push({
+        id: productId,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        quantity: quantity,
+      });
+    }
+  } else if (name && price !== undefined) {
+    // Arbitrary item (e.g. parts catalog) — accept name+price directly
+    const existingItem = cart.find((item) => item.id === productId);
+    if (existingItem) {
+      existingItem.quantity += quantity || 1;
+    } else {
+      cart.push({
+        id: productId,
+        name,
+        price,
+        image: null,
+        quantity: quantity || 1,
+      });
+    }
   } else {
-    cart.push({
-      id: productId,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: quantity,
-    });
+    return res.status(404).json({ error: "Product not found" });
   }
 
   carts.set(req.cartId, cart);

@@ -108,11 +108,12 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState<"overview" | "specs" | "reviews">("overview");
   const [wishlist, setWishlist] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [cartError, setCartError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetch(`http://localhost:3001/api/products/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`)
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(d => { setProduct(d); setLoading(false); })
       .catch(() => { setProduct(null); setLoading(false); });
@@ -122,7 +123,12 @@ export default function ProductDetail() {
     return (
       <div style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg)" }}>
         <div style={{ textAlign: "center", color: "var(--text-muted)" }}>
-          <div style={{ fontSize: "2rem", marginBottom: 12 }}>🚗</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2" />
+              <circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" />
+            </svg>
+          </div>
           <div style={{ fontWeight: 600 }}>Loading vehicle details…</div>
         </div>
       </div>
@@ -133,7 +139,12 @@ export default function ProductDetail() {
     return (
       <div style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg)" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: 16 }}>🔍</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16, color: "var(--text-muted)" }}>
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
+            </svg>
+          </div>
           <h2 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>Vehicle Not Found</h2>
           <p style={{ color: "var(--text-secondary)", marginBottom: 24 }}>This vehicle may no longer be available.</p>
           <Link href="/inventory" style={{ display: "inline-flex", padding: "12px 24px", background: "var(--navy)", color: "white", borderRadius: 8, fontWeight: 600, textDecoration: "none", fontSize: "0.9rem" }}>
@@ -148,9 +159,32 @@ export default function ProductDetail() {
   const currentImg = gallery[activeImg] ?? gallery[0];
   const inStock = product.stock > 0;
 
-  const handleAddToCart = () => {
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2500);
+  const handleAddToCart = async () => {
+    if (!product) return;
+    setCartError(null);
+    try {
+      const cartId = localStorage.getItem("cartId") || undefined;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(cartId ? { "x-cart-id": cartId } : {}),
+        },
+        body: JSON.stringify({ productId: product.id, quantity: qty }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCartError(data.error || "Could not add to cart");
+        return;
+      }
+      // Persist the cart ID for this session
+      const returnedId = res.headers.get("x-cart-id");
+      if (returnedId) localStorage.setItem("cartId", returnedId);
+      setAddedToCart(true);
+      setTimeout(() => setAddedToCart(false), 2500);
+    } catch {
+      setCartError("Network error — please try again");
+    }
   };
 
   return (
@@ -277,6 +311,9 @@ export default function ProductDetail() {
                 style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 52, background: addedToCart ? "#059669" : "var(--amber)", color: "white", border: "none", borderRadius: 10, fontSize: "0.9375rem", fontWeight: 700, cursor: inStock ? "pointer" : "not-allowed", transition: "background 200ms ease", opacity: inStock ? 1 : 0.5 }}>
                 {addedToCart ? <><CheckIcon /> Added to Cart</> : <><CartIcon /> Add to Cart</>}
               </button>
+              {cartError && (
+                <div style={{ fontSize: "0.8rem", color: "#DC2626", marginTop: -4 }}>{cartError}</div>
+              )}
 
               <Link href="/appointments" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 48, background: "transparent", color: "var(--navy)", border: "1.5px solid var(--navy)", borderRadius: 10, fontSize: "0.9rem", fontWeight: 600, textDecoration: "none" }}>
                 <CalendarIcon /> Book a Test Drive
@@ -291,13 +328,44 @@ export default function ProductDetail() {
             {/* Guarantees */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               {[
-                { icon: "🛡️", text: "6-month warranty" },
-                { icon: "🔧", text: "Free inspection" },
-                { icon: "📄", text: "Full documentation" },
-                { icon: "🚗", text: "Test drive available" },
+                {
+                  icon: (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  ),
+                  text: "6-month warranty",
+                },
+                {
+                  icon: (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                    </svg>
+                  ),
+                  text: "Free inspection",
+                },
+                {
+                  icon: (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                  ),
+                  text: "Full documentation",
+                },
+                {
+                  icon: (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2" />
+                      <circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" />
+                    </svg>
+                  ),
+                  text: "Test drive available",
+                },
               ].map((g, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", background: "var(--surface)", borderRadius: 8, border: "1px solid var(--border)" }}>
-                  <span style={{ fontSize: "1rem" }}>{g.icon}</span>
+                  <span style={{ color: "var(--amber)", flexShrink: 0 }}>{g.icon}</span>
                   <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "var(--text)" }}>{g.text}</span>
                 </div>
               ))}

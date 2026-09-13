@@ -20,14 +20,81 @@ function CheckCircle() {
   );
 }
 
-const SERVICE_ICONS: Record<string, string> = {
-  "engine-diagnostics": "🔍",
-  "oil-change": "🛢️",
-  "brake-repair": "🔧",
-  "wheel-alignment": "⚙️",
-  "battery-replacement": "🔋",
-  "car-detailing": "✨",
-  "tire-replacement": "🔄",
+// ── Service icon SVG components ────────────────────────────────────────────────
+function SvcDiagnosticsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+function SvcOilIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v6l3 3-3 3v6" /><ellipse cx="12" cy="19" rx="5" ry="3" />
+      <path d="M7 8H4a1 1 0 00-1 1v5a1 1 0 001 1h3" />
+    </svg>
+  );
+}
+function SvcBrakeIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="4" />
+      <line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function SvcAlignIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2" />
+    </svg>
+  );
+}
+function SvcBatteryIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="18" height="11" rx="2" /><path d="M20 11h2v4h-2" />
+      <line x1="7" y1="12" x2="11" y2="12" /><line x1="9" y1="10" x2="9" y2="14" />
+    </svg>
+  );
+}
+function SvcDetailIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+      <line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" />
+    </svg>
+  );
+}
+function SvcTireIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" />
+      <line x1="12" y1="2" x2="12" y2="5" /><line x1="12" y1="19" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="5" y2="12" /><line x1="19" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function SvcDefaultIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+
+const SERVICE_ICON_MAP: Record<string, React.ReactNode> = {
+  "engine-diagnostics": <SvcDiagnosticsIcon />,
+  "oil-change": <SvcOilIcon />,
+  "brake-repair": <SvcBrakeIcon />,
+  "wheel-alignment": <SvcAlignIcon />,
+  "battery-replacement": <SvcBatteryIcon />,
+  "car-detailing": <SvcDetailIcon />,
+  "tire-replacement": <SvcTireIcon />,
 };
 
 const STEPS = ["Your Info", "Vehicle", "Service & Time", "Confirm"];
@@ -55,6 +122,8 @@ export default function Appointments() {
 
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [form, setForm] = useState<FormData>({
     name: "", phone: "", email: "",
@@ -92,8 +161,28 @@ export default function Appointments() {
 
   const next = () => { if (validate(step)) setStep(s => s + 1); };
   const back = () => setStep(s => s - 1);
-  const submit = () => {
-    if (validate(2)) setSubmitted(true);
+  const submit = async () => {
+    if (!validate(2)) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSubmitError(data.error || "Booking failed. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      setSubmitError("Network error — please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const selectedService = services.find(s => s.id === form.serviceId);
@@ -255,7 +344,7 @@ export default function Appointments() {
                       {services.map(s => (
                         <button key={s.id} onClick={() => { setForm(f => ({ ...f, serviceId: s.id })); setErrors(e => ({ ...e, serviceId: undefined })); }}
                           style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", border: `1.5px solid ${form.serviceId === s.id ? "var(--amber)" : "var(--border)"}`, borderRadius: 10, background: form.serviceId === s.id ? "rgba(232,112,10,0.06)" : "var(--bg)", cursor: "pointer", textAlign: "left", transition: "all 180ms ease" }}>
-                          <span style={{ fontSize: "1.2rem" }}>{SERVICE_ICONS[s.id] || "🔧"}</span>
+                          <span style={{ color: "var(--amber)", flexShrink: 0 }}>{SERVICE_ICON_MAP[s.id] || <SvcDefaultIcon />}</span>
                           <div>
                             <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text)" }}>{s.title}</div>
                             <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{s.priceRange}</div>
@@ -299,7 +388,12 @@ export default function Appointments() {
                     { label: "Name", value: form.name },
                     { label: "Contact", value: `${form.phone}  ·  ${form.email}` },
                     { label: "Vehicle", value: `${form.year} ${form.make} ${form.model} — ${form.licensePlate}` },
-                    { label: "Service", value: selectedService ? `${SERVICE_ICONS[selectedService.id]} ${selectedService.title} (${selectedService.priceRange})` : "—" },
+                    { label: "Service", value: selectedService ? (
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ color: "var(--amber)" }}>{SERVICE_ICON_MAP[selectedService.id] || <SvcDefaultIcon />}</span>
+                          {selectedService.title} ({selectedService.priceRange})
+                        </span>
+                      ) : "—" },
                     { label: "Date & Time", value: `${form.date}  at  ${form.time}` },
                     ...(form.notes ? [{ label: "Notes", value: form.notes }] : []),
                   ].map((row, i) => (
@@ -325,13 +419,18 @@ export default function Appointments() {
                   ← Back
                 </button>
               ) : <div />}
+              {step === 3 && submitError && (
+                <div style={{ padding: "12px 16px", background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 8, fontSize: "0.85rem", color: "#DC2626", marginBottom: 8 }}>
+                  {submitError}
+                </div>
+              )}
               {step < 3 ? (
                 <button onClick={next} style={{ display: "flex", alignItems: "center", gap: 8, height: 48, paddingInline: 28, background: "var(--amber)", color: "white", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: "0.9rem" }}>
                   Continue <ArrowRight />
                 </button>
               ) : (
-                <button onClick={submit} style={{ display: "flex", alignItems: "center", gap: 8, height: 48, paddingInline: 28, background: "#059669", color: "white", border: "none", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: "0.9rem" }}>
-                  Confirm Booking ✓
+                <button onClick={submit} disabled={submitting} style={{ display: "flex", alignItems: "center", gap: 8, height: 48, paddingInline: 28, background: "#059669", color: "white", border: "none", borderRadius: 8, fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.7 : 1, fontSize: "0.9rem" }}>
+                  {submitting ? "Confirming…" : "Confirm Booking ✓"}
                 </button>
               )}
             </div>
@@ -344,8 +443,8 @@ export default function Appointments() {
               <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: 20, boxShadow: "var(--shadow-sm)" }}>
                 <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>Selected Service</div>
                 <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
-                  <div style={{ width: 44, height: 44, background: "rgba(232,112,10,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem" }}>
-                    {SERVICE_ICONS[selectedService.id] || "🔧"}
+                  <div style={{ width: 44, height: 44, background: "rgba(232,112,10,0.08)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber)" }}>
+                    {SERVICE_ICON_MAP[selectedService.id] || <SvcDefaultIcon />}
                   </div>
                   <div>
                     <div style={{ fontWeight: 700, color: "var(--text)", fontSize: "0.95rem" }}>{selectedService.title}</div>
@@ -365,7 +464,11 @@ export default function Appointments() {
               </div>
             ) : (
               <div style={{ background: "var(--surface)", border: "1.5px dashed var(--border)", borderRadius: 12, padding: 20, textAlign: "center" }}>
-                <div style={{ fontSize: "1.5rem", marginBottom: 8 }}>🛠️</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 8, color: "var(--text-muted)" }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                  </svg>
+                </div>
                 <div style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>Select a service in Step 3</div>
               </div>
             )}

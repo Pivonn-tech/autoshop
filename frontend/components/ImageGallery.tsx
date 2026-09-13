@@ -146,7 +146,9 @@ export default function ImageGallery({
             e.currentTarget.style.transform = "translateY(-50%) scale(1)";
           }}
         >
-          ◀
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
 
         <button
@@ -178,7 +180,9 @@ export default function ImageGallery({
             e.currentTarget.style.transform = "translateY(-50%) scale(1)";
           }}
         >
-          ▶
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
         </button>
 
         {/* Fullscreen indicator */}
@@ -196,8 +200,11 @@ export default function ImageGallery({
             zIndex: 5,
           }}
         >
-          Click to expand ⛶
-        </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" />
+            <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
+          View Full Screen        </div>
       </div>
 
       {/* Thumbnail Strip */}
@@ -288,6 +295,9 @@ export default function ImageGallery({
             fontSize: "0.75rem",
             fontWeight: "600",
             transition: "all 0.3s ease",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.35rem",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = colors.accent;
@@ -298,6 +308,10 @@ export default function ImageGallery({
             e.currentTarget.style.color = colors.accent;
           }}
         >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" />
+            <line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" />
+          </svg>
           View Full Resolution
         </button>
       </div>

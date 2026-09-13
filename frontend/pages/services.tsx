@@ -33,14 +33,81 @@ function CheckIcon() {
   );
 }
 
-const SERVICE_ICONS: Record<string, string> = {
-  "engine-diagnostics": "🔍",
-  "oil-change": "🛢️",
-  "brake-repair": "🔧",
-  "wheel-alignment": "⚙️",
-  "battery-replacement": "🔋",
-  "car-detailing": "✨",
-  "tire-replacement": "🔄",
+// ── Service icon SVG components ────────────────────────────────────────────────
+function SvcDiagnosticsIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+function SvcOilIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v6l3 3-3 3v6" /><ellipse cx="12" cy="19" rx="5" ry="3" />
+      <path d="M7 8H4a1 1 0 00-1 1v5a1 1 0 001 1h3" />
+    </svg>
+  );
+}
+function SvcBrakeIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="4" />
+      <line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function SvcAlignIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2" />
+    </svg>
+  );
+}
+function SvcBatteryIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="18" height="11" rx="2" /><path d="M20 11h2v4h-2" />
+      <line x1="7" y1="12" x2="11" y2="12" /><line x1="9" y1="10" x2="9" y2="14" />
+    </svg>
+  );
+}
+function SvcDetailIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+      <line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" />
+    </svg>
+  );
+}
+function SvcTireIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" />
+      <line x1="12" y1="2" x2="12" y2="5" /><line x1="12" y1="19" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="5" y2="12" /><line x1="19" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function SvcDefaultIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+
+const SERVICE_ICON_MAP: Record<string, React.ReactNode> = {
+  "engine-diagnostics": <SvcDiagnosticsIcon />,
+  "oil-change": <SvcOilIcon />,
+  "brake-repair": <SvcBrakeIcon />,
+  "wheel-alignment": <SvcAlignIcon />,
+  "battery-replacement": <SvcBatteryIcon />,
+  "car-detailing": <SvcDetailIcon />,
+  "tire-replacement": <SvcTireIcon />,
 };
 
 const ALL_CATS = ["All", ...Array.from(new Set(services.map(s => s.category)))];
@@ -132,8 +199,8 @@ export default function Services() {
               >
                 {/* Icon + category */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ width: 52, height: 52, background: "rgba(232,112,10,0.08)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}>
-                    {SERVICE_ICONS[service.id] || "🔧"}
+                  <div style={{ width: 52, height: 52, background: "rgba(232,112,10,0.08)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber)" }}>
+                    {SERVICE_ICON_MAP[service.id] || <SvcDefaultIcon />}
                   </div>
                   <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--amber)", background: "rgba(232,112,10,0.08)", border: "1px solid rgba(232,112,10,0.2)", padding: "3px 10px", borderRadius: 20, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                     {service.category}

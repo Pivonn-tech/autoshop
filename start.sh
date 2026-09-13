@@ -117,7 +117,48 @@ print_summary() {
   echo ""
 }
 
-# ── Ctrl+C handler ──────────────────────────────────────────
+# ── db:check ────────────────────────────────────────────────
+check_db() {
+  log "Checking PostgreSQL connection…"
+  # Read DATABASE_URL from backend .env
+  local db_url
+  db_url=$(grep -E '^DATABASE_URL' "$BACKEND_DIR/.env" 2>/dev/null | head -1 | cut -d'=' -f2- | tr -d '"')
+  if [[ -z "$db_url" ]]; then
+    # Fall back to frontend .env
+    db_url=$(grep -E '^DATABASE_URL' "$FRONTEND_DIR/.env" 2>/dev/null | head -1 | cut -d'=' -f2- | tr -d '"')
+  fi
+
+  if [[ -z "$db_url" ]]; then
+    warn "DATABASE_URL not found in .env files — skipping DB check"
+    return 0
+  fi
+
+  # Extract host and port from the URL (postgresql://user:pass@host:port/db)
+  local host port
+  host=$(echo "$db_url" | sed -E 's|.*@([^:/]+).*|\1|')
+  port=$(echo "$db_url" | sed -E 's|.*:([0-9]+)/.*|\1|')
+  port="${port:-5432}"
+
+  # Try psql ping, fall back to nc
+  if command -v psql &>/dev/null; then
+    if PGPASSWORD="" psql "$db_url" -c '\q' &>/dev/null 2>&1; then
+      ok "PostgreSQL is reachable at $host:$port"
+      return 0
+    fi
+  fi
+
+  # nc fallback
+  if command -v nc &>/dev/null; then
+    if nc -z -w3 "$host" "$port" &>/dev/null 2>&1; then
+      ok "PostgreSQL port is open at $host:$port (connection not authenticated)"
+      return 0
+    fi
+  fi
+
+  warn "Could not reach PostgreSQL at $host:$port — the app may fail to authenticate users"
+  warn "Start PostgreSQL with: sudo service postgresql start  (or: pg_ctlcluster 14 main start)"
+  return 1
+}
 trap 'echo ""; stop_servers; exit 0' INT TERM
 
 # ── main ────────────────────────────────────────────────────
@@ -135,12 +176,14 @@ case "${1:-both}" in
     ;;
   backend)
     > "$PID_FILE"
+    check_db
     start_backend
     print_summary
     wait
     ;;
   both|"")
     > "$PID_FILE"
+    check_db
     start_backend
     start_frontend
     print_summary

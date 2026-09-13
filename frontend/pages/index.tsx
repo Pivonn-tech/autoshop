@@ -60,6 +60,31 @@ function MapPinIcon() {
   );
 }
 
+// ── Tab icons ──────────────────────────────────────────────────────────────────
+function CarTabIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2" />
+      <circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" />
+    </svg>
+  );
+}
+function WrenchTabIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+function ToolsTabIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2" />
+    </svg>
+  );
+}
+
 // ── Search Widget ──────────────────────────────────────────────────────────────
 const VEHICLE_MAKES = ["Any Make", "Toyota", "Subaru", "Mitsubishi", "Isuzu", "Nissan", "Honda", "Ford", "Mazda"];
 const PART_CATS = ["All Categories", "Braking", "Engine", "Suspension", "Electrical", "Body"];
@@ -72,9 +97,9 @@ function SearchWidget() {
   const [col2, setCol2] = useState("");
 
   const tabDefs = [
-    { id: "vehicles" as const, emoji: "🚗", label: "Vehicles" },
-    { id: "parts" as const, emoji: "🔧", label: "Parts" },
-    { id: "services" as const, emoji: "🛠️", label: "Services" },
+    { id: "vehicles" as const, icon: <CarTabIcon />, label: "Vehicles" },
+    { id: "parts" as const, icon: <WrenchTabIcon />, label: "Parts" },
+    { id: "services" as const, icon: <ToolsTabIcon />, label: "Services" },
   ];
 
   const col1Options = tab === "vehicles" ? VEHICLE_MAKES : tab === "parts" ? PART_CATS : SVC_CATS;
@@ -152,7 +177,7 @@ function SearchWidget() {
               transition: "all 180ms ease",
             }}
           >
-            <span>{t.emoji}</span> {t.label}
+            {t.icon} {t.label}
           </button>
         ))}
       </div>
@@ -331,8 +356,8 @@ function ServiceCard({ service }: { service: (typeof services)[0] }) {
         transform: hovered ? "translateY(-3px)" : "none",
         display: "flex", flexDirection: "column", gap: 14, height: "100%",
       }}>
-        <div style={{ width: 48, height: 48, background: "rgba(232,112,10,0.08)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem" }}>
-          {serviceIcons[service.id] || "🔧"}
+        <div style={{ width: 48, height: 48, background: "rgba(232,112,10,0.08)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--amber)" }}>
+          {serviceIconComponents[service.id] || <SvcDefaultIcon />}
         </div>
         <div>
           <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
@@ -346,8 +371,9 @@ function ServiceCard({ service }: { service: (typeof services)[0] }) {
           {service.description}
         </p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ fontSize: "0.72rem", fontWeight: 600, color: "var(--text-muted)", background: "var(--surface)", padding: "3px 8px", borderRadius: 4 }}>
-            ⏱ {service.duration}
+          <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.72rem", fontWeight: 600, color: "var(--text-muted)", background: "var(--surface)", padding: "3px 8px", borderRadius: 4 }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {service.duration}
           </span>
           <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--navy)", background: "rgba(15,42,74,0.06)", padding: "3px 8px", borderRadius: 4 }}>
             {service.priceRange}
@@ -398,15 +424,82 @@ function ReviewCard({ review }: { review: (typeof reviews)[0] }) {
   );
 }
 
-// ── Service icons map (module-level) ────────────────────────────────────────────
-const serviceIcons: Record<string, string> = {
-  "engine-diagnostics": "🔍",
-  "oil-change": "🛢️",
-  "brake-repair": "🔧",
-  "wheel-alignment": "⚙️",
-  "battery-replacement": "🔋",
-  "car-detailing": "✨",
-  "tire-replacement": "🔄",
+// ── Service icons (SVG components) ─────────────────────────────────────────────
+function SvcDiagnosticsIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+function SvcOilIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v6l3 3-3 3v6" /><ellipse cx="12" cy="19" rx="5" ry="3" />
+      <path d="M7 8H4a1 1 0 00-1 1v5a1 1 0 001 1h3" />
+    </svg>
+  );
+}
+function SvcBrakeIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="4" />
+      <line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="6" y2="12" /><line x1="18" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function SvcAlignIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2" />
+    </svg>
+  );
+}
+function SvcBatteryIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="18" height="11" rx="2" /><path d="M20 11h2v4h-2" />
+      <line x1="7" y1="12" x2="11" y2="12" /><line x1="9" y1="10" x2="9" y2="14" />
+    </svg>
+  );
+}
+function SvcDetailIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9" />
+      <path d="M3 12h3m12 0h3" />
+      <path d="M12 3v3m0 12v3" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+function SvcTireIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" />
+      <line x1="12" y1="2" x2="12" y2="5" /><line x1="12" y1="19" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="5" y2="12" /><line x1="19" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+function SvcDefaultIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+
+const serviceIconComponents: Record<string, React.ReactNode> = {
+  "engine-diagnostics": <SvcDiagnosticsIcon />,
+  "oil-change": <SvcOilIcon />,
+  "brake-repair": <SvcBrakeIcon />,
+  "wheel-alignment": <SvcAlignIcon />,
+  "battery-replacement": <SvcBatteryIcon />,
+  "car-detailing": <SvcDetailIcon />,
+  "tire-replacement": <SvcTireIcon />,
 };
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
@@ -429,10 +522,41 @@ export default function HomePage() {
   ];
 
   const trustItems = [
-    { icon: "🛡️", title: "Genuine Parts Guarantee", body: "OEM-certified parts or your money back." },
-    { icon: "🔬", title: "Expert Diagnostics", body: "Latest OBD tools and trained technicians." },
-    { icon: "📋", title: "Transparent Pricing", body: "Full estimate before any work begins." },
-    { icon: "⚡", title: "Fast Turnaround", body: "Most services completed same day." },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      ),
+      title: "Genuine Parts Guarantee", body: "OEM-certified parts or your money back.",
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
+        </svg>
+      ),
+      title: "Expert Diagnostics", body: "Latest OBD tools and trained technicians.",
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
+        </svg>
+      ),
+      title: "Transparent Pricing", body: "Full estimate before any work begins.",
+    },
+    {
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      ),
+      title: "Fast Turnaround", body: "Most services completed same day.",
+    },
   ];
 
   const whyItems = [
@@ -523,6 +647,96 @@ export default function HomePage() {
                 Find What You Need
               </div>
               <SearchWidget />
+              {/* ── Quick-action pills ── */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {[
+                  {
+                    href: "/inventory?condition=used",
+                    label: "Shop Used",
+                    accent: false,
+                    icon: (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2"/>
+                        <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    href: "/inventory?condition=new",
+                    label: "Shop New",
+                    accent: false,
+                    icon: (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    href: "/inventory?category=trucks",
+                    label: "Trucks",
+                    accent: false,
+                    icon: (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    href: "/inventory?category=motorcycles",
+                    label: "Motorcycles",
+                    accent: false,
+                    icon: (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/>
+                        <path d="M15 6h-3l-3 6 3 3h6l2-5-5-4z"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    href: "/contact",
+                    label: "Get a Quote",
+                    accent: true,
+                    icon: (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                      </svg>
+                    ),
+                  },
+                ].map((pill) => (
+                  <Link
+                    key={pill.href + pill.label}
+                    href={pill.href}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 7,
+                      height: 36, paddingInline: 16,
+                      borderRadius: 999,
+                      border: pill.accent ? "1.5px solid rgba(232,112,10,0.5)" : "1.5px solid rgba(255,255,255,0.3)",
+                      background: pill.accent ? "rgba(232,112,10,0.15)" : "rgba(255,255,255,0.07)",
+                      color: pill.accent ? "#f5a05a" : "white",
+                      fontSize: "0.82rem", fontWeight: pill.accent ? 700 : 600,
+                      textDecoration: "none",
+                      backdropFilter: "blur(6px)",
+                      transition: "all 180ms ease",
+                    }}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      if (pill.accent) { el.style.background = "rgba(232,112,10,0.28)"; }
+                      else { el.style.background = "rgba(255,255,255,0.16)"; el.style.borderColor = "rgba(255,255,255,0.55)"; }
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      if (pill.accent) { el.style.background = "rgba(232,112,10,0.15)"; }
+                      else { el.style.background = "rgba(255,255,255,0.07)"; el.style.borderColor = "rgba(255,255,255,0.3)"; }
+                    }}
+                  >
+                    {pill.icon}
+                    {pill.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -553,13 +767,230 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ══ BROWSE BY TYPE ═══════════════════════════════════════════════════ */}
+      <section style={{ background: "var(--bg)", paddingBlock: 64 }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <div style={{ width: 20, height: 2, background: "var(--amber)", borderRadius: 2 }} /> Browse By Type <div style={{ width: 20, height: 2, background: "var(--amber)", borderRadius: 2 }} />
+            </div>
+            <h2 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "clamp(1.5rem, 3vw, 2.2rem)", fontWeight: 700, color: "var(--text)", margin: 0, letterSpacing: "-0.02em" }}>
+              What are you looking for?
+            </h2>
+          </div>
+
+          <div className="browse-by-type-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+            {[
+              {
+                href: "/inventory?category=trucks",
+                label: "Cargo Trucks",
+                sub: "Commercial fleet",
+                illustration: (
+                  <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                    {/* Cab */}
+                    <rect x="8" y="28" width="38" height="28" rx="4" fill="var(--navy)" opacity="0.12"/>
+                    <rect x="10" y="30" width="34" height="24" rx="3" fill="var(--navy)" opacity="0.2"/>
+                    {/* Windshield */}
+                    <rect x="14" y="32" width="18" height="12" rx="2" fill="var(--navy)" opacity="0.5"/>
+                    {/* Cargo box */}
+                    <rect x="46" y="20" width="64" height="36" rx="3" fill="var(--navy)" opacity="0.15"/>
+                    <rect x="48" y="22" width="60" height="32" rx="2" fill="var(--navy)" opacity="0.22"/>
+                    {/* Cargo lines */}
+                    <line x1="68" y1="22" x2="68" y2="54" stroke="var(--navy)" strokeWidth="1.5" opacity="0.3"/>
+                    <line x1="88" y1="22" x2="88" y2="54" stroke="var(--navy)" strokeWidth="1.5" opacity="0.3"/>
+                    {/* Chassis */}
+                    <rect x="8" y="54" width="104" height="5" rx="2" fill="var(--navy)" opacity="0.2"/>
+                    {/* Wheels */}
+                    <circle cx="28" cy="62" r="9" fill="var(--navy)" opacity="0.18"/>
+                    <circle cx="28" cy="62" r="5" fill="var(--navy)" opacity="0.3"/>
+                    <circle cx="28" cy="62" r="2" fill="var(--navy)" opacity="0.5"/>
+                    <circle cx="88" cy="62" r="9" fill="var(--navy)" opacity="0.18"/>
+                    <circle cx="88" cy="62" r="5" fill="var(--navy)" opacity="0.3"/>
+                    <circle cx="88" cy="62" r="2" fill="var(--navy)" opacity="0.5"/>
+                    <circle cx="106" cy="62" r="9" fill="var(--navy)" opacity="0.18"/>
+                    <circle cx="106" cy="62" r="5" fill="var(--navy)" opacity="0.3"/>
+                    <circle cx="106" cy="62" r="2" fill="var(--navy)" opacity="0.5"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/inventory?category=motorcycles",
+                label: "Motorcycles",
+                sub: "2 & 3-wheelers",
+                illustration: (
+                  <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                    {/* Rear wheel */}
+                    <circle cx="82" cy="54" r="18" fill="var(--navy)" opacity="0.12"/>
+                    <circle cx="82" cy="54" r="12" fill="var(--navy)" opacity="0.15"/>
+                    <circle cx="82" cy="54" r="4" fill="var(--navy)" opacity="0.4"/>
+                    {/* Front wheel */}
+                    <circle cx="30" cy="54" r="18" fill="var(--navy)" opacity="0.12"/>
+                    <circle cx="30" cy="54" r="12" fill="var(--navy)" opacity="0.15"/>
+                    <circle cx="30" cy="54" r="4" fill="var(--navy)" opacity="0.4"/>
+                    {/* Frame */}
+                    <path d="M82 54 L65 28 L48 28 L30 54" stroke="var(--navy)" strokeWidth="4" opacity="0.25" strokeLinecap="round"/>
+                    <path d="M65 28 L75 20 L82 30" stroke="var(--navy)" strokeWidth="3.5" opacity="0.25" strokeLinecap="round"/>
+                    {/* Seat */}
+                    <rect x="48" y="24" width="22" height="6" rx="3" fill="var(--navy)" opacity="0.35"/>
+                    {/* Engine */}
+                    <rect x="50" y="36" width="20" height="14" rx="3" fill="var(--navy)" opacity="0.2"/>
+                    {/* Handlebar */}
+                    <line x1="72" y1="18" x2="82" y2="18" stroke="var(--navy)" strokeWidth="3" opacity="0.35" strokeLinecap="round"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/inventory?category=pickups",
+                label: "Pick-Ups",
+                sub: "Double & single cab",
+                illustration: (
+                  <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                    {/* Body */}
+                    <rect x="10" y="32" width="100" height="26" rx="4" fill="var(--navy)" opacity="0.12"/>
+                    {/* Cab */}
+                    <path d="M14 32 L22 16 L62 16 L68 32" fill="var(--navy)" opacity="0.2"/>
+                    <rect x="24" y="18" width="26" height="14" rx="2" fill="var(--navy)" opacity="0.4"/>
+                    {/* Bed */}
+                    <rect x="68" y="24" width="38" height="8" rx="2" fill="var(--navy)" opacity="0.12"/>
+                    <line x1="80" y1="24" x2="80" y2="32" stroke="var(--navy)" strokeWidth="1.5" opacity="0.25"/>
+                    <line x1="94" y1="24" x2="94" y2="32" stroke="var(--navy)" strokeWidth="1.5" opacity="0.25"/>
+                    {/* Chassis */}
+                    <rect x="10" y="56" width="100" height="4" rx="2" fill="var(--navy)" opacity="0.15"/>
+                    {/* Wheels */}
+                    <circle cx="30" cy="62" r="10" fill="var(--navy)" opacity="0.18"/>
+                    <circle cx="30" cy="62" r="6" fill="var(--navy)" opacity="0.28"/>
+                    <circle cx="30" cy="62" r="2.5" fill="var(--navy)" opacity="0.5"/>
+                    <circle cx="90" cy="62" r="10" fill="var(--navy)" opacity="0.18"/>
+                    <circle cx="90" cy="62" r="6" fill="var(--navy)" opacity="0.28"/>
+                    <circle cx="90" cy="62" r="2.5" fill="var(--navy)" opacity="0.5"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/parts",
+                label: "Parts & Spares",
+                sub: "OEM & aftermarket",
+                illustration: (
+                  <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                    {/* Large gear */}
+                    <circle cx="52" cy="42" r="22" fill="var(--navy)" opacity="0.08"/>
+                    <circle cx="52" cy="42" r="16" fill="var(--navy)" opacity="0.12"/>
+                    <circle cx="52" cy="42" r="6" fill="var(--navy)" opacity="0.3"/>
+                    {/* Gear teeth */}
+                    {[0,45,90,135,180,225,270,315].map((deg, i) => {
+                      const r = (deg * Math.PI) / 180;
+                      const x1 = 52 + 16 * Math.cos(r);
+                      const y1 = 42 + 16 * Math.sin(r);
+                      const x2 = 52 + 23 * Math.cos(r);
+                      const y2 = 42 + 23 * Math.sin(r);
+                      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--navy)" strokeWidth="5" opacity="0.18" strokeLinecap="round"/>;
+                    })}
+                    {/* Small gear */}
+                    <circle cx="82" cy="28" r="13" fill="var(--navy)" opacity="0.08"/>
+                    <circle cx="82" cy="28" r="9" fill="var(--navy)" opacity="0.14"/>
+                    <circle cx="82" cy="28" r="3.5" fill="var(--navy)" opacity="0.3"/>
+                    {[0,60,120,180,240,300].map((deg, i) => {
+                      const r = (deg * Math.PI) / 180;
+                      const x1 = 82 + 9 * Math.cos(r);
+                      const y1 = 28 + 9 * Math.sin(r);
+                      const x2 = 82 + 14 * Math.cos(r);
+                      const y2 = 28 + 14 * Math.sin(r);
+                      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--navy)" strokeWidth="4" opacity="0.18" strokeLinecap="round"/>;
+                    })}
+                    {/* Wrench */}
+                    <path d="M24 60 L38 46" stroke="var(--navy)" strokeWidth="5" opacity="0.22" strokeLinecap="round"/>
+                    <circle cx="40" cy="44" r="5" fill="none" stroke="var(--navy)" strokeWidth="3" opacity="0.25"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/services",
+                label: "Workshop",
+                sub: "All repair services",
+                illustration: (
+                  <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                    {/* Building */}
+                    <rect x="20" y="28" width="80" height="44" rx="3" fill="var(--navy)" opacity="0.1"/>
+                    <rect x="22" y="30" width="76" height="40" rx="2" fill="var(--navy)" opacity="0.1"/>
+                    {/* Roof */}
+                    <path d="M16 30 L60 10 L104 30" fill="var(--navy)" opacity="0.18"/>
+                    {/* Door */}
+                    <rect x="48" y="48" width="24" height="22" rx="2" fill="var(--navy)" opacity="0.22"/>
+                    {/* Windows */}
+                    <rect x="28" y="38" width="16" height="14" rx="2" fill="var(--navy)" opacity="0.3"/>
+                    <rect x="76" y="38" width="16" height="14" rx="2" fill="var(--navy)" opacity="0.3"/>
+                    {/* Lift/ramp detail */}
+                    <line x1="48" y1="70" x2="72" y2="70" stroke="var(--navy)" strokeWidth="2" opacity="0.3"/>
+                    {/* Sign text */}
+                    <rect x="38" y="14" width="44" height="8" rx="2" fill="var(--amber)" opacity="0.35"/>
+                    <line x1="44" y1="18" x2="76" y2="18" stroke="var(--amber)" strokeWidth="2" opacity="0.6" strokeLinecap="round"/>
+                  </svg>
+                ),
+              },
+            ].map((cat, i) => (
+              <Link key={i} href={cat.href} style={{ textDecoration: "none" }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "var(--amber)";
+                  el.style.boxShadow = "var(--shadow-lg)";
+                  el.style.transform = "translateY(-4px)";
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.borderColor = "var(--border)";
+                  el.style.boxShadow = "var(--shadow-sm)";
+                  el.style.transform = "none";
+                }}
+              >
+                <div style={{
+                  background: "var(--surface)",
+                  border: "1.5px solid var(--border)",
+                  borderRadius: 14,
+                  padding: "20px 16px 18px",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  transition: "all 220ms ease",
+                  boxShadow: "var(--shadow-sm)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 12,
+                }}>
+                  {/* Illustration box */}
+                  <div style={{
+                    width: "100%",
+                    aspectRatio: "3/2",
+                    background: "var(--bg)",
+                    borderRadius: 8,
+                    border: "1px solid var(--border)",
+                    overflow: "hidden",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "8px 6px",
+                  }}>
+                    {cat.illustration}
+                  </div>
+                  <div>
+                    <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, fontSize: "0.9rem", color: "var(--text)", marginBottom: 2 }}>
+                      {cat.label}
+                    </div>
+                    <div style={{ fontSize: "0.74rem", color: "var(--text-muted)" }}>{cat.sub}</div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ══ TRUST BAND ════════════════════════════════════════════════════════ */}
       <section style={{ background: "var(--surface)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", paddingBlock: 36 }}>
         <div className="container">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
             {trustItems.map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-                <div style={{ width: 44, height: 44, background: "var(--navy)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", flexShrink: 0, color: "white" }}>
+                <div style={{ width: 44, height: 44, background: "var(--navy)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "white" }}>
                   {item.icon}
                 </div>
                 <div>
@@ -613,7 +1044,12 @@ export default function HomePage() {
             </div>
           ) : (
             <div style={{ textAlign: "center", padding: "60px 24px", color: "var(--text-muted)", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🚗</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 12, color: "var(--text-muted)" }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2" />
+                  <circle cx="7" cy="17" r="2" /><circle cx="17" cy="17" r="2" />
+                </svg>
+              </div>
               <div style={{ fontWeight: 600 }}>Vehicles loading… Make sure the backend is running on port 3001.</div>
             </div>
           )}
@@ -858,6 +1294,7 @@ export default function HomePage() {
         @media (max-width: 900px) {
           .hero-grid { grid-template-columns: 1fr !important; }
           .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .browse-by-type-grid { grid-template-columns: repeat(3, 1fr) !important; }
           .trust-grid { grid-template-columns: repeat(2,1fr) !important; }
           .products-grid { grid-template-columns: repeat(2,1fr) !important; }
           .why-reviews-grid { grid-template-columns: 1fr !important; }
@@ -867,6 +1304,7 @@ export default function HomePage() {
         @media (max-width: 640px) {
           .products-grid { grid-template-columns: 1fr !important; }
           .trust-grid { grid-template-columns: 1fr !important; }
+          .browse-by-type-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
           .footer-cols { grid-template-columns: 1fr !important; }
         }

@@ -3,15 +3,12 @@ import { NextResponse } from "next/server";
 
 export const middleware = withAuth(
   function middleware(req) {
-    // Protected routes that require authentication
-    const protectedRoutes = ["/dashboard", "/checkout", "/my-garage"];
-    const isProtectedRoute = protectedRoutes.some((route) =>
-      req.nextUrl.pathname.startsWith(route),
-    );
+    const { pathname } = req.nextUrl;
 
-    if (isProtectedRoute && !req.nextauth.token) {
+    // Admin route: require auth (role check can be added later)
+    if (pathname.startsWith("/admin") && !req.nextauth.token) {
       const signInUrl = new URL("/auth/login", req.url);
-      signInUrl.searchParams.append("callbackUrl", req.nextUrl.pathname);
+      signInUrl.searchParams.append("callbackUrl", pathname);
       return NextResponse.redirect(signInUrl);
     }
 
@@ -25,5 +22,5 @@ export const middleware = withAuth(
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/checkout/:path*", "/my-garage/:path*"],
+  matcher: ["/dashboard/:path*", "/checkout/:path*", "/my-garage/:path*", "/admin/:path*", "/admin"],
 };

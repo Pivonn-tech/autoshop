@@ -156,7 +156,7 @@ export default function Inventory() {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/products")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
       .then(r => r.json())
       .then(d => { setProducts(d); setLoading(false); })
       .catch(() => setLoading(false));

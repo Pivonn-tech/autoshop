@@ -62,10 +62,39 @@ export default function Contact() {
   });
 
   const contactCards = [
-    { icon: "📞", title: "Call Us", value: "+254 700 123 456", sub: "Mon–Fri, 8AM – 6PM", href: "tel:+254700123456", hoverColor: "#059669" },
-    { icon: "📧", title: "Email Us", value: "service@autofixkenya.co.ke", sub: "Response within 2 hours", href: "mailto:service@autofixkenya.co.ke", hoverColor: "#0369A1" },
-    { icon: "💬", title: "WhatsApp", value: "+254 700 123 456", sub: "Chat with us instantly", href: "https://wa.me/254700123456", hoverColor: "#059669" },
-    { icon: "📍", title: "Visit Us", value: "Industrial Area, Nairobi", sub: "Near the KRA offices", href: "#map", hoverColor: "#E8700A" },
+    {
+      icon: (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.1 13.88 19.79 19.79 0 011.03 5.25 2 2 0 013 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 10.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+        </svg>
+      ),
+      title: "Call Us", value: "+254 700 123 456", sub: "Mon–Fri, 8AM – 6PM", href: "tel:+254700123456", hoverColor: "#059669",
+    },
+    {
+      icon: (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+          <polyline points="22,6 12,13 2,6" />
+        </svg>
+      ),
+      title: "Email Us", value: "service@autofixkenya.co.ke", sub: "Response within 2 hours", href: "mailto:service@autofixkenya.co.ke", hoverColor: "#0369A1",
+    },
+    {
+      icon: (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </svg>
+      ),
+      title: "WhatsApp", value: "+254 700 123 456", sub: "Chat with us instantly", href: "https://wa.me/254700123456", hoverColor: "#059669",
+    },
+    {
+      icon: (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+        </svg>
+      ),
+      title: "Visit Us", value: "Industrial Area, Nairobi", sub: "Near the KRA offices", href: "#map", hoverColor: "#E8700A",
+    },
   ];
 
   return (
@@ -99,7 +128,7 @@ export default function Contact() {
                 onMouseLeave={e => { (e.currentTarget.firstChild as HTMLElement).style.borderColor = "var(--border)"; (e.currentTarget.firstChild as HTMLElement).style.transform = "none"; (e.currentTarget.firstChild as HTMLElement).style.boxShadow = "var(--shadow-sm)"; }}
               >
                 <div style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, textAlign: "center", transition: "all 220ms ease", boxShadow: "var(--shadow-sm)", cursor: "pointer" }}>
-                  <div style={{ fontSize: "1.8rem", marginBottom: 12 }}>{card.icon}</div>
+                  <div style={{ display: "flex", justifyContent: "center", marginBottom: 12, color: "var(--navy)" }}>{card.icon}</div>
                   <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>{card.title}</div>
                   <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, fontSize: "0.9rem", color: "var(--text)", marginBottom: 4, wordBreak: "break-all" }}>{card.value}</div>
                   <div style={{ fontSize: "0.775rem", color: "var(--text-muted)" }}>{card.sub}</div>
@@ -227,7 +256,11 @@ export default function Contact() {
                   Nairobi, Kenya
                 </div>
                 <div id="map" style={{ marginTop: 16, background: "linear-gradient(135deg, #0F2A4A 0%, #1a3a5c 100%)", borderRadius: 10, padding: 24, textAlign: "center", minHeight: 120, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                  <div style={{ fontSize: "1.8rem" }}>📍</div>
+                  <div style={{ color: "rgba(255,255,255,0.7)" }}>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </div>
                   <div style={{ fontWeight: 700, color: "white", fontSize: "0.9rem" }}>AutoFix Kenya</div>
                   <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.6)" }}>Industrial Area, Nairobi</div>
                   <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer"
