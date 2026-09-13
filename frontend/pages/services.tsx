@@ -143,8 +143,8 @@ export default function Services() {
               <Link href="/appointments" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 48, paddingInline: 24, background: "#E8700A", color: "white", borderRadius: 8, fontSize: "0.9rem", fontWeight: 700, textDecoration: "none" }}>
                 Book a Service <ArrowRight />
               </Link>
-              <a href="tel:+254700123456" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 48, paddingInline: 24, background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.25)", borderRadius: 8, fontSize: "0.9rem", fontWeight: 600, textDecoration: "none" }}>
-                Call +254 700 123 456
+              <a href="tel:+254743645366" style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 48, paddingInline: 24, background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.25)", borderRadius: 8, fontSize: "0.9rem", fontWeight: 600, textDecoration: "none" }}>
+                Call 0743 645 366
               </a>
             </div>
           </div>

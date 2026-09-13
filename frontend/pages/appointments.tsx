@@ -479,8 +479,8 @@ export default function Appointments() {
               <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.6, marginBottom: 14 }}>
                 Call us and we'll set up your appointment over the phone.
               </div>
-              <a href="tel:+254700123456" style={{ display: "flex", alignItems: "center", gap: 8, height: 40, paddingInline: 16, background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, fontSize: "0.875rem", fontWeight: 600, textDecoration: "none" }}>
-                +254 700 123 456
+              <a href="tel:+254743645366" style={{ display: "flex", alignItems: "center", gap: 8, height: 40, paddingInline: 16, background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, fontSize: "0.875rem", fontWeight: 600, textDecoration: "none" }}>
+                0743 645 366
               </a>
             </div>
 

@@ -68,7 +68,7 @@ export default function Contact() {
           <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.1 13.88 19.79 19.79 0 011.03 5.25 2 2 0 013 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 10.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
         </svg>
       ),
-      title: "Call Us", value: "+254 700 123 456", sub: "Mon–Fri, 8AM – 6PM", href: "tel:+254700123456", hoverColor: "#059669",
+      title: "Call Us", value: "0743 645 366 / 0719 233 626", sub: "24/7 — always available", href: "tel:+254743645366", hoverColor: "#059669",
     },
     {
       icon: (
@@ -85,7 +85,7 @@ export default function Contact() {
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
         </svg>
       ),
-      title: "WhatsApp", value: "+254 700 123 456", sub: "Chat with us instantly", href: "https://wa.me/254700123456", hoverColor: "#059669",
+      title: "WhatsApp", value: "0743 645 366", sub: "Chat with us instantly", href: "https://wa.me/254743645366", hoverColor: "#059669",
     },
     {
       icon: (

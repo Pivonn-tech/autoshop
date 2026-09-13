@@ -231,12 +231,12 @@ export default function SiteHeader() {
         <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <PhoneIcon />
-            <a href="tel:+254700123456" style={{ color: "inherit", textDecoration: "none" }}>
-              +254 700 123 456
+            <a href="tel:+254743645366" style={{ color: "inherit", textDecoration: "none" }}>
+              0743 645 366 / 0719 233 626
             </a>
           </span>
           <span style={{ opacity: 0.3 }}>|</span>
-          <span>Mon–Fri: 8:00 AM – 6:00 PM &nbsp;·&nbsp; Sat: 9:00 AM – 4:00 PM</span>
+          <span>Open 24/7 — We're always here for you</span>
           <span style={{ opacity: 0.3 }}>|</span>
           <Link href="/appointments" style={{ color: "var(--amber)", fontWeight: 600, textDecoration: "none" }}>
             Book a Service →
@@ -358,7 +358,8 @@ export default function SiteHeader() {
 
             {/* AI Assistant pill */}
             <Link
-              href="/contact"
+              href="/ai-assistant"
+              className="ai-pill"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -375,14 +376,18 @@ export default function SiteHeader() {
                 flexShrink: 0,
                 boxShadow: "0 2px 8px rgba(109,40,217,0.35)",
                 transition: "all 180ms ease",
+                position: "relative",
+                overflow: "hidden",
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(109,40,217,0.5)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(109,40,217,0.55)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 8px rgba(109,40,217,0.35)"; (e.currentTarget as HTMLElement).style.transform = "none"; }}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/>
-                <path d="M9 21h6M12 17v4"/>
-                <path d="M5 9a7 7 0 0014 0"/>
+              {/* Shimmer sweep */}
+              <span className="ai-pill-shimmer" aria-hidden="true" />
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z" opacity="0.95"/>
+                <path d="M19 14l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" opacity="0.8"/>
+                <path d="M5 17l.4 1.2 1.2.4-1.2.4L5 20.2l-.4-1.2-1.2-.4 1.2-.4L5 17z" opacity="0.65"/>
               </svg>
               AI Assistant
             </Link>
@@ -830,7 +835,7 @@ export default function SiteHeader() {
                 ))}
                 {/* AI Assistant */}
                 <Link
-                  href="/contact"
+                  href="/ai-assistant"
                   onClick={() => setDrawerOpen(false)}
                   style={{
                     display: "flex",
@@ -900,6 +905,39 @@ export default function SiteHeader() {
         @media (min-width: 769px) {
           .show-mobile { display: none !important; }
           .hidden-mobile { display: flex !important; }
+        }
+
+        /* ── AI pill shimmer ── */
+        .ai-pill-shimmer {
+          position: absolute;
+          top: 0; left: -100%;
+          width: 60%;
+          height: 100%;
+          background: linear-gradient(
+            105deg,
+            transparent 20%,
+            rgba(255,255,255,0.28) 50%,
+            transparent 80%
+          );
+          animation: ai-shimmer 2.6s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes ai-shimmer {
+          0%   { left: -100%; }
+          45%  { left: 140%; }
+          100% { left: 140%; }
+        }
+
+        /* Sparkle pulse on the star icon */
+        .ai-pill svg {
+          animation: ai-sparkle 2.6s ease-in-out infinite;
+          transform-origin: center;
+        }
+        @keyframes ai-sparkle {
+          0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          40%       { transform: scale(1.25) rotate(18deg); opacity: 1; }
+          55%       { transform: scale(0.9) rotate(-6deg); opacity: 0.85; }
+          70%       { transform: scale(1.05) rotate(4deg); opacity: 1; }
         }
       `}</style>
     </>

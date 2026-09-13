@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { services, reviews } from "../lib/businessData";
 import { getProductCardImage } from "../lib/productImages";
@@ -85,160 +86,267 @@ function ToolsTabIcon() {
   );
 }
 
-// ── Search Widget ──────────────────────────────────────────────────────────────
-const VEHICLE_MAKES = ["Any Make", "Toyota", "Subaru", "Mitsubishi", "Isuzu", "Nissan", "Honda", "Ford", "Mazda"];
-const PART_CATS = ["All Categories", "Braking", "Engine", "Suspension", "Electrical", "Body"];
-const SVC_CATS = ["All Services", "Diagnostics", "Maintenance", "Safety", "Tires", "Electrical", "Care"];
-const PRICE_RANGES = ["Any Price", "Under KSh 10k", "KSh 10k – 50k", "KSh 50k – 200k", "KSh 200k – 500k", "Over KSh 500k"];
+// ── AI Search Widget ───────────────────────────────────────────────────────────
+const EXAMPLE_PROMPTS = [
+  "Isuzu truck under KSh 2M",
+  "Honda motorcycle good for Nairobi",
+  "Toyota Hilux with low mileage",
+  "Brake pads for Subaru Forester",
+  "Book an oil change service",
+  "Pick-up under KSh 1.5M",
+];
+
+// Parse the natural language query into a URL
+function parseQuery(q: string): string {
+  const lower = q.toLowerCase();
+
+  // ── Parts keywords ──
+  const partKeywords = ["brake", "oil filter", "shock", "battery", "clutch", "tyre", "tire", "bulb", "belt", "pad", "filter", "absorber", "alternator"];
+  const isPart = partKeywords.some((k) => lower.includes(k));
+
+  // ── Service keywords ──
+  const svcKeywords = ["service", "repair", "diagnos", "alignment", "detailing", "change", "check", "fix", "book", "appointment"];
+  const isService = svcKeywords.some((k) => lower.includes(k));
+
+  if (isPart) {
+    const p = new URLSearchParams({ q });
+    if (lower.includes("brake")) p.set("system", "Braking");
+    else if (lower.includes("engine") || lower.includes("oil") || lower.includes("belt")) p.set("system", "Engine");
+    else if (lower.includes("shock") || lower.includes("absorber")) p.set("system", "Suspension");
+    else if (lower.includes("battery") || lower.includes("alternator")) p.set("system", "Electrical");
+    return `/parts?${p}`;
+  }
+
+  if (isService) return `/services?q=${encodeURIComponent(q)}`;
+
+  // ── Vehicle search ──
+  const p = new URLSearchParams({ q });
+
+  const makes = ["toyota", "subaru", "mitsubishi", "isuzu", "nissan", "honda", "ford", "mazda", "suzuki", "bajaj", "tvs"];
+  const foundMake = makes.find((m) => lower.includes(m));
+  if (foundMake) p.set("make", foundMake.charAt(0).toUpperCase() + foundMake.slice(1));
+
+  const cats = [
+    { key: "truck", val: "trucks" }, { key: "lorry", val: "trucks" },
+    { key: "motorcycle", val: "motorcycles" }, { key: "motorbike", val: "motorcycles" }, { key: "boda", val: "motorcycles" },
+    { key: "pickup", val: "pickups" }, { key: "pick-up", val: "pickups" }, { key: "pick up", val: "pickups" },
+  ];
+  const foundCat = cats.find((c) => lower.includes(c.key));
+  if (foundCat) p.set("category", foundCat.val);
+
+  // Budget extraction: "under X" / "below X" / "less than X"
+  const budgetMatch = lower.match(/(?:under|below|less than|max|upto|up to)\s*(?:ksh|kes|sh)?\s*([\d,.]+)\s*([mk]?)/i);
+  if (budgetMatch) {
+    let amount = parseFloat(budgetMatch[1].replace(/,/g, ""));
+    const suffix = budgetMatch[2]?.toLowerCase();
+    if (suffix === "m") amount *= 1_000_000;
+    else if (suffix === "k") amount *= 1_000;
+    p.set("maxPrice", String(amount));
+  }
+
+  const conditionNew = /\bnew\b/.test(lower);
+  const conditionUsed = /\bused\b|\bsecond.?hand\b/.test(lower);
+  if (conditionNew) p.set("condition", "new");
+  if (conditionUsed) p.set("condition", "used");
+
+  return `/inventory?${p}`;
+}
 
 function SearchWidget() {
-  const [tab, setTab] = useState<"vehicles" | "parts" | "services">("vehicles");
-  const [col1, setCol1] = useState("");
-  const [col2, setCol2] = useState("");
-
-  const tabDefs = [
-    { id: "vehicles" as const, icon: <CarTabIcon />, label: "Vehicles" },
-    { id: "parts" as const, icon: <WrenchTabIcon />, label: "Parts" },
-    { id: "services" as const, icon: <ToolsTabIcon />, label: "Services" },
-  ];
-
-  const col1Options = tab === "vehicles" ? VEHICLE_MAKES : tab === "parts" ? PART_CATS : SVC_CATS;
-  const col2Options = tab === "vehicles" ? PRICE_RANGES : ["Any Budget", "Under KSh 5k", "KSh 5k–20k", "KSh 20k–80k", "Over KSh 80k"];
-  const col1Label = tab === "vehicles" ? "Make" : tab === "parts" ? "Category" : "Service Type";
-  const col2Label = tab === "vehicles" ? "Price Range" : "Budget";
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
 
   const handleSearch = () => {
-    if (tab === "vehicles") {
-      const p = new URLSearchParams();
-      if (col1 && !col1.startsWith("Any")) p.set("make", col1);
-      if (col2 && !col2.startsWith("Any")) p.set("price", col2);
-      window.location.href = `/inventory?${p}`;
-    } else if (tab === "parts") {
-      const p = new URLSearchParams();
-      if (col1 && !col1.startsWith("All")) p.set("system", col1);
-      window.location.href = `/parts?${p}`;
-    } else {
-      const p = new URLSearchParams();
-      if (col1 && !col1.startsWith("All")) p.set("category", col1);
-      window.location.href = `/services?${p}`;
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    setLoading(true);
+    // Small delay so the spinner is visible — feels like "thinking"
+    setTimeout(() => {
+      router.push(parseQuery(trimmed));
+    }, 520);
+  };
+
+  const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSearch();
     }
   };
 
-  const selectStyle: React.CSSProperties = {
-    width: "100%",
-    height: 48,
-    paddingInline: 14,
-    background: "white",
-    border: "1.5px solid #E5E7EB",
-    borderRadius: 8,
-    color: "#111827",
-    fontSize: "0.9375rem",
-    outline: "none",
-    appearance: "none",
-    backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234B5563'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\")",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "right 12px center",
-    backgroundSize: 16,
-    paddingRight: 36,
-    cursor: "pointer",
-  };
-
   return (
-    <div
-      style={{
-        background: "white",
-        borderRadius: 16,
-        boxShadow: "0 20px 60px rgba(15,42,74,0.22)",
-        overflow: "hidden",
-        width: "100%",
-        maxWidth: 680,
-      }}
-    >
-      {/* Tabs */}
-      <div style={{ display: "flex", borderBottom: "1px solid #E5E7EB" }}>
-        {tabDefs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => { setTab(t.id); setCol1(""); setCol2(""); }}
+    <div style={{ width: "100%", maxWidth: 860 }}>
+
+      {/* ── Heading ── */}
+      <div style={{ marginBottom: 20, textAlign: "center" }}>
+        <h2 style={{
+          fontFamily: "var(--font-space-grotesk, sans-serif)",
+          fontSize: "clamp(1.5rem, 3vw, 2rem)",
+          fontWeight: 700,
+          color: "white",
+          margin: "0 0 8px",
+          letterSpacing: "-0.02em",
+        }}>
+          Let's find your{" "}
+          <span style={{
+            color: "#E8700A",
+            position: "relative",
+            display: "inline-block",
+          }}>
+            perfect vehicle
+            <svg style={{ position: "absolute", bottom: -4, left: 0, width: "100%", overflow: "visible" }}
+              viewBox="0 0 200 8" preserveAspectRatio="none" height="6">
+              <path d="M0 6 Q50 0 100 5 Q150 10 200 4" stroke="#E8700A" strokeWidth="2.5"
+                fill="none" strokeLinecap="round" opacity="0.6"/>
+            </svg>
+          </span>
+        </h2>
+        <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", margin: 0 }}>
+          Describe what you're looking for — make, budget, type, anything
+        </p>
+      </div>
+
+      {/* ── Input card ── */}
+      <div
+        style={{
+          background: "white",
+          borderRadius: 16,
+          boxShadow: focused
+            ? "0 0 0 3px rgba(232,112,10,0.35), 0 24px 64px rgba(15,42,74,0.32)"
+            : "0 24px 64px rgba(15,42,74,0.28)",
+          transition: "box-shadow 200ms ease",
+          overflow: "hidden",
+        }}
+      >
+        {/* Textarea row */}
+        <div style={{ display: "flex", alignItems: "flex-end", padding: "16px 16px 12px 20px", gap: 12 }}>
+          {/* Sparkle icon */}
+          <div style={{
+            width: 36, height: 36, borderRadius: 10, flexShrink: 0, marginBottom: 2,
+            background: "linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 2px 8px rgba(109,40,217,0.3)",
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z"/>
+              <path d="M19 14l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" opacity="0.7"/>
+            </svg>
+          </div>
+
+          <textarea
+            ref={inputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKey}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            placeholder="e.g. Isuzu truck under KSh 2M, or Honda motorcycle for Nairobi…"
+            rows={1}
             style={{
               flex: 1,
-              height: 52,
+              border: "none",
+              outline: "none",
+              resize: "none",
+              fontSize: "1.05rem",
+              color: "#111827",
+              fontFamily: "inherit",
+              lineHeight: 1.6,
+              background: "transparent",
+              maxHeight: 120,
+              overflow: "auto",
+              paddingTop: 6,
+            }}
+            onInput={(e) => {
+              const el = e.currentTarget;
+              el.style.height = "auto";
+              el.style.height = el.scrollHeight + "px";
+            }}
+          />
+
+          {/* Search button */}
+          <button
+            onClick={handleSearch}
+            disabled={!query.trim() || loading}
+            style={{
+              flexShrink: 0,
+              height: 44,
+              paddingInline: 22,
+              borderRadius: 10,
+              border: "none",
+              background: query.trim() && !loading ? "#E8700A" : "#F3F4F6",
+              color: query.trim() && !loading ? "white" : "#9CA3AF",
+              fontSize: "0.9rem",
+              fontWeight: 700,
+              cursor: query.trim() && !loading ? "pointer" : "default",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              gap: 6,
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              color: tab === t.id ? "#0F2A4A" : "#6B7280",
-              background: tab === t.id ? "white" : "#F5F7FA",
-              border: "none",
-              borderBottom: `3px solid ${tab === t.id ? "#E8700A" : "transparent"}`,
-              cursor: "pointer",
+              gap: 8,
               transition: "all 180ms ease",
+              boxShadow: query.trim() && !loading ? "0 2px 10px rgba(232,112,10,0.35)" : "none",
+              marginBottom: 2,
             }}
+            onMouseEnter={(e) => { if (query.trim() && !loading) (e.currentTarget as HTMLElement).style.background = "#d4620a"; }}
+            onMouseLeave={(e) => { if (query.trim() && !loading) (e.currentTarget as HTMLElement).style.background = "#E8700A"; }}
           >
-            {t.icon} {t.label}
+            {loading ? (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: "spin 0.7s linear infinite" }}>
+                  <path d="M12 2a10 10 0 0110 10"/>
+                </svg>
+                Searching…
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                Search
+              </>
+            )}
           </button>
-        ))}
-      </div>
-
-      {/* Fields */}
-      <div style={{ padding: "20px 24px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151" }}>{col1Label}</label>
-          <select value={col1} onChange={(e) => setCol1(e.target.value)} style={selectStyle}>
-            {col1Options.map((o) => <option key={o}>{o}</option>)}
-          </select>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#374151" }}>{col2Label}</label>
-          <select value={col2} onChange={(e) => setCol2(e.target.value)} style={selectStyle}>
-            {col2Options.map((o) => <option key={o}>{o}</option>)}
-          </select>
-        </div>
-        <button
-          onClick={handleSearch}
-          style={{
-            gridColumn: "1 / -1",
-            height: 48,
-            background: "#E8700A",
-            color: "white",
-            border: "none",
-            borderRadius: 8,
-            fontSize: "0.9375rem",
-            fontWeight: 700,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            transition: "background 180ms ease",
-          }}
-          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "#f07b1a")}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "#E8700A")}
-        >
-          Search {tab === "vehicles" ? "Vehicles" : tab === "parts" ? "Parts" : "Services"}
-          <ArrowRight />
-        </button>
-      </div>
 
-      {/* Quick links */}
-      <div style={{ padding: "12px 24px 16px", borderTop: "1px solid #F5F7FA", display: "flex", gap: 16, flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.78rem", color: "#9CA3AF", fontWeight: 600 }}>POPULAR:</span>
-        {(tab === "vehicles"
-          ? ["Toyota Corolla", "Subaru Forester", "Isuzu Truck"]
-          : tab === "parts"
-          ? ["Brake Pads", "Oil Filter", "Shock Absorbers"]
-          : ["Oil Change", "Engine Diagnostics", "Wheel Alignment"]
-        ).map((q) => (
-          <Link
-            key={q}
-            href={tab === "vehicles" ? `/inventory?q=${encodeURIComponent(q)}` : tab === "parts" ? "/parts" : "/services"}
-            style={{ fontSize: "0.8rem", color: "#0F2A4A", fontWeight: 500, textDecoration: "none" }}
-          >
-            {q}
-          </Link>
-        ))}
+        {/* Divider */}
+        <div style={{ height: 1, background: "#F3F4F6", marginInline: 20 }} />
+
+        {/* Example chips */}
+        <div style={{ padding: "10px 20px 14px", display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+          <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.07em", textTransform: "uppercase", marginRight: 4 }}>
+            Try:
+          </span>
+          {EXAMPLE_PROMPTS.map((p) => (
+            <button
+              key={p}
+              onClick={() => { setQuery(p); inputRef.current?.focus(); }}
+              style={{
+                padding: "5px 12px",
+                borderRadius: 999,
+                border: "1.5px solid #E5E7EB",
+                background: "white",
+                color: "#374151",
+                fontSize: "0.8rem",
+                fontWeight: 500,
+                cursor: "pointer",
+                transition: "all 150ms ease",
+                whiteSpace: "nowrap",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#E8700A";
+                (e.currentTarget as HTMLElement).style.color = "#E8700A";
+                (e.currentTarget as HTMLElement).style.background = "rgba(232,112,10,0.05)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB";
+                (e.currentTarget as HTMLElement).style.color = "#374151";
+                (e.currentTarget as HTMLElement).style.background = "white";
+              }}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -578,167 +686,166 @@ export default function HomePage() {
           background: "linear-gradient(135deg, #091e33 0%, #0F2A4A 45%, #1a3a5c 100%)",
           color: "white",
           overflow: "hidden",
-          paddingTop: 80,
-          paddingBottom: 0,
+          paddingTop: 72,
+          paddingBottom: 64,
         }}
       >
         {/* Decorative circles */}
         <div style={{ position: "absolute", top: -120, right: -120, width: 480, height: 480, borderRadius: "50%", background: "rgba(232,112,10,0.06)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: -80, left: -80, width: 320, height: 320, borderRadius: "50%", background: "rgba(255,255,255,0.03)", pointerEvents: "none" }} />
 
-        <div className="container" style={{ position: "relative", zIndex: 2 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(300px,560px)", gap: 64, alignItems: "center" }}>
-            {/* Left copy */}
-            <div style={{ paddingBottom: 80 }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(232,112,10,0.15)", border: "1px solid rgba(232,112,10,0.3)", borderRadius: 20, padding: "6px 14px", marginBottom: 24 }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#E8700A", display: "block", animation: "pulse 2s infinite" }} />
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#E8700A", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                  Nairobi's Premier Auto Centre
-                </span>
-              </div>
+        <div className="container" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
 
-              <h1 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "clamp(2.2rem, 5vw, 3.8rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.025em", color: "white", margin: "0 0 20px" }}>
-                Drive With <span style={{ color: "#E8700A" }}>Confidence.</span>
-                <br />Service With Trust.
-              </h1>
+          {/* ── Search widget — TOP, center stage ── */}
+          <div style={{ width: "100%", maxWidth: 900, marginBottom: 20 }}>
+            <SearchWidget />
+          </div>
 
-              <p style={{ fontSize: "clamp(1rem, 2vw, 1.15rem)", lineHeight: 1.75, color: "rgba(255,255,255,0.72)", maxWidth: 480, margin: "0 0 36px" }}>
-                From premium commercial vehicles to expert workshop services and genuine parts — AUTOFIX KENYA is Nairobi's most trusted automotive destination.
-              </p>
+          {/* ── Quick-action pills ── */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginBottom: 40 }}>
+            {[
+              {
+                href: "/inventory?condition=used",
+                label: "Shop Used",
+                accent: false,
+                icon: (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2"/>
+                    <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/inventory?condition=new",
+                label: "Shop New",
+                accent: false,
+                icon: (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/inventory?category=trucks",
+                label: "Trucks",
+                accent: false,
+                icon: (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/inventory?category=motorcycles",
+                label: "Motorcycles",
+                accent: false,
+                icon: (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/>
+                    <path d="M15 6h-3l-3 6 3 3h6l2-5-5-4z"/>
+                  </svg>
+                ),
+              },
+              {
+                href: "/contact",
+                label: "Get a Quote",
+                accent: true,
+                icon: (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                ),
+              },
+            ].map((pill) => (
+              <Link
+                key={pill.href + pill.label}
+                href={pill.href}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 7,
+                  height: 36, paddingInline: 16,
+                  borderRadius: 999,
+                  border: pill.accent ? "1.5px solid rgba(232,112,10,0.5)" : "1.5px solid rgba(255,255,255,0.3)",
+                  background: pill.accent ? "rgba(232,112,10,0.15)" : "rgba(255,255,255,0.07)",
+                  color: pill.accent ? "#f5a05a" : "white",
+                  fontSize: "0.82rem", fontWeight: pill.accent ? 700 : 600,
+                  textDecoration: "none",
+                  backdropFilter: "blur(6px)",
+                  transition: "all 180ms ease",
+                }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget as HTMLElement;
+                  if (pill.accent) { el.style.background = "rgba(232,112,10,0.28)"; }
+                  else { el.style.background = "rgba(255,255,255,0.16)"; el.style.borderColor = "rgba(255,255,255,0.55)"; }
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLElement;
+                  if (pill.accent) { el.style.background = "rgba(232,112,10,0.15)"; }
+                  else { el.style.background = "rgba(255,255,255,0.07)"; el.style.borderColor = "rgba(255,255,255,0.3)"; }
+                }}
+              >
+                {pill.icon}
+                {pill.label}
+              </Link>
+            ))}
+          </div>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                <Link
-                  href="/inventory"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, paddingInline: 28, background: "#E8700A", color: "white", borderRadius: 8, fontSize: "0.9375rem", fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 16px rgba(232,112,10,0.4)" }}
-                >
-                  Browse Vehicles <ArrowRight />
-                </Link>
-                <Link
-                  href="/appointments"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, paddingInline: 28, background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.25)", borderRadius: 8, fontSize: "0.9375rem", fontWeight: 600, textDecoration: "none", backdropFilter: "blur(4px)" }}
-                >
-                  Book a Service
-                </Link>
-              </div>
-
-              {/* Social proof */}
-              <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 36, paddingTop: 28, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ display: "flex" }}>
-                  {["MN","PK","AH","DO","GW"].map((init, i) => (
-                    <div key={i} style={{ width: 36, height: 36, borderRadius: "50%", background: ["#0F2A4A","#E8700A","#059669","#7C3AED","#DC2626"][i], border: "2px solid rgba(255,255,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: 700, color: "white", marginLeft: i === 0 ? 0 : -10, zIndex: 5 - i }}>
-                      {init}
-                    </div>
-                  ))}
+          {/* Social proof */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.1)", marginBottom: 56 }}>
+            <div style={{ display: "flex" }}>
+              {["MN","PK","AH","DO","GW"].map((init, i) => (
+                <div key={i} style={{ width: 36, height: 36, borderRadius: "50%", background: ["#0F2A4A","#E8700A","#059669","#7C3AED","#DC2626"][i], border: "2px solid rgba(255,255,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: 700, color: "white", marginLeft: i === 0 ? 0 : -10, zIndex: 5 - i }}>
+                  {init}
                 </div>
-                <div>
-                  <div style={{ display: "flex", gap: 2, color: "#FBBF24", marginBottom: 2 }}>
-                    {[1,2,3,4,5].map((s) => <StarFill key={s} />)}
-                  </div>
-                  <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.65)" }}>
-                    Trusted by <strong style={{ color: "white" }}>5,000+</strong> Kenyan drivers
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-
-            {/* Right: Search widget */}
-            <div style={{ paddingBottom: 40, display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "rgba(255,255,255,0.55)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
-                Find What You Need
+            <div>
+              <div style={{ display: "flex", gap: 2, color: "#FBBF24", marginBottom: 2 }}>
+                {[1,2,3,4,5].map((s) => <StarFill key={s} />)}
               </div>
-              <SearchWidget />
-              {/* ── Quick-action pills ── */}
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {[
-                  {
-                    href: "/inventory?condition=used",
-                    label: "Shop Used",
-                    accent: false,
-                    icon: (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h3.44L8 4h8l1.56 3H21a2 2 0 012 2v6a2 2 0 01-2 2h-2"/>
-                        <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
-                      </svg>
-                    ),
-                  },
-                  {
-                    href: "/inventory?condition=new",
-                    label: "Shop New",
-                    accent: false,
-                    icon: (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                      </svg>
-                    ),
-                  },
-                  {
-                    href: "/inventory?category=trucks",
-                    label: "Trucks",
-                    accent: false,
-                    icon: (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
-                        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                      </svg>
-                    ),
-                  },
-                  {
-                    href: "/inventory?category=motorcycles",
-                    label: "Motorcycles",
-                    accent: false,
-                    icon: (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/>
-                        <path d="M15 6h-3l-3 6 3 3h6l2-5-5-4z"/>
-                      </svg>
-                    ),
-                  },
-                  {
-                    href: "/contact",
-                    label: "Get a Quote",
-                    accent: true,
-                    icon: (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-                      </svg>
-                    ),
-                  },
-                ].map((pill) => (
-                  <Link
-                    key={pill.href + pill.label}
-                    href={pill.href}
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: 7,
-                      height: 36, paddingInline: 16,
-                      borderRadius: 999,
-                      border: pill.accent ? "1.5px solid rgba(232,112,10,0.5)" : "1.5px solid rgba(255,255,255,0.3)",
-                      background: pill.accent ? "rgba(232,112,10,0.15)" : "rgba(255,255,255,0.07)",
-                      color: pill.accent ? "#f5a05a" : "white",
-                      fontSize: "0.82rem", fontWeight: pill.accent ? 700 : 600,
-                      textDecoration: "none",
-                      backdropFilter: "blur(6px)",
-                      transition: "all 180ms ease",
-                    }}
-                    onMouseEnter={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      if (pill.accent) { el.style.background = "rgba(232,112,10,0.28)"; }
-                      else { el.style.background = "rgba(255,255,255,0.16)"; el.style.borderColor = "rgba(255,255,255,0.55)"; }
-                    }}
-                    onMouseLeave={e => {
-                      const el = e.currentTarget as HTMLElement;
-                      if (pill.accent) { el.style.background = "rgba(232,112,10,0.15)"; }
-                      else { el.style.background = "rgba(255,255,255,0.07)"; el.style.borderColor = "rgba(255,255,255,0.3)"; }
-                    }}
-                  >
-                    {pill.icon}
-                    {pill.label}
-                  </Link>
-                ))}
+              <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.65)" }}>
+                Trusted by <strong style={{ color: "white" }}>5,000+</strong> Kenyan drivers
               </div>
             </div>
           </div>
+
+          {/* Badge */}
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(232,112,10,0.15)", border: "1px solid rgba(232,112,10,0.3)", borderRadius: 20, padding: "6px 14px", marginBottom: 24 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#E8700A", display: "block", animation: "pulse 2s infinite" }} />
+            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#E8700A", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+              Nairobi's Premier Auto Centre
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h1 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "clamp(2.4rem, 5.5vw, 4rem)", fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.025em", color: "white", margin: "0 0 20px", maxWidth: 720 }}>
+            Drive With <span style={{ color: "#E8700A" }}>Confidence.</span>
+            <br />Service With Trust.
+          </h1>
+
+          {/* Subheading */}
+          <p style={{ fontSize: "clamp(1rem, 2vw, 1.15rem)", lineHeight: 1.75, color: "rgba(255,255,255,0.72)", maxWidth: 560, margin: "0 0 32px" }}>
+            From premium commercial vehicles to expert workshop services and genuine parts — AUTOFIX KENYA is Nairobi's most trusted automotive destination.
+          </p>
+
+          {/* CTA buttons */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
+            <Link
+              href="/inventory"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, paddingInline: 32, background: "#E8700A", color: "white", borderRadius: 8, fontSize: "0.9375rem", fontWeight: 700, textDecoration: "none", boxShadow: "0 4px 16px rgba(232,112,10,0.4)" }}
+            >
+              Browse Vehicles <ArrowRight />
+            </Link>
+            <Link
+              href="/appointments"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 52, paddingInline: 32, background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.25)", borderRadius: 8, fontSize: "0.9375rem", fontWeight: 600, textDecoration: "none", backdropFilter: "blur(4px)" }}
+            >
+              Book a Service
+            </Link>
+          </div>
+
         </div>
       </section>
 
@@ -1178,7 +1285,7 @@ export default function HomePage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, maxWidth: 900, margin: "0 auto" }}>
             {[
-              { icon: <PhoneIcon />, title: "Call Us", body: "+254 700 123 456", sub: "Mon–Fri 8AM–6PM", href: "tel:+254700123456" },
+              { icon: <PhoneIcon />, title: "Call Us", body: "0743 645 366 / 0719 233 626", sub: "24/7 — always available", href: "tel:+254743645366" },
               { icon: <MailIcon />, title: "Email Us", body: "service@autofixkenya.co.ke", sub: "Response within 2 hours", href: "mailto:service@autofixkenya.co.ke" },
               { icon: <MapPinIcon />, title: "Visit Us", body: "Industrial Area, Nairobi", sub: "Near the KRA offices", href: "/contact" },
             ].map((c, i) => (
