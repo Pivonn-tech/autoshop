@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
@@ -143,16 +141,29 @@ export default function Parts() {
       });
       const returnedId = res.headers.get("x-cart-id");
       if (returnedId) localStorage.setItem("cartId", returnedId);
-      setAddedCart(part.id);
-      setTimeout(() => setAddedCart(null), 2000);
+      if (res.ok) {
+        setAddedCart(part.id);
+        setTimeout(() => setAddedCart(null), 2000);
+      } else {
+        setCartError("Could not add to cart. Please try again.");
+        setTimeout(() => setCartError(null), 3000);
+      }
     } catch {
-      setAddedCart(part.id);
-      setTimeout(() => setAddedCart(null), 2000);
+      setCartError("Network error — please try again.");
+      setTimeout(() => setCartError(null), 3000);
     }
   };
 
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
+
+      {/* Error toast */}
+      {cartError && (
+        <div style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 9999, background: "#DC2626", color: "white", padding: "12px 24px", borderRadius: 10, fontWeight: 600, fontSize: "0.875rem", boxShadow: "0 8px 24px rgba(0,0,0,0.2)", display: "flex", alignItems: "center", gap: 8 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          {cartError}
+        </div>
+      )}
 
       {/* Hero */}
       <div style={{ background: "var(--navy)", color: "white", paddingBlock: 56 }}>

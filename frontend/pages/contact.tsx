@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { businessHours } from "../lib/businessData";
@@ -31,6 +29,8 @@ export default function Contact() {
   const [form, setForm] = useState<ContactForm>({ name: "", email: "", phone: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Partial<ContactForm>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
 
   const set = (key: keyof ContactForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -38,14 +38,35 @@ export default function Contact() {
     setErrors(er => ({ ...er, [key]: undefined }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Partial<ContactForm> = {};
     if (!form.name.trim()) errs.name = "Name is required";
     if (!form.email.trim() || !form.email.includes("@")) errs.email = "Valid email required";
     if (!form.message.trim() || form.message.length < 10) errs.message = "Please write at least 10 characters";
     setErrors(errs);
-    if (Object.keys(errs).length === 0) setSubmitted(true);
+    if (Object.keys(errs).length > 0) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("server error");
+      setSubmitted(true);
+    } catch {
+      // Fallback: open mailto so the message is never lost
+      const body = encodeURIComponent(
+        `Name: ${form.name}\nPhone: ${form.phone || "—"}\nSubject: ${form.subject || "General"}\n\n${form.message}`
+      );
+      window.location.href = `mailto:service@autofixkenya.co.ke?subject=${encodeURIComponent(form.subject || "Website Enquiry")}&body=${body}`;
+      setSubmitError("Could not reach the server — opening your email client instead.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputBase: React.CSSProperties = {
@@ -224,11 +245,17 @@ export default function Contact() {
                   </div>
 
                   <button type="submit"
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 52, background: "var(--amber)", color: "white", border: "none", borderRadius: 10, fontSize: "0.9375rem", fontWeight: 700, cursor: "pointer", transition: "background 180ms ease" }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#f07b1a")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "var(--amber)")}>
-                    Send Message <ArrowRight />
+                    disabled={submitting}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 52, background: submitting ? "#c4600a" : "var(--amber)", color: "white", border: "none", borderRadius: 10, fontSize: "0.9375rem", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer", transition: "background 180ms ease", opacity: submitting ? 0.8 : 1 }}
+                    onMouseEnter={e => { if (!submitting) (e.currentTarget.style.background = "#f07b1a"); }}
+                    onMouseLeave={e => { if (!submitting) (e.currentTarget.style.background = "var(--amber)"); }}>
+                    {submitting ? "Sending…" : <><span>Send Message</span> <ArrowRight /></>}
                   </button>
+                  {submitError && (
+                    <div style={{ fontSize: "0.8rem", color: "#D97706", background: "rgba(217,119,6,0.08)", border: "1px solid rgba(217,119,6,0.25)", borderRadius: 8, padding: "10px 14px", marginTop: 4 }}>
+                      {submitError}
+                    </div>
+                  )}
                 </form>
               </div>
             )}

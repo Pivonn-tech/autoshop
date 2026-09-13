@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -166,8 +164,33 @@ export default function SiteHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
+  const [cartCount, setCartCount] = useState(0);
   const searchRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  // Load real cart count from backend (or localStorage fallback)
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const cartId = localStorage.getItem("cartId");
+        const headers: Record<string, string> = {};
+        if (cartId) headers["x-cart-id"] = cartId;
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart`, { headers });
+        if (res.ok) {
+          const data = await res.json();
+          const returned = res.headers.get("x-cart-id");
+          if (returned) localStorage.setItem("cartId", returned);
+          setCartCount(data.items?.reduce((sum: number, i: { quantity: number }) => sum + i.quantity, 0) ?? 0);
+        }
+      } catch {
+        // silently ignore — badge just won't show
+      }
+    };
+    fetchCart();
+    // Refresh whenever the route changes (e.g. after adding to cart)
+    router.events?.on("routeChangeComplete", fetchCart);
+    return () => router.events?.off("routeChangeComplete", fetchCart);
+  }, [router.events]);
 
   // Scroll detection
   useEffect(() => {
@@ -453,6 +476,7 @@ export default function SiteHeader() {
             >
               <CartIcon />
               {/* Cart badge */}
+              {cartCount > 0 && (
               <span
                 style={{
                   position: "absolute",
@@ -471,8 +495,9 @@ export default function SiteHeader() {
                   border: "2px solid var(--bg)",
                 }}
               >
-                2
+                {cartCount > 99 ? "99+" : cartCount}
               </span>
+              )}
             </Link>
 
             {/* Account */}

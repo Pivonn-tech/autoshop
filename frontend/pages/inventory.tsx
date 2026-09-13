@@ -1,6 +1,5 @@
-"use client";
-
 import { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import { getProductCardImage } from "../lib/productImages";
@@ -148,12 +147,15 @@ function ProductCard({ product, view }: { product: Product; view: "grid" | "list
 }
 
 export default function Inventory() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("newest");
   const [maxPrice, setMaxPrice] = useState(2000000);
   const [category, setCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filtersReady, setFiltersReady] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`)
@@ -162,15 +164,41 @@ export default function Inventory() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Initialise filters from URL query params once router is ready
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { q, category: cat, maxPrice: mp, condition } = router.query;
+    if (q) setSearchQuery(String(q));
+    if (cat) setCategory(String(cat));
+    if (mp) setMaxPrice(Number(mp));
+    // condition param noted — will be wired when backend supports it
+    void condition;
+    setFiltersReady(true);
+  }, [router.isReady, router.query]);
+
   const categories = ["All", ...Array.from(new Set(products.map(p => p.category)))];
 
   const filtered = useMemo(() => {
     return products
-      .filter(p => p.price <= maxPrice && (category === "All" || p.category === category))
+      .filter(p => {
+        const matchesPrice = p.price <= maxPrice;
+        const matchesCategory = category === "All" || p.category === category;
+        const matchesSearch = searchQuery === "" ||
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.category.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesPrice && matchesCategory && matchesSearch;
+      })
       .sort((a, b) => sortBy === "price-low" ? a.price - b.price : sortBy === "price-high" ? b.price - a.price : b.id - a.id);
-  }, [products, maxPrice, category, sortBy]);
+  }, [products, maxPrice, category, sortBy, searchQuery]);
 
-  const resetFilters = () => { setMaxPrice(2000000); setCategory("All"); setSortBy("newest"); };
+  const resetFilters = () => {
+    setMaxPrice(2000000);
+    setCategory("All");
+    setSortBy("newest");
+    setSearchQuery("");
+    router.replace("/inventory", undefined, { shallow: true });
+  };
 
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
@@ -247,11 +275,31 @@ export default function Inventory() {
 
         {/* ── Main Content ── */}
         <main>
+          {/* Search bar */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, height: 44, background: "var(--bg)", border: "1.5px solid var(--border)", borderRadius: 9, padding: "0 14px" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: "var(--text-muted)" }}>
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search vehicles by name, type…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{ border: "none", outline: "none", background: "transparent", fontSize: "0.9rem", color: "var(--text)", flex: 1, fontFamily: "inherit" }}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 0, lineHeight: 1 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            )}
+          </div>
+
           {/* Toolbar */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
             <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
               Showing <strong style={{ color: "var(--text)" }}>{filtered.length}</strong> vehicles
               {category !== "All" && <span> in <strong style={{ color: "var(--navy)" }}>{category}</strong></span>}
+              {searchQuery && <span> matching <strong style={{ color: "var(--amber)" }}>"{searchQuery}"</strong></span>}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {[{ v: "grid" as const, icon: <GridIcon /> }, { v: "list" as const, icon: <ListIcon /> }].map(({ v, icon }) => (
@@ -264,7 +312,7 @@ export default function Inventory() {
           </div>
 
           {/* Results */}
-          {loading ? (
+          {loading || !filtersReady ? (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24 }}>
               {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
             </div>

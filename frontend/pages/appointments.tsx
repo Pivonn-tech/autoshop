@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -141,13 +139,24 @@ export default function Appointments() {
     const e: Partial<FormData> = {};
     if (stepIndex === 0) {
       if (!form.name.trim()) e.name = "Name is required";
-      if (!form.phone.trim()) e.phone = "Phone is required";
+      // Kenyan phone: 07xx or 01xx (10 digits) or +2547xx (12 digits)
+      const phoneRe = /^(\+?254|0)[17]\d{8}$/;
+      if (!form.phone.trim()) {
+        e.phone = "Phone is required";
+      } else if (!phoneRe.test(form.phone.replace(/\s/g, ""))) {
+        e.phone = "Enter a valid Kenyan phone number (e.g. 0712 345678)";
+      }
       if (!form.email.trim() || !form.email.includes("@")) e.email = "Valid email required";
     }
     if (stepIndex === 1) {
       if (!form.make) e.make = "Make is required";
       if (!form.model.trim()) e.model = "Model is required";
-      if (!form.year.trim()) e.year = "Year is required";
+      const yearNum = parseInt(form.year, 10);
+      if (!form.year.trim()) {
+        e.year = "Year is required";
+      } else if (isNaN(yearNum) || yearNum < 1970 || yearNum > new Date().getFullYear() + 1) {
+        e.year = `Enter a year between 1970 and ${new Date().getFullYear() + 1}`;
+      }
       if (!form.licensePlate.trim()) e.licensePlate = "Plate is required";
     }
     if (stepIndex === 2) {

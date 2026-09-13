@@ -1,8 +1,7 @@
-"use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { services, reviews, businessHours } from "../lib/businessData";
+import { useRouter } from "next/router";
+import { services, reviews } from "../lib/businessData";
 
 function ArrowRight() {
   return (
@@ -113,10 +112,26 @@ const SERVICE_ICON_MAP: Record<string, React.ReactNode> = {
 const ALL_CATS = ["All", ...Array.from(new Set(services.map(s => s.category)))];
 
 export default function Services() {
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
   const [hovered, setHovered] = useState<string | null>(null);
 
-  const filtered = activeCategory === "All" ? services : services.filter(s => s.category === activeCategory);
+  // Initialise from ?q= query param
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { q } = router.query;
+    if (q) setSearchQuery(String(q));
+  }, [router.isReady, router.query]);
+
+  const filtered = services.filter(s => {
+    const matchesCategory = activeCategory === "All" || s.category === activeCategory;
+    const matchesSearch = searchQuery === "" ||
+      s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
@@ -173,6 +188,26 @@ export default function Services() {
       {/* Services grid */}
       <section style={{ paddingBlock: 64 }}>
         <div className="container">
+          {/* Search + Category filter */}
+          {/* Search bar */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, maxWidth: 400, height: 44, background: "var(--bg)", border: "1.5px solid var(--border)", borderRadius: 9, padding: "0 14px" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: "var(--text-muted)" }}>
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search services…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{ border: "none", outline: "none", background: "transparent", fontSize: "0.9rem", color: "var(--text)", flex: 1, fontFamily: "inherit" }}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", padding: 0, lineHeight: 1 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            )}
+          </div>
+
           {/* Category filter */}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 40 }}>
             {ALL_CATS.map(cat => (
@@ -184,6 +219,15 @@ export default function Services() {
           </div>
 
           {/* Grid */}
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "56px 24px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
+              <div style={{ fontSize: "2rem", marginBottom: 10 }}>🔧</div>
+              <div style={{ fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>No services match your search</div>
+              <button onClick={() => { setSearchQuery(""); setActiveCategory("All"); }} style={{ marginTop: 4, padding: "10px 24px", background: "var(--navy)", color: "white", border: "none", borderRadius: 8, fontWeight: 600, cursor: "pointer", fontSize: "0.875rem" }}>
+                Clear Filters
+              </button>
+            </div>
+          ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
             {filtered.map(service => (
               <div key={service.id}
@@ -231,6 +275,7 @@ export default function Services() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 

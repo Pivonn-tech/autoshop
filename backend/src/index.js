@@ -49,11 +49,13 @@ const PRODUCTS_DATA = [
     name: "Melvin Red Cargo Truck",
     description:
       "Heavy-duty cargo truck for commercial transport and logistics",
-    category: "Vehicles",
+    category: "trucks",
     price: 950000,
     currency: "KES",
     stock: 2,
     icon: "🚚",
+    make: "Isuzu",
+    condition: "used",
     views: [
       "product1/IMG-20260509-WA0008.jpg",
       "product1/IMG-20260509-WA0009.jpg",
@@ -68,11 +70,13 @@ const PRODUCTS_DATA = [
     name: "Melvin Three-Wheeler Motorcycle",
     description:
       "Three-wheeled cargo motorcycle with canopy roof for urban delivery",
-    category: "Vehicles",
+    category: "motorcycles",
     price: 185000,
     currency: "KES",
     stock: 4,
     icon: "🏍️",
+    make: "Bajaj",
+    condition: "new",
     views: [
       "product2/IMG-20260509-WA0010.jpg",
       "product2/IMG-20260509-WA0011.jpg",
@@ -87,11 +91,13 @@ const PRODUCTS_DATA = [
     name: "Melvin Blue Motorcycle",
     description:
       "Blue three-wheeled cargo motorcycle for commercial operations",
-    category: "Vehicles",
+    category: "motorcycles",
     price: 175000,
     currency: "KES",
     stock: 3,
     icon: "🏍️",
+    make: "Bajaj",
+    condition: "new",
     views: [
       "product3/IMG-20260509-WA0016.jpg",
       "product3/IMG-20260509-WA0021.jpg",
@@ -162,6 +168,28 @@ app.post("/api/appointments", (req, res) => {
 
 app.get("/api/appointments", (req, res) => {
   res.json(appointmentsStore);
+});
+
+// Dashboard endpoint — returns summary data for the customer dashboard
+app.get("/api/dashboard", (req, res) => {
+  const recentAppointments = appointmentsStore.slice(-5).reverse().map((a) => ({
+    id: a.id,
+    service: a.serviceId,
+    vehicle: a.vehicle,
+    date: a.preferredDate,
+    time: a.preferredTime,
+    status: a.status,
+  }));
+
+  res.json({
+    stats: {
+      totalAppointments: appointmentsStore.length,
+      pendingAppointments: appointmentsStore.filter((a) => a.status === "Pending").length,
+      completedAppointments: appointmentsStore.filter((a) => a.status === "Completed").length,
+    },
+    recentAppointments,
+    lastUpdated: new Date().toISOString(),
+  });
 });
 
 // Products endpoint - NOW SERVES YOUR ACTUAL IMAGES!
@@ -295,7 +323,16 @@ app.post("/api/checkout", async (req, res) => {
   });
 });
 
-// Serve index.html for root path
+// Contact form endpoint
+app.post("/api/contact", (req, res) => {
+  const { name, email, phone, subject, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "name, email and message are required" });
+  }
+  // Log it server-side (replace with email integration when ready)
+  console.log(`📬 Contact form — ${name} <${email}> [${subject || "General"}]: ${message.slice(0, 80)}`);
+  res.json({ success: true });
+});
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../../frontend/public/index.html"));
 });
