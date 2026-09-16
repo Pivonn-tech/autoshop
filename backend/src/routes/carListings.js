@@ -1,17 +1,18 @@
-import express from 'express';
-import { uploadCarImages, processCarImages, deleteCarImages } from '../middleware/upload.js';
+import express from "express";
+import { uploadCarImages, processCarImages, deleteCarImages } from "../middleware/upload.js";
+import { prisma } from "../db/prisma.js";
+import { carListingSchema, validate } from "../lib/schemas.js";
+import logger from "../lib/logger.js";
 
 const router = express.Router();
+const IS_PROD = process.env.NODE_ENV === "production";
 
-// In-memory storage for car listings (replace with database in production)
-const carListings = new Map();
-
-// Get all car listings with filtering and pagination
-router.get('/', async (req, res) => {
+// ── GET all listings (with filters + pagination) ──────────────────────────────
+router.get("/", async (req, res) => {
   try {
     const {
-      page = 1,
-      limit = 12,
+      page = "1",
+      limit = "12",
       make,
       model,
       minPrice,
@@ -21,453 +22,273 @@ router.get('/', async (req, res) => {
       transmission,
       bodyType,
       location,
-      sortBy = 'createdAt',
-      sortOrder = 'desc',
-      status = 'active'
+      sortBy = "createdAt",
+      sortOrder = "desc",
+      status = "active",
     } = req.query;
 
-    let listings = Array.from(carListings.values());
+    const where = { status };
+    if (make) where.make = { contains: make, mode: "insensitive" };
+    if (model) where.model = { contains: model, mode: "insensitive" };
+    if (year) where.year = parseInt(year);
+    if (fuelType) where.fuelType = fuelType;
+    if (transmission) where.transmission = transmission;
+    if (bodyType) where.bodyType = bodyType;
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) where.price.gte = parseFloat(minPrice);
+      if (maxPrice) where.price.lte = parseFloat(maxPrice);
+    }
 
-    // Apply filters
-    if (status) listings = listings.filter(l => l.status === status);
-    if (make) listings = listings.filter(l => l.make.toLowerCase().includes(make.toLowerCase()));
-    if (model) listings = listings.filter(l => l.model.toLowerCase().includes(model.toLowerCase()));
-    if (minPrice) listings = listings.filter(l => l.price >= parseFloat(minPrice));
-    if (maxPrice) listings = listings.filter(l => l.price <= parseFloat(maxPrice));
-    if (year) listings = listings.filter(l => l.year === parseInt(year));
-    if (fuelType) listings = listings.filter(l => l.fuelType === fuelType);
-    if (transmission) listings = listings.filter(l => l.transmission === transmission);
-    if (bodyType) listings = listings.filter(l => l.bodyType === bodyType);
-    if (location) listings = listings.filter(l => 
-      l.location && l.location.county && l.location.county.toLowerCase().includes(location.toLowerCase())
-    );
+    const validSortFields = ["createdAt", "price", "year", "mileage", "viewCount"];
+    const orderField = validSortFields.includes(sortBy) ? sortBy : "createdAt";
 
-    // Sort listings
-    listings.sort((a, b) => {
-      let aVal = a[sortBy];
-      let bVal = b[sortBy];
-      
-      if (sortBy === 'createdAt') {
-        aVal = new Date(aVal);
-        bVal = new Date(bVal);
-      }
-      
-      if (sortOrder === 'asc') {
-        return aVal > bVal ? 1 : -1;
-      } else {
-        return aVal < bVal ? 1 : -1;
-      }
-    });
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+    const skip = (pageNum - 1) * limitNum;
 
-    // Pagination
-    const total = listings.length;
-    const startIndex = (parseInt(page) - 1) * parseInt(limit);
-    const endIndex = startIndex + parseInt(limit);
-    const paginatedListings = listings.slice(startIndex, endIndex);
+    const [listings, total] = await Promise.all([
+      prisma.carListing.findMany({
+        where,
+        orderBy: { [orderField]: sortOrder === "asc" ? "asc" : "desc" },
+        skip,
+        take: limitNum,
+      }),
+      prisma.carListing.count({ where }),
+    ]);
 
-    res.json({
+    return res.json({
       success: true,
-      data: paginatedListings,
+      data: listings,
       pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
+        page: pageNum,
+        limit: limitNum,
         total,
-        totalPages: Math.ceil(total / parseInt(limit))
-      }
+        totalPages: Math.ceil(total / limitNum),
+      },
     });
-  } catch (error) {
-    console.error('Error fetching car listings:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch car listings',
-      error: error.message
-    });
+  } catch (err) {
+    logger.error({ err }, "Error fetching car listings");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Get single car listing by ID
-router.get('/:id', async (req, res) => {
+// ── GET single listing ────────────────────────────────────────────────────────
+router.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const listing = carListings.get(id);
+    const listing = await prisma.carListing.findUnique({ where: { id: req.params.id } });
+    if (!listing) return res.status(404).json({ success: false, message: "Car listing not found" });
 
-    if (!listing) {
-      return res.status(404).json({
-        success: false,
-        message: 'Car listing not found'
-      });
-    }
+    // Increment view count without awaiting (best-effort)
+    prisma.carListing.update({
+      where: { id: listing.id },
+      data: { viewCount: { increment: 1 } },
+    }).catch(() => {});
 
-    // Increment view count
-    listing.viewCount = (listing.viewCount || 0) + 1;
-    carListings.set(id, listing);
-
-    res.json({
-      success: true,
-      data: listing
-    });
-  } catch (error) {
-    console.error('Error fetching car listing:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch car listing',
-      error: error.message
-    });
+    return res.json({ success: true, data: listing });
+  } catch (err) {
+    logger.error({ err }, "Error fetching car listing");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Create new car listing
-router.post('/', uploadCarImages, async (req, res) => {
-  try {
-    const {
-      userId,
-      make,
-      model,
-      year,
-      mileage,
-      color,
-      bodyType,
-      fuelType,
-      transmission,
-      engineSize,
-      condition,
-      price,
-      negotiable,
-      title,
-      description,
-      features,
-      location,
-      contactPhone,
-      contactEmail
-    } = req.body;
+// ── POST create listing ───────────────────────────────────────────────────────
+router.post("/", uploadCarImages, async (req, res) => {
+  const validation = validate(carListingSchema, req.body);
+  if (!validation.ok) {
+    return res.status(400).json({ success: false, message: "Validation failed", fields: validation.errors });
+  }
 
-    // Validate required fields
-    if (!userId || !make || !model || !year || !price || !title || !contactPhone) {
-      return res.status(400).json({
-        success: false,
-        message: 'Missing required fields'
-      });
-    }
+  const data = validation.data;
 
-    // Process uploaded images
-    let processedImages = [];
-    if (req.files && req.files.length > 0) {
-      try {
-        processedImages = await processCarImages(req.files);
-      } catch (error) {
-        return res.status(400).json({
-          success: false,
-          message: 'Failed to process images: ' + error.message
-        });
-      }
-    }
-
-    // Parse JSON fields
-    let parsedFeatures = [];
-    let parsedLocation = {};
-    
+  let processedImages = [];
+  if (req.files?.length) {
     try {
-      if (features) parsedFeatures = JSON.parse(features);
-      if (location) parsedLocation = JSON.parse(location);
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid JSON format for features or location'
-      });
+      processedImages = await processCarImages(req.files);
+    } catch (err) {
+      return res.status(400).json({ success: false, message: "Failed to process images: " + err.message });
     }
+  }
 
-    // Generate unique ID
-    const id = `car_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  let parsedFeatures = [];
+  let parsedLocation = {};
+  try {
+    parsedFeatures = JSON.parse(data.features);
+    parsedLocation = JSON.parse(data.location);
+  } catch {
+    return res.status(400).json({ success: false, message: "Invalid JSON in features or location" });
+  }
 
-    // Create car listing
-    const listing = {
-      id,
-      userId,
-      make,
-      model,
-      year: parseInt(year),
-      mileage: parseInt(mileage) || 0,
-      color,
-      bodyType,
-      fuelType,
-      transmission,
-      engineSize,
-      condition,
-      price: parseFloat(price),
-      currency: 'KSH',
-      negotiable: negotiable === 'true',
-      title,
-      description,
-      features: parsedFeatures,
-      images: processedImages,
-      primaryImage: processedImages.length > 0 ? processedImages[0].url : null,
-      location: parsedLocation,
-      contactPhone,
-      contactEmail,
-      status: 'pending', // Require admin approval
-      viewCount: 0,
-      featured: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+  try {
+    const listing = await prisma.carListing.create({
+      data: {
+        userId: data.userId,
+        make: data.make,
+        model: data.model,
+        year: data.year,
+        mileage: data.mileage ?? 0,
+        color: data.color,
+        bodyType: data.bodyType,
+        fuelType: data.fuelType,
+        transmission: data.transmission,
+        engineSize: data.engineSize,
+        condition: data.condition,
+        price: data.price,
+        currency: "KSH",
+        negotiable: data.negotiable,
+        title: data.title,
+        description: data.description,
+        features: parsedFeatures,
+        images: processedImages,
+        primaryImage: processedImages[0]?.url ?? null,
+        location: parsedLocation,
+        contactPhone: data.contactPhone,
+        contactEmail: data.contactEmail || null,
+        status: "pending",
+      },
+    });
 
-    carListings.set(id, listing);
+    logger.info({ listingId: listing.id, userId: data.userId }, "Car listing created");
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message: 'Car listing created successfully. It will be reviewed before going live.',
-      data: listing
+      message: "Car listing created. It will be reviewed before going live.",
+      data: listing,
     });
-  } catch (error) {
-    console.error('Error creating car listing:', error);
-    
-    // Clean up uploaded images if database operation failed
-    if (req.files && req.files.length > 0) {
-      try {
-        const processedImages = await processCarImages(req.files);
-        await deleteCarImages(processedImages);
-      } catch (cleanupError) {
-        console.error('Error cleaning up images:', cleanupError);
-      }
-    }
-    
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create car listing',
-      error: error.message
-    });
+  } catch (err) {
+    // Clean up uploaded images on DB failure
+    if (processedImages.length) deleteCarImages(processedImages).catch(() => {});
+    logger.error({ err }, "Error creating car listing");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Update car listing
-router.put('/:id', uploadCarImages, async (req, res) => {
+// ── PUT update listing ────────────────────────────────────────────────────────
+router.put("/:id", uploadCarImages, async (req, res) => {
   try {
-    const { id } = req.params;
-    const existingListing = carListings.get(id);
+    const existing = await prisma.carListing.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ success: false, message: "Car listing not found" });
 
-    if (!existingListing) {
-      return res.status(404).json({
-        success: false,
-        message: 'Car listing not found'
-      });
-    }
-
-    const updateData = { ...req.body };
-
-    // Process new images if uploaded
     let newImages = [];
-    if (req.files && req.files.length > 0) {
+    if (req.files?.length) {
       try {
         newImages = await processCarImages(req.files);
-      } catch (error) {
-        return res.status(400).json({
-          success: false,
-          message: 'Failed to process images: ' + error.message
-        });
+      } catch (err) {
+        return res.status(400).json({ success: false, message: "Failed to process images: " + err.message });
       }
     }
 
-    // Handle image removal
-    let currentImages = existingListing.images || [];
-    if (updateData.removeImages) {
+    let currentImages = Array.isArray(existing.images) ? existing.images : [];
+    if (req.body.removeImages) {
       try {
-        const imagesToRemove = JSON.parse(updateData.removeImages);
-        const imagesToDelete = currentImages.filter(img => imagesToRemove.includes(img.id));
-        await deleteCarImages(imagesToDelete);
-        currentImages = currentImages.filter(img => !imagesToRemove.includes(img.id));
-      } catch (error) {
-        console.error('Error removing images:', error);
+        const toRemove = JSON.parse(req.body.removeImages);
+        const del = currentImages.filter((img) => toRemove.includes(img.id));
+        await deleteCarImages(del);
+        currentImages = currentImages.filter((img) => !toRemove.includes(img.id));
+      } catch {
+        /* ignore bad removeImages input */
       }
     }
 
-    // Combine existing and new images
     const allImages = [...currentImages, ...newImages];
-    
-    // Parse JSON fields
+    const updateData = { ...req.body };
+    delete updateData.removeImages;
+
     if (updateData.features) {
-      try {
-        updateData.features = JSON.parse(updateData.features);
-      } catch (error) {
-        updateData.features = existingListing.features;
-      }
+      try { updateData.features = JSON.parse(updateData.features); } catch { delete updateData.features; }
     }
-    
     if (updateData.location) {
-      try {
-        updateData.location = JSON.parse(updateData.location);
-      } catch (error) {
-        updateData.location = existingListing.location;
-      }
+      try { updateData.location = JSON.parse(updateData.location); } catch { delete updateData.location; }
     }
+    if (updateData.year) updateData.year = parseInt(updateData.year);
+    if (updateData.mileage) updateData.mileage = parseInt(updateData.mileage);
+    if (updateData.price) updateData.price = parseFloat(updateData.price);
+    if (updateData.negotiable !== undefined) updateData.negotiable = updateData.negotiable === "true";
 
-    // Update listing
-    const updatedListing = {
-      ...existingListing,
-      ...updateData,
-      images: allImages,
-      primaryImage: allImages.length > 0 ? allImages[0].url : null,
-      status: 'pending', // Reset to pending for re-approval
-      updatedAt: new Date().toISOString()
-    };
-
-    // Convert numeric fields
-    if (updateData.year) updatedListing.year = parseInt(updateData.year);
-    if (updateData.mileage) updatedListing.mileage = parseInt(updateData.mileage);
-    if (updateData.price) updatedListing.price = parseFloat(updateData.price);
-    if (updateData.negotiable !== undefined) updatedListing.negotiable = updateData.negotiable === 'true';
-
-    carListings.set(id, updatedListing);
-
-    res.json({
-      success: true,
-      message: 'Car listing updated successfully',
-      data: updatedListing
+    const updated = await prisma.carListing.update({
+      where: { id: req.params.id },
+      data: {
+        ...updateData,
+        images: allImages,
+        primaryImage: allImages[0]?.url ?? null,
+        status: "pending", // reset to pending for re-review
+      },
     });
-  } catch (error) {
-    console.error('Error updating car listing:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update car listing',
-      error: error.message
-    });
+
+    return res.json({ success: true, message: "Car listing updated", data: updated });
+  } catch (err) {
+    logger.error({ err }, "Error updating car listing");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Delete car listing
-router.delete('/:id', async (req, res) => {
+// ── DELETE listing ────────────────────────────────────────────────────────────
+router.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const listing = carListings.get(id);
+    const listing = await prisma.carListing.findUnique({ where: { id: req.params.id } });
+    if (!listing) return res.status(404).json({ success: false, message: "Car listing not found" });
 
-    if (!listing) {
-      return res.status(404).json({
-        success: false,
-        message: 'Car listing not found'
-      });
-    }
+    const images = Array.isArray(listing.images) ? listing.images : [];
+    if (images.length) await deleteCarImages(images).catch(() => {});
 
-    // Delete images from filesystem
-    if (listing.images && listing.images.length > 0) {
-      try {
-        await deleteCarImages(listing.images);
-      } catch (error) {
-        console.error('Error deleting images:', error);
-      }
-    }
+    await prisma.carListing.delete({ where: { id: req.params.id } });
 
-    // Delete listing from memory
-    carListings.delete(id);
-
-    res.json({
-      success: true,
-      message: 'Car listing deleted successfully'
-    });
-  } catch (error) {
-    console.error('Error deleting car listing:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to delete car listing',
-      error: error.message
-    });
+    return res.json({ success: true, message: "Car listing deleted" });
+  } catch (err) {
+    logger.error({ err }, "Error deleting car listing");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Get user's car listings
-router.get('/user/:userId', async (req, res) => {
+// ── GET user's listings ───────────────────────────────────────────────────────
+router.get("/user/:userId", async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { status } = req.query;
+    const where = { userId: req.params.userId };
+    if (req.query.status) where.status = req.query.status;
 
-    let listings = Array.from(carListings.values()).filter(l => l.userId === userId);
-    
-    if (status) {
-      listings = listings.filter(l => l.status === status);
-    }
-
-    listings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    res.json({
-      success: true,
-      data: listings
+    const listings = await prisma.carListing.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
     });
-  } catch (error) {
-    console.error('Error fetching user car listings:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch user car listings',
-      error: error.message
-    });
+    return res.json({ success: true, data: listings });
+  } catch (err) {
+    logger.error({ err }, "Error fetching user car listings");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Admin: Approve car listing
-router.patch('/:id/approve', async (req, res) => {
+// ── PATCH approve ─────────────────────────────────────────────────────────────
+router.patch("/:id/approve", async (req, res) => {
   try {
-    const { id } = req.params;
-    const listing = carListings.get(id);
-
-    if (!listing) {
-      return res.status(404).json({
-        success: false,
-        message: 'Car listing not found'
-      });
-    }
-
-    listing.status = 'active';
-    listing.approvedAt = new Date().toISOString();
-    listing.rejectedAt = null;
-    listing.rejectionReason = null;
-
-    carListings.set(id, listing);
-
-    res.json({
-      success: true,
-      message: 'Car listing approved successfully',
-      data: listing
+    const listing = await prisma.carListing.update({
+      where: { id: req.params.id },
+      data: { status: "active", approvedAt: new Date(), rejectedAt: null, rejectionReason: null },
     });
-  } catch (error) {
-    console.error('Error approving car listing:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to approve car listing',
-      error: error.message
-    });
+    return res.json({ success: true, message: "Car listing approved", data: listing });
+  } catch (err) {
+    if (err.code === "P2025") return res.status(404).json({ success: false, message: "Car listing not found" });
+    logger.error({ err }, "Error approving car listing");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 
-// Admin: Reject car listing
-router.patch('/:id/reject', async (req, res) => {
+// ── PATCH reject ──────────────────────────────────────────────────────────────
+router.patch("/:id/reject", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { reason } = req.body;
-    const listing = carListings.get(id);
-
-    if (!listing) {
-      return res.status(404).json({
-        success: false,
-        message: 'Car listing not found'
-      });
-    }
-
-    listing.status = 'rejected';
-    listing.rejectedAt = new Date().toISOString();
-    listing.rejectionReason = reason || 'No reason provided';
-    listing.approvedAt = null;
-
-    carListings.set(id, listing);
-
-    res.json({
-      success: true,
-      message: 'Car listing rejected',
-      data: listing
+    const listing = await prisma.carListing.update({
+      where: { id: req.params.id },
+      data: {
+        status: "rejected",
+        rejectedAt: new Date(),
+        rejectionReason: req.body.reason || "No reason provided",
+        approvedAt: null,
+      },
     });
-  } catch (error) {
-    console.error('Error rejecting car listing:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to reject car listing',
-      error: error.message
-    });
+    return res.json({ success: true, message: "Car listing rejected", data: listing });
+  } catch (err) {
+    if (err.code === "P2025") return res.status(404).json({ success: false, message: "Car listing not found" });
+    logger.error({ err }, "Error rejecting car listing");
+    return res.status(500).json({ success: false, message: IS_PROD ? "Server error" : err.message });
   }
 });
 

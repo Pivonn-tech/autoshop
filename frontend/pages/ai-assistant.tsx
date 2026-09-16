@@ -58,6 +58,8 @@ function SparkleIcon({ size = 18 }: { size?: number }) {
 // ── Chat bubble ────────────────────────────────────────────────────────────────
 function Bubble({ msg }: { msg: Message }) {
   const isUser = msg.role === "user";
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   return (
     <div
       style={{
@@ -112,7 +114,7 @@ function Bubble({ msg }: { msg: Message }) {
             textAlign: "right",
           }}
         >
-          {msg.ts.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          {mounted ? msg.ts.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
         </div>
       </div>
       {isUser && (
@@ -193,9 +195,15 @@ export default function AIAssistantPage() {
       id: 0,
       role: "assistant",
       text: "Hi! I'm AutoFix Kenya's AI assistant. I can help you find the right vehicle, source parts, book a service, or answer questions about your car. What can I help you with today?",
-      ts: new Date(),
+      ts: new Date(0),
     },
   ]);
+
+  useEffect(() => {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === 0 ? { ...m, ts: new Date() } : m))
+    );
+  }, []);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);

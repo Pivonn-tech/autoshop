@@ -3,16 +3,23 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000"
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "postbuild": "next-sitemap",
+    "start": "next start -p 3000",
+    "lint": "next lint"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
     "@next/font": "^14.2.15",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@swc/helpers": "0.5.23",
     "bcryptjs": "^3.0.3",
-    "next": "13.0.0",
+    "next": "^14.2.35",
     "next-auth": "^4.24.14",
+    "next-pwa": "^5.6.0",
+    "next-sitemap": "^4.2.3",
     "pg": "^8.21.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",

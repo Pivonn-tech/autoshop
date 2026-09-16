@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { services } from "../lib/businessData";
@@ -123,6 +123,10 @@ export default function Appointments() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    setToday(new Date().toISOString().split("T")[0]);
+  }, []);
   const [form, setForm] = useState<FormData>({
     name: "", phone: "", email: "",
     make: "", model: "", year: "", licensePlate: "",
@@ -195,7 +199,6 @@ export default function Appointments() {
   };
 
   const selectedService = services.find(s => s.id === form.serviceId);
-  const today = new Date().toISOString().split("T")[0];
 
   const inputStyle: React.CSSProperties = {
     width: "100%", height: 48, paddingInline: 14,

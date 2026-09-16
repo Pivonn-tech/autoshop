@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { services, reviews } from "../lib/businessData";
@@ -676,6 +677,21 @@ export default function HomePage() {
 
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)" }}>
+      <Head>
+        <title>AutoFix Kenya — Nairobi's Premier Automotive Centre</title>
+        <meta name="description" content="Buy quality vehicles, genuine parts, and book expert workshop services. Trusted by thousands of Kenyan drivers." />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="AutoFix Kenya — Nairobi's Premier Automotive Centre" />
+        <meta property="og:description" content="Buy quality vehicles, genuine parts, and book expert workshop services. Trusted by thousands of Kenyan drivers." />
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_SITE_URL || "https://autofixkenya.co.ke"}/logo.png`} />
+        <meta property="og:url" content={process.env.NEXT_PUBLIC_SITE_URL || "https://autofixkenya.co.ke"} />
+        <meta property="og:site_name" content="AutoFix Kenya" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="AutoFix Kenya — Nairobi's Premier Automotive Centre" />
+        <meta name="twitter:description" content="Buy quality vehicles, genuine parts, and book expert workshop services." />
+        <meta name="twitter:image" content={`${process.env.NEXT_PUBLIC_SITE_URL || "https://autofixkenya.co.ke"}/logo.png`} />
+        <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || "https://autofixkenya.co.ke"} />
+      </Head>
 
       {/* ══ HERO ══════════════════════════════════════════════════════════════ */}
       <section
@@ -1376,7 +1392,7 @@ export default function HomePage() {
         {/* Bottom */}
         <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBlock: 24, gap: 16, flexWrap: "wrap" }}>
           <div style={{ fontSize: "0.8125rem" }}>
-            © {new Date().getFullYear()} AutoFix Kenya Ltd. All rights reserved.
+            © 2026 AutoFix Kenya Ltd. All rights reserved.
           </div>
           <div style={{ display: "flex", gap: 20, fontSize: "0.8125rem" }}>
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((l) => (

@@ -1,69 +1,18 @@
-// For now, we'll create a simple database connection
-// In a production setup, you'd want to set up Prisma in the backend too
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-export const createCarListing = async (data) => {
-  // This would use Prisma or direct DB connection
-  // For now, return mock data to keep the API working
-  return {
-    id: `car_${Date.now()}`,
-    ...data,
-    createdAt: new Date(),
-    status: 'pending'
-  };
-};
+const connectionString = process.env.DATABASE_URL;
 
-export const getCarListings = async (filters = {}) => {
-  // Mock data for now
-  return {
-    data: [],
-    pagination: {
-      page: 1,
-      limit: 12,
-      total: 0,
-      totalPages: 0
-    }
-  };
-};
+const globalForPrisma = globalThis;
 
-export const getCarListingById = async (id) => {
-  // Mock data for now
-  return null;
-};
+function createPrismaClient() {
+  const adapter = new PrismaPg(connectionString ?? "");
+  return new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+  });
+}
 
-export const updateCarListing = async (id, data) => {
-  // Mock data for now
-  return {
-    id,
-    ...data,
-    updatedAt: new Date()
-  };
-};
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-export const deleteCarListing = async (id) => {
-  // Mock data for now
-  return { success: true };
-};
-
-export const getUserCarListings = async (userId) => {
-  // Mock data for now
-  return [];
-};
-
-export const approveCarListing = async (id) => {
-  // Mock data for now
-  return {
-    id,
-    status: 'active',
-    approvedAt: new Date()
-  };
-};
-
-export const rejectCarListing = async (id, reason) => {
-  // Mock data for now
-  return {
-    id,
-    status: 'rejected',
-    rejectedAt: new Date(),
-    rejectionReason: reason
-  };
-};
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

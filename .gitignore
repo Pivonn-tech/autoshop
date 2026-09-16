@@ -4,3 +4,13 @@ dist/
 .DS_Store
 
 .logs/
+
+
+# Environment files — never commit real secrets
+.env
+.env.local
+.env.production
+.env.*.local
+backend/.env
+frontend/.env
+frontend/.env.local

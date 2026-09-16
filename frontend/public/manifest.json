@@ -1,0 +1,43 @@
+{
+  "name": "AutoFix Kenya",
+  "short_name": "AutoFix",
+  "description": "Buy vehicles, genuine parts, and book workshop services.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F2A4A",
+  "theme_color": "#0F2A4A",
+  "orientation": "portrait-primary",
+  "categories": ["automotive", "shopping", "business"],
+  "lang": "en-KE",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Browse Vehicles",
+      "short_name": "Vehicles",
+      "description": "Browse our vehicle inventory",
+      "url": "/inventory",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Book a Service",
+      "short_name": "Book",
+      "description": "Book a workshop service appointment",
+      "url": "/appointments",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    }
+  ]
+}

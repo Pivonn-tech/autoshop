@@ -250,7 +250,7 @@ export default function SellCar() {
       const formData = new FormData();
       
       // Add all form fields
-      formData.append('userId', session.user.id);
+      formData.append('userId', session.user?.id ?? '');
       formData.append('make', form.make);
       formData.append('model', form.model);
       formData.append('year', form.year);

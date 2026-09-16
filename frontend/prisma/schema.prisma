@@ -44,15 +44,18 @@ model User {
   emailVerified DateTime?
   password      String?
   image         String?
+  isAdmin       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  savedVehicles SavedVehicle[]
-  orders        Order[]
+  accounts        Account[]
+  sessions        Session[]
+  savedVehicles   SavedVehicle[]
+  orders          Order[]
   serviceBookings ServiceBooking[]
-  carListings   CarListing[]
+  carListings     CarListing[]
+  carts           Cart[]
+  appointments    Appointment[]
 }
 
 model VerificationToken {
@@ -158,4 +161,64 @@ model CarListing {
   @@index([make, model])
   @@index([price])
   @@index([location])
+}
+
+
+// ── Cart ──────────────────────────────────────────────────────────────────────
+model Cart {
+  id        String     @id @default(cuid())
+  // userId is null for anonymous/guest carts identified by sessionKey
+  userId    String?
+  // sessionKey is the x-cart-id token for anonymous carts
+  sessionKey String?   @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user  User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  @@index([userId])
+  @@index([sessionKey])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String   // references PRODUCTS_DATA id (kept as string for flexibility)
+  name      String
+  price     Float
+  image     String?
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+}
+
+// ── Appointment ───────────────────────────────────────────────────────────────
+model Appointment {
+  id           String   @id @default(cuid())
+  // userId null = walk-in / unauthenticated booking
+  userId       String?
+  customerName String
+  phone        String
+  email        String
+  vehicle      String   // "2022 Toyota Hilux"
+  licensePlate String
+  serviceId    String
+  preferredDate DateTime
+  preferredTime String
+  notes        String?  @db.Text
+  status       String   @default("Pending") // Pending | Confirmed | Completed | Cancelled
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([preferredDate])
+  @@index([status])
 }

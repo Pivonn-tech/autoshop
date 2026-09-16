@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -13,6 +14,7 @@ interface Product {
   currency: string;
   stock: number;
   icon?: string;
+  image?: string;
   gallery?: string[];
 }
 
@@ -185,8 +187,39 @@ export default function ProductDetail() {
     }
   };
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://autofixkenya.co.ke";
+  const ogImage = product.gallery?.[0] || product.image || `${siteUrl}/logo.png`;
+  const formattedPrice = new Intl.NumberFormat("en-KE", {
+    style: "currency", currency: "KES", maximumFractionDigits: 0,
+  }).format(product.price);
+  const title = `${product.name} — ${formattedPrice} | AutoFix Kenya`;
+  const description = product.description ||
+    `Buy ${product.name} from AutoFix Kenya. ${formattedPrice}. Quality vehicles for Kenyan roads.`;
+
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        {/* Open Graph */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage.startsWith("http") ? ogImage : `${siteUrl}${ogImage}`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={`${siteUrl}/product/${product.id}`} />
+        <meta property="og:site_name" content="AutoFix Kenya" />
+        <meta property="product:price:amount" content={String(product.price)} />
+        <meta property="product:price:currency" content="KES" />
+        {/* Twitter / X */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage.startsWith("http") ? ogImage : `${siteUrl}${ogImage}`} />
+        {/* WhatsApp preview uses OG tags — ensure canonical URL */}
+        <link rel="canonical" href={`${siteUrl}/product/${product.id}`} />
+      </Head>
       {/* Breadcrumb */}
       <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", paddingBlock: 14 }}>
         <div className="container" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.82rem", color: "var(--text-muted)" }}>
