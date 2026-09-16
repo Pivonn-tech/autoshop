@@ -52,6 +52,7 @@ model User {
   savedVehicles SavedVehicle[]
   orders        Order[]
   serviceBookings ServiceBooking[]
+  carListings   CarListing[]
 }
 
 model VerificationToken {
@@ -100,4 +101,61 @@ model ServiceBooking {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CarListing {
+  id          String   @id @default(cuid())
+  userId      String
+  
+  // Basic car information
+  make        String
+  model       String
+  year        Int
+  mileage     Int
+  color       String
+  bodyType    String   // sedan, suv, hatchback, pickup, etc.
+  fuelType    String   // petrol, diesel, hybrid, electric
+  transmission String  // manual, automatic
+  engineSize  String?  // e.g., "2.0L", "1600cc"
+  condition   String   // excellent, good, fair, poor
+  
+  // Pricing and availability
+  price       Float
+  currency    String   @default("KSH")
+  negotiable  Boolean  @default(true)
+  status      String   @default("draft") // draft, pending, active, sold, rejected, expired
+  
+  // Description and features
+  title       String
+  description String   @db.Text
+  features    Json     // Array of features like ["Air Conditioning", "Power Steering"]
+  
+  // Images
+  images      Json     // Array of image URLs
+  primaryImage String? // Main image URL
+  
+  // Location and contact
+  location    Json     // {county, town, specific_location}
+  contactPhone String
+  contactEmail String?
+  
+  // Administrative
+  viewCount   Int      @default(0)
+  featured    Boolean  @default(false)
+  approvedAt  DateTime?
+  rejectedAt  DateTime?
+  rejectionReason String?
+  expiresAt   DateTime? // Auto-expire listings after certain period
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([status, createdAt])
+  @@index([make, model])
+  @@index([price])
+  @@index([location])
 }

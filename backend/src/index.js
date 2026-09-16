@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import carListingsRouter from "./routes/carListings.js";
 
 dotenv.config();
 
@@ -41,6 +42,9 @@ app.use(express.static(path.join(__dirname, "../../frontend/public")));
 
 // Serve product images from pics folder
 app.use("/images", express.static(path.join(__dirname, "../../pics")));
+
+// Serve car listing images
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Product database with Kenyan Shilling pricing - Melvin vehicles
 const PRODUCTS_DATA = [
@@ -132,6 +136,9 @@ app.get("/health", (req, res) => {
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });
 });
+
+// Car listings routes
+app.use("/api/car-listings", carListingsRouter);
 
 // ── In-memory appointments store ─────────────────────────────────────────────
 const appointmentsStore = [];

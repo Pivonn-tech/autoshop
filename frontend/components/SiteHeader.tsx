@@ -102,6 +102,7 @@ const navItems = [
     ],
   },
   { label: "Book", href: "/appointments" },
+  { label: "Sell Car", href: "/sell-car" },
   { label: "Track Order", href: "/order-tracking" },
 ];
 
