@@ -181,7 +181,11 @@ export default function OrderTracking() {
         {/* Error state */}
         {searched && error && (
           <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", padding: "40px 24px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
-            <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🔍</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 12, color: "var(--text-muted)" }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
             <div style={{ fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>{error}</div>
             <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.65, marginBottom: 20 }}>
               Can't find your booking? Give us a call and we'll look it up for you.

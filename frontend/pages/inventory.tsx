@@ -12,6 +12,14 @@ interface Product {
   price: number;
   currency?: string;
   stock?: number;
+  // Rich spec fields
+  make?: string;
+  year?: number;
+  condition?: string;
+  engineSize?: string;
+  payload?: string;
+  fuelType?: string;
+  transmission?: string;
 }
 
 const FORMAT = (n: number) =>
@@ -84,6 +92,23 @@ function ProductCard({ product, view }: { product: Product; view: "grid" | "list
             <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase" }}>{product.category}</div>
             <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.2rem", fontWeight: 700, color: "var(--text)", margin: 0 }}>{product.name}</h3>
             <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.6, maxWidth: 520 }}>{product.description}</p>
+
+            {/* Spec pills */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[
+                product.make && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>, val: product.make },
+                product.year && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, val: String(product.year) },
+                product.condition && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, val: product.condition.charAt(0).toUpperCase() + product.condition.slice(1) },
+                product.engineSize && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>, val: product.engineSize },
+                product.payload && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>, val: product.payload },
+                product.fuelType && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 00-2-2H6a2 2 0 00-2 2v18"/><path d="M14 13h2a2 2 0 012 2v2a2 2 0 002 2h0a2 2 0 002-2V9.83a2 2 0 00-.59-1.42L18 5"/></svg>, val: product.fuelType },
+              ].filter(Boolean).map((item: any, i: number) => (
+                <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.72rem", fontWeight: 600, padding: "3px 9px", background: "var(--surface-2, rgba(0,0,0,0.04))", border: "1px solid var(--border)", borderRadius: 20, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                  <span style={{ color: "var(--text-muted)", display: "flex", alignItems: "center" }}>{item.icon}</span>{item.val}
+                </span>
+              ))}
+            </div>
+
             <div style={{ display: "flex", gap: 3, color: "#FBBF24", marginTop: 2 }}>{[1,2,3,4,5].map(s => <StarFill key={s} />)}<span style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginLeft: 4 }}>(12)</span></div>
           </div>
           <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", gap: 16, flexShrink: 0 }}>
@@ -124,12 +149,28 @@ function ProductCard({ product, view }: { product: Product; view: "grid" | "list
             <div style={{ position: "absolute", top: 12, right: 12, background: "#DC2626", color: "white", fontSize: "0.68rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20 }}>{product.stock} left</div>
           )}
         </div>
-        <div style={{ padding: 20, flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ padding: 20, flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
           <div>
             <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Melvin Vehicles</div>
             <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1rem", fontWeight: 700, color: "var(--text)", margin: 0, lineHeight: 1.3 }}>{product.name}</h3>
           </div>
           <p style={{ fontSize: "0.835rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.55, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{product.description}</p>
+
+          {/* Spec pills */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {[
+              product.make && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>, val: product.make },
+              product.year && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, val: String(product.year) },
+              product.condition && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, val: product.condition.charAt(0).toUpperCase() + product.condition.slice(1) },
+              product.engineSize && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>, val: product.engineSize },
+              product.payload && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>, val: product.payload },
+            ].filter(Boolean).map((item: any, i: number) => (
+              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.7rem", fontWeight: 600, padding: "3px 8px", background: "var(--surface-2, rgba(0,0,0,0.04))", border: "1px solid var(--border)", borderRadius: 20, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                <span style={{ color: "var(--text-muted)", display: "flex", alignItems: "center" }}>{item.icon}</span>{item.val}
+              </span>
+            ))}
+          </div>
+
           <div style={{ display: "flex", gap: 3, color: "#FBBF24" }}>{[1,2,3,4,5].map(s => <StarFill key={s} />)}<span style={{ color: "var(--text-muted)", fontSize: "0.72rem", marginLeft: 4 }}>(12)</span></div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: 12, borderTop: "1px solid var(--border)" }}>
             <div>
@@ -318,7 +359,11 @@ export default function Inventory() {
             </div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: "center", padding: "64px 24px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>🔍</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 12, color: "var(--text-muted)" }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </div>
               <div style={{ fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>No vehicles match these filters</div>
               <button onClick={resetFilters} style={{ marginTop: 4, padding: "10px 24px", background: "var(--navy)", color: "white", border: "none", borderRadius: 8, fontWeight: 600, cursor: "pointer", fontSize: "0.9rem" }}>
                 Clear Filters

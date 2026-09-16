@@ -5,10 +5,16 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getProductImages } from "../../lib/productImages";
 
+interface ProductSpec {
+  label: string;
+  value: string;
+}
+
 interface Product {
   id: number;
   name: string;
   description: string;
+  fullDescription?: string;
   category: string;
   price: number;
   currency: string;
@@ -16,6 +22,22 @@ interface Product {
   icon?: string;
   image?: string;
   gallery?: string[];
+  // Rich spec fields
+  make?: string;
+  model?: string;
+  year?: number;
+  condition?: string;
+  bodyType?: string;
+  fuelType?: string;
+  transmission?: string;
+  engineSize?: string;
+  payload?: string;
+  mileage?: string;
+  color?: string;
+  warranty?: string;
+  certification?: string;
+  specs?: ProductSpec[];
+  highlights?: string[];
 }
 
 const FORMAT = (n: number) =>
@@ -81,22 +103,8 @@ function ShareIcon() {
   );
 }
 
-const HIGHLIGHTS = [
-  "Built and tested for East African road conditions",
-  "Excellent low-end torque for Nairobi traffic",
-  "Easy maintenance — parts available nationwide",
-  "Fuel-efficient engine reduces operating costs",
-  "Ready for business or personal transport",
-];
 
-const SPECS = [
-  { label: "Engine", value: "1,000cc – 1,200cc" },
-  { label: "Fuel Type", value: "Petrol" },
-  { label: "Transmission", value: "Manual / Automatic" },
-  { label: "Payload", value: "Up to 400 kg" },
-  { label: "Warranty", value: "6 months / 10,000 km" },
-  { label: "Certification", value: "KEBS Approved" },
-];
+
 
 export default function ProductDetail() {
   const router = useRouter();
@@ -307,6 +315,21 @@ export default function ProductDetail() {
               </div>
             </div>
 
+            {/* Quick spec summary — just the 3 most scannable facts */}
+            {(product.make || product.condition || product.year) && (
+              <div style={{ display: "flex", gap: 20, fontSize: "0.82rem", color: "var(--text-secondary)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", paddingBlock: 12 }}>
+                {product.make && (
+                  <span><strong style={{ color: "var(--text)", fontWeight: 700 }}>Make:</strong> {product.make}{product.model ? ` ${product.model}` : ""}</span>
+                )}
+                {product.year && (
+                  <span><strong style={{ color: "var(--text)", fontWeight: 700 }}>Year:</strong> {product.year}</span>
+                )}
+                {product.condition && (
+                  <span><strong style={{ color: "var(--text)", fontWeight: 700 }}>Condition:</strong> {product.condition.charAt(0).toUpperCase() + product.condition.slice(1)}</span>
+                )}
+              </div>
+            )}
+
             {/* Price box */}
             <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: 20 }}>
               <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Starting Price</div>
@@ -423,16 +446,21 @@ export default function ProductDetail() {
           {activeTab === "overview" && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
               <div>
-                <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Description</h3>
-                <p style={{ color: "var(--text-secondary)", lineHeight: 1.8, fontSize: "0.9375rem" }}>{product.description}</p>
-                <p style={{ color: "var(--text-secondary)", lineHeight: 1.8, fontSize: "0.9375rem", marginTop: 14 }}>
-                  This vehicle has been thoroughly inspected by our KEBS-certified technicians and is ready for immediate use. All documentation is in order including logbook, insurance, and service history.
-                </p>
+                <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>About this Vehicle</h3>
+                {(product.fullDescription || product.description).split("\n\n").map((para, i) => (
+                  <p key={i} style={{ color: "var(--text-secondary)", lineHeight: 1.8, fontSize: "0.9375rem", marginTop: i === 0 ? 0 : 14 }}>{para}</p>
+                ))}
               </div>
               <div>
-                <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Highlights</h3>
+                <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, color: "var(--text)", marginBottom: 16 }}>Key Highlights</h3>
                 <div style={{ display: "grid", gap: 10 }}>
-                  {HIGHLIGHTS.map((h, i) => (
+                  {(product.highlights ?? [
+                    "Built and tested for East African road conditions",
+                    "Excellent low-end torque for Nairobi traffic",
+                    "Easy maintenance — parts available nationwide",
+                    "Fuel-efficient engine reduces operating costs",
+                    "Ready for business or personal transport",
+                  ]).map((h, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
                       <div style={{ width: 22, height: 22, borderRadius: "50%", background: "rgba(232,112,10,0.1)", border: "1.5px solid rgba(232,112,10,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "var(--amber)", marginTop: 1 }}>
                         <CheckIcon />
@@ -446,13 +474,28 @@ export default function ProductDetail() {
           )}
 
           {activeTab === "specs" && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-              {SPECS.map((s, i) => (
-                <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: 20 }}>
-                  <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, fontSize: "1rem", color: "var(--text)" }}>{s.value}</div>
-                </div>
-              ))}
+            <div style={{ maxWidth: 680 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+                <tbody>
+                  {(product.specs ?? [
+                    { label: "Engine", value: product.engineSize ?? "N/A" },
+                    { label: "Fuel Type", value: product.fuelType ?? "N/A" },
+                    { label: "Transmission", value: product.transmission ?? "N/A" },
+                    { label: "Payload", value: product.payload ?? "N/A" },
+                    { label: "Warranty", value: product.warranty ?? "6 months" },
+                    { label: "Certification", value: product.certification ?? "KEBS Approved" },
+                  ]).map((s: any, i: number) => (
+                    <tr key={i} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "transparent" : "var(--surface)" }}>
+                      <td style={{ padding: "13px 16px", fontWeight: 600, color: "var(--text-muted)", fontSize: "0.82rem", textTransform: "uppercase", letterSpacing: "0.06em", width: "38%", whiteSpace: "nowrap" }}>
+                        {s.label}
+                      </td>
+                      <td style={{ padding: "13px 16px", fontWeight: 600, color: "var(--text)" }}>
+                        {s.value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
