@@ -1,0 +1,79 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: autoshop-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-autoshop}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-autoshop_password}
+      POSTGRES_DB: ${DB_NAME:-autoshop_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-autoshop}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - autoshop-network
+
+  # Express Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: autoshop-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://${DB_USER:-autoshop}:${DB_PASSWORD:-autoshop_password}@postgres:5432/${DB_NAME:-autoshop_db}
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/src:/app/src
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    networks:
+      - autoshop-network
+    restart: unless-stopped
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: autoshop-frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
+      NEXT_PUBLIC_STRIPE_KEY: ${NEXT_PUBLIC_STRIPE_KEY}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - autoshop-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  autoshop-network:
+    driver: bridge

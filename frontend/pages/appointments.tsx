@@ -116,7 +116,7 @@ const MAKES = ["Toyota","Subaru","Nissan","Honda","Mazda","Mitsubishi","Isuzu","
 
 export default function Appointments() {
   const router = useRouter();
-  const preselectedService = router.query.service as string;
+  const [preselectedService, setPreselectedService] = useState("");
 
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -124,9 +124,14 @@ export default function Appointments() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [today, setToday] = useState("");
+  
   useEffect(() => {
     setToday(new Date().toISOString().split("T")[0]);
-  }, []);
+    if (router.isReady && router.query.service) {
+      setPreselectedService(router.query.service as string);
+    }
+  }, [router.isReady, router.query]);
+  
   const [form, setForm] = useState<FormData>({
     name: "", phone: "", email: "",
     make: "", model: "", year: "", licensePlate: "",

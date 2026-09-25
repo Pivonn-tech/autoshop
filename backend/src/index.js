@@ -95,6 +95,8 @@ const PRODUCTS_DATA = [
     color: "Red",
     warranty: "6 months / 10,000 km",
     certification: "KEBS Approved",
+    sponsorshipTier: "sponsored",
+    location: "Karen",
     specs: [
       { label: "Make & Model", value: "Isuzu NKR 55" },
       { label: "Year", value: "2019" },
@@ -148,6 +150,8 @@ const PRODUCTS_DATA = [
     color: "Yellow / Black",
     warranty: "1 year Bajaj Kenya warranty",
     certification: "NTSA Approved",
+    sponsorshipTier: "standard",
+    location: "Nairobi CBD",
     specs: [
       { label: "Make & Model", value: "Bajaj RE Compact" },
       { label: "Year", value: "2026" },
@@ -202,6 +206,8 @@ const PRODUCTS_DATA = [
     color: "Blue / White",
     warranty: "1 year Bajaj Kenya warranty",
     certification: "NTSA Approved",
+    sponsorshipTier: "standard",
+    location: "Ridgeways",
     specs: [
       { label: "Make & Model", value: "Bajaj RE Cargo" },
       { label: "Year", value: "2026" },
@@ -424,7 +430,56 @@ app.get("/api/dashboard", async (req, res) => {
 });
 
 // ── Products ──────────────────────────────────────────────────────────────────
-app.get("/api/products", (req, res) => res.json(getProductsFromImages()));
+app.get("/api/products", (req, res) => {
+  const { make, minPrice, maxPrice, minYear, maxYear, transmission, color, sort } = req.query;
+  
+  let products = getProductsFromImages();
+  
+  // Apply filters
+  if (make) {
+    products = products.filter(p => p.make?.toLowerCase() === make.toLowerCase());
+  }
+  if (minPrice) {
+    const min = parseFloat(minPrice);
+    products = products.filter(p => p.price >= min);
+  }
+  if (maxPrice) {
+    const max = parseFloat(maxPrice);
+    products = products.filter(p => p.price <= max);
+  }
+  if (minYear) {
+    const min = parseInt(minYear);
+    products = products.filter(p => (p.year || 0) >= min);
+  }
+  if (maxYear) {
+    const max = parseInt(maxYear);
+    products = products.filter(p => (p.year || 0) <= max);
+  }
+  if (transmission) {
+    products = products.filter(p => p.transmission?.toLowerCase().includes(transmission.toLowerCase()));
+  }
+  if (color) {
+    products = products.filter(p => p.color?.toLowerCase() === color.toLowerCase());
+  }
+  
+  // Apply sorting
+  if (sort === "price-low") {
+    products.sort((a, b) => a.price - b.price);
+  } else if (sort === "price-high") {
+    products.sort((a, b) => b.price - a.price);
+  } else if (sort === "year-new") {
+    products.sort((a, b) => (b.year || 0) - (a.year || 0));
+  } else if (sort === "deals") {
+    // Sponsored/featured items first
+    products.sort((a, b) => {
+      if (a.sponsorshipTier === "sponsored" && b.sponsorshipTier !== "sponsored") return -1;
+      if (a.sponsorshipTier !== "sponsored" && b.sponsorshipTier === "sponsored") return 1;
+      return 0;
+    });
+  }
+  
+  return res.json(products);
+});
 
 app.get("/api/products/:id", (req, res) => {
   const product = getProductWithGallery(parseInt(req.params.id));

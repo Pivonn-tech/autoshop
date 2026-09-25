@@ -3,6 +3,9 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
+// Disable static generation for this page since it requires authentication
+export const dynamic = 'force-dynamic';
+
 // Arrow and Check icons from appointments.tsx
 function ArrowRight() {
   return (

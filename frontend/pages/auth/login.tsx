@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -19,10 +19,7 @@ const colors = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const callbackUrl =
-    typeof router.query.callbackUrl === "string"
-      ? router.query.callbackUrl
-      : "/my-garage";
+  const [callbackUrl, setCallbackUrl] = useState("/my-garage");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,6 +27,15 @@ export default function LoginPage() {
     password: "",
   });
   const [isSignUp, setIsSignUp] = useState(false);
+
+  useEffect(() => {
+    if (router.isReady) {
+      const url = typeof router.query.callbackUrl === "string"
+        ? router.query.callbackUrl
+        : "/my-garage";
+      setCallbackUrl(url);
+    }
+  }, [router.isReady, router.query]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

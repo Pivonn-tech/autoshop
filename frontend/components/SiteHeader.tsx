@@ -166,11 +166,18 @@ export default function SiteHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Load real cart count from backend (or localStorage fallback)
   useEffect(() => {
+    if (!mounted) return;
+    
     const fetchCart = async () => {
       try {
         const cartId = localStorage.getItem("cartId");
@@ -189,9 +196,11 @@ export default function SiteHeader() {
     };
     fetchCart();
     // Refresh whenever the route changes (e.g. after adding to cart)
-    router.events?.on("routeChangeComplete", fetchCart);
-    return () => router.events?.off("routeChangeComplete", fetchCart);
-  }, [router.events]);
+    if (router.events) {
+      router.events.on("routeChangeComplete", fetchCart);
+      return () => router.events.off("routeChangeComplete", fetchCart);
+    }
+  }, [mounted]);
 
   // Scroll detection
   useEffect(() => {
@@ -202,9 +211,10 @@ export default function SiteHeader() {
 
   // Close drawer on route change
   useEffect(() => {
+    if (!mounted) return;
     setDrawerOpen(false);
     setActiveDropdown(null);
-  }, [router.pathname]);
+  }, [mounted]);
 
   // Focus search input when opened
   useEffect(() => {
@@ -229,15 +239,17 @@ export default function SiteHeader() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
+    if (searchQuery.trim() && mounted) {
       router.push(`/inventory?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchOpen(false);
       setSearchQuery("");
     }
   };
 
-  const isActive = (href: string) =>
-    router.pathname === href || router.pathname.startsWith(href + "/");
+  const isActive = (href: string) => {
+    if (!mounted) return false;
+    return router.pathname === href || router.pathname.startsWith(href + "/");
+  };
 
   return (
     <>

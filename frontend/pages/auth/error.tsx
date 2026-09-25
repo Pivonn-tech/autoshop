@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -17,8 +18,13 @@ const colors = {
 
 export default function AuthErrorPage() {
   const router = useRouter();
-  const error =
-    typeof router.query.error === "string" ? router.query.error : undefined;
+  const [error, setError] = useState<string | undefined>();
+  
+  useEffect(() => {
+    if (router.isReady && typeof router.query.error === "string") {
+      setError(router.query.error);
+    }
+  }, [router.isReady, router.query]);
 
   const errorMessages: Record<string, string> = {
     Callback: "There was a problem signing in. Please try again.",
