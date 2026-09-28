@@ -1,0 +1,7 @@
+backend
+.env.docker
+docker-compose.yml
+DOCKER_SETUP.md
+.logs
+*.pid
+.git

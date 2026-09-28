@@ -256,12 +256,13 @@ export default function SiteHeader() {
       {/* ── Top announcement bar ── */}
       <div
         style={{
-          background: "var(--navy)",
-          color: "rgba(255,255,255,0.82)",
-          fontSize: "0.8rem",
-          padding: "8px 0",
+          background: "var(--charcoal)",
+          color: "rgba(255,255,255,0.8)",
+          fontSize: "0.75rem",
+          padding: "6px 0",
           textAlign: "center",
           letterSpacing: "0.01em",
+          borderBottom: "1px solid rgba(229,27,36,0.15)",
         }}
       >
         <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
@@ -274,7 +275,7 @@ export default function SiteHeader() {
           <span style={{ opacity: 0.3 }}>|</span>
           <span>Open 24/7 — We're always here for you</span>
           <span style={{ opacity: 0.3 }}>|</span>
-          <Link href="/appointments" style={{ color: "var(--amber)", fontWeight: 600, textDecoration: "none" }}>
+          <Link href="/appointments" style={{ color: "var(--red-accent)", fontWeight: 600, textDecoration: "none" }}>
             Book a Service →
           </Link>
         </div>
@@ -292,8 +293,9 @@ export default function SiteHeader() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 24,
-            height: 68,
+            gap: 20,
+            height: 64,
+            paddingBlock: 12,
           }}
         >
           {/* Logo */}
@@ -309,16 +311,16 @@ export default function SiteHeader() {
           >
             <div
               style={{
-                width: 36,
-                height: 36,
-                background: "var(--navy)",
-                borderRadius: 8,
+                width: 32,
+                height: 32,
+                background: "var(--charcoal)",
+                borderRadius: 6,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "1rem",
+                fontSize: "0.9rem",
                 fontWeight: 900,
-                color: "var(--amber)",
+                color: "var(--red-accent)",
                 fontFamily: "var(--font-space-grotesk, sans-serif)",
                 letterSpacing: "-0.02em",
               }}
@@ -329,10 +331,10 @@ export default function SiteHeader() {
               <div
                 style={{
                   fontFamily: "var(--font-space-grotesk, sans-serif)",
-                  fontSize: "1.05rem",
+                  fontSize: "0.95rem",
                   fontWeight: 700,
                   color: "var(--text)",
-                  lineHeight: 1.1,
+                  lineHeight: 1,
                   letterSpacing: "0.02em",
                 }}
               >
@@ -340,10 +342,10 @@ export default function SiteHeader() {
               </div>
               <div
                 style={{
-                  fontSize: "0.65rem",
+                  fontSize: "0.6rem",
                   fontWeight: 600,
-                  color: "var(--amber)",
-                  letterSpacing: "0.12em",
+                  color: "var(--red-accent)",
+                  letterSpacing: "0.1em",
                   textTransform: "uppercase",
                   lineHeight: 1,
                 }}
@@ -358,7 +360,7 @@ export default function SiteHeader() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 4,
+              gap: 2,
               flex: 1,
               justifyContent: "center",
             }}
@@ -379,7 +381,7 @@ export default function SiteHeader() {
                     display: "flex",
                     alignItems: "center",
                     gap: 4,
-                    padding: "8px 12px",
+                    padding: "6px 10px",
                     borderRadius: "var(--radius-md)",
                   }}
                 >
@@ -430,14 +432,14 @@ export default function SiteHeader() {
           </nav>
 
           {/* Right actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
             {/* Search toggle */}
             <button
               onClick={() => setSearchOpen((v) => !v)}
               aria-label="Search"
               style={{
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: "var(--radius-md)",
                 border: "1.5px solid var(--border)",
                 background: "transparent",
@@ -465,8 +467,8 @@ export default function SiteHeader() {
               href="/checkout"
               aria-label="Cart"
               style={{
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: "var(--radius-md)",
                 border: "1.5px solid var(--border)",
                 background: "transparent",
@@ -498,7 +500,7 @@ export default function SiteHeader() {
                   width: 18,
                   height: 18,
                   borderRadius: "50%",
-                  background: "var(--amber)",
+                  background: "var(--red-accent)",
                   color: "white",
                   fontSize: "0.65rem",
                   fontWeight: 700,
@@ -519,8 +521,8 @@ export default function SiteHeader() {
               aria-label="Account"
               className="hidden-mobile"
               style={{
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: "var(--radius-md)",
                 border: "1.5px solid var(--border)",
                 background: "transparent",
@@ -560,8 +562,8 @@ export default function SiteHeader() {
               aria-label="Open menu"
               className="show-mobile"
               style={{
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 borderRadius: "var(--radius-md)",
                 border: "1.5px solid var(--border)",
                 background: "transparent",
@@ -672,16 +674,16 @@ export default function SiteHeader() {
               >
                 <div
                   style={{
-                    width: 32,
-                    height: 32,
-                    background: "var(--navy)",
+                    width: 30,
+                    height: 30,
+                    background: "var(--charcoal)",
                     borderRadius: 6,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: 900,
-                    color: "var(--amber)",
-                    fontSize: "0.85rem",
+                    color: "var(--red-accent)",
+                    fontSize: "0.8rem",
                     fontFamily: "var(--font-space-grotesk, sans-serif)",
                   }}
                 >
@@ -703,8 +705,8 @@ export default function SiteHeader() {
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close menu"
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   borderRadius: "var(--radius-md)",
                   border: "1.5px solid var(--border)",
                   background: "transparent",
@@ -838,7 +840,7 @@ export default function SiteHeader() {
                         padding: "14px 20px",
                         fontSize: "0.95rem",
                         fontWeight: 600,
-                        color: isActive(item.href) ? "var(--amber)" : "var(--text)",
+                        color: isActive(item.href) ? "var(--red-accent)" : "var(--text)",
                         textDecoration: "none",
                         borderBottom: "1px solid var(--border)",
                       }}
@@ -853,7 +855,6 @@ export default function SiteHeader() {
               <div style={{ padding: "8px 0", borderTop: "1px solid var(--border)", marginTop: 8 }}>
                 {[
                   { label: "My Dashboard", href: "/dashboard" },
-                  { label: "Admin Panel", href: "/admin" },
                   { label: "Contact Us", href: "/contact" },
                 ].map((link) => (
                   <Link
