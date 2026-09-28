@@ -1,9 +1,0 @@
-"use strict";(()=>{var e={};e.id=660,e.ids=[660],e.modules={7471:(e,t,r)=>{r.r(t),r.d(t,{default:()=>o});var s=r(997),n=r(6859);let a=`
-  (() => {
-    try {
-      const stored = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.classList.toggle("dark", stored ? stored === "dark" : prefersDark);
-    } catch (_) {}
-  })();
-`;function o(){return(0,s.jsxs)(n.Html,{lang:"en",children:[(0,s.jsxs)(n.Head,{children:[s.jsx("script",{dangerouslySetInnerHTML:{__html:a}}),s.jsx("link",{rel:"manifest",href:"/manifest.json"}),s.jsx("meta",{name:"application-name",content:"AutoFix Kenya"}),s.jsx("meta",{name:"apple-mobile-web-app-capable",content:"yes"}),s.jsx("meta",{name:"apple-mobile-web-app-status-bar-style",content:"default"}),s.jsx("meta",{name:"apple-mobile-web-app-title",content:"AutoFix Kenya"}),s.jsx("meta",{name:"mobile-web-app-capable",content:"yes"}),s.jsx("meta",{name:"theme-color",content:"#0F2A4A"}),s.jsx("link",{rel:"icon",href:"/logo.png"}),s.jsx("link",{rel:"apple-touch-icon",sizes:"180x180",href:"/logo.png"}),s.jsx("link",{rel:"preconnect",href:"https://fonts.googleapis.com"}),s.jsx("link",{rel:"preconnect",href:"https://fonts.gstatic.com",crossOrigin:"anonymous"})]}),(0,s.jsxs)("body",{children:[s.jsx(n.Main,{}),s.jsx(n.NextScript,{})]})]})}},2785:e=>{e.exports=require("next/dist/compiled/next-server/pages.runtime.prod.js")},6689:e=>{e.exports=require("react")},997:e=>{e.exports=require("react/jsx-runtime")},5315:e=>{e.exports=require("path")}};var t=require("../webpack-runtime.js");t.C(e);var r=e=>t(t.s=e),s=t.X(0,[824,859],()=>r(7471));module.exports=s})();
