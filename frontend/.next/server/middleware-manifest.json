@@ -1,6 +1,48 @@
 {
   "version": 3,
-  "middleware": {},
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge-runtime-webpack.js",
+        "server/middleware.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/dashboard(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/dashboard/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/checkout(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/checkout/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/my-garage(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/my-garage/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/admin(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/admin/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/admin(.json)?[\\/#\\?]?$",
+          "originalSource": "/admin"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "znvpufjpKFABomlltpwBt",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "l+6Fwh1GR5rkHC2xt8bHkco+IifI81+DnDKTXhJkJtQ=",
+        "__NEXT_PREVIEW_MODE_ID": "faa52a9280ae5989f51037b50dbeca1e",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "7e567a57ff7cf9880f0b0813b7cd82fcb18c0226b2ac09f876ef6973ab5923d9",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "e67ebf9af21ae0f386a66c6f87024180e9dc5ffde5fb90318be4c7db4c28118a"
+      }
+    }
+  },
   "functions": {},
-  "sortedMiddleware": []
+  "sortedMiddleware": [
+    "/"
+  ]
 }

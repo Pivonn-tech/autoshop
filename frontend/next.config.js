@@ -84,6 +84,9 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
+  
+  // Disable static generation to avoid prerendering errors
+  output: 'standalone',
 
   // Security headers on all routes
   async headers() {

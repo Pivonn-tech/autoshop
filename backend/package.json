@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node src/index.js",
+    "build": "echo 'Running backend build...' && npx prisma generate",
     "start": "prisma migrate deploy && node src/index.js",
     "migrate": "prisma migrate deploy",
     "db:studio": "prisma studio"
