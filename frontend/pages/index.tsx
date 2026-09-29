@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { Car, Zap, Wrench, ChevronRight, Clock } from "lucide-react";
+import { Car, Zap, Wrench, ChevronRight, Clock, ArrowRight, Truck } from "lucide-react";
 
 // ── Auction Countdown Timer ────────────────────────────────────────────────────
 function LiveIndicator() {
@@ -287,7 +287,7 @@ function HeroFunnel() {
                   }}
                 >
                   <span>{activeTab === "buy" ? "Search Inventory" : activeTab === "auction" ? "Browse Auctions" : "Book Service"}</span>
-                  <ArrowRight />
+                  <ArrowRight size={16} strokeWidth={2.5} style={{ marginLeft: "auto" }} />
                 </Link>
               </div>
             </div>
@@ -357,7 +357,7 @@ function AuctionCard({
             letterSpacing: "0.05em",
             animation: "pulse 2s infinite",
           }}>
-            <LiveIcon />
+            <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--red-accent)" }} />
             LIVE
           </div>
         )}
@@ -377,7 +377,7 @@ function AuctionCard({
           alignItems: "center",
           gap: "6px",
         }}>
-          <ClockIcon />
+          <Clock size={14} strokeWidth={2} />
           <span>{timeLeft}</span>
         </div>
       </div>
@@ -561,7 +561,7 @@ function LiveAuctionsZone() {
                 e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              View All Auctions <ArrowRight />
+              View All Auctions <ArrowRight size={16} strokeWidth={2.5} style={{ display: "inline", marginLeft: "6px" }} />
             </Link>
           </div>
         </div>
@@ -745,7 +745,7 @@ export default function HomePage() {
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                Get Valuation <ArrowRight />
+                Get Valuation <ArrowRight size={16} strokeWidth={2.5} style={{ display: "inline", marginLeft: "6px" }} />
               </Link>
             </div>
 
@@ -811,7 +811,7 @@ export default function HomePage() {
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                Book Now <ArrowRight />
+                Book Now <ArrowRight size={16} strokeWidth={2.5} style={{ display: "inline", marginLeft: "6px" }} />
               </Link>
             </div>
           </div>
@@ -874,7 +874,7 @@ export default function HomePage() {
                   }}
                 >
                   View All Vehicles
-                  <ArrowRight />
+                  <ArrowRight size={16} strokeWidth={2.5} style={{ display: "inline", marginLeft: "6px" }} />
                 </button>
               </div>
             </div>
