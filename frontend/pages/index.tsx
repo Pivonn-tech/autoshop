@@ -1241,12 +1241,14 @@ export default function HomePage() {
             marginBottom: "48px",
           }}>
             {[
-              { label: "SUVs & 4x4s", count: "328", icon: "truck" },
-              { label: "Sedans", count: "195", icon: "car" },
-              { label: "Pickup Trucks", count: "142", icon: "truck" },
-              { label: "Luxury Vehicles", count: "78", icon: "sport-car" },
-              { label: "Commercial", count: "56", icon: "van" },
-            ].map((category, index) => (
+              { label: "SUVs & 4x4s", count: "328", icon: Truck },
+              { label: "Sedans", count: "195", icon: Car },
+              { label: "Pickup Trucks", count: "142", icon: Truck },
+              { label: "Luxury Vehicles", count: "78", icon: Zap },
+              { label: "Commercial", count: "56", icon: Wrench },
+            ].map((category, index) => {
+              const IconComponent = category.icon;
+              return (
               <div
                 key={index}
                 style={{
@@ -1279,9 +1281,9 @@ export default function HomePage() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "1.5rem",
+                  color: "var(--red-accent)",
                 }}>
-                  {category.icon}
+                  <IconComponent size={24} strokeWidth={2} />
                 </div>
                 <div>
                   <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--text)", marginBottom: "4px" }}>
@@ -1292,7 +1294,8 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
 
           {/* Trust Indicators */}
