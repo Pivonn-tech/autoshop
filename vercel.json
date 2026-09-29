@@ -1,9 +1,10 @@
 {
-  "projectSettings": {
-    "framework": "nextjs",
-    "buildCommand": "cd frontend && npm run build",
-    "outputDirectory": "frontend/.next",
-    "installCommand": "npm run setup",
-    "devCommand": "cd frontend && npm run dev"
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/.next",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
+    "NEXTAUTH_SECRET": "@nextauth_secret",
+    "NEXT_PUBLIC_SITE_URL": "@next_public_site_url"
   }
 }
