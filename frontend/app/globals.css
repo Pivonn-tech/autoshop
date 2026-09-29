@@ -1316,3 +1316,404 @@ input, select, textarea {
     }
   }
 }
+
+/* ============================================================
+   MOBILE OPTIMIZATION (max-width: 640px)
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Improve small screen readability */
+  body {
+    font-size: 15px;
+  }
+
+  /* Container padding for small screens */
+  .container,
+  .container-wide {
+    width: min(100%, calc(100% - 32px));
+  }
+
+  /* Hero section adjustments */
+  .hero {
+    padding-block: 48px;
+    min-height: auto;
+  }
+
+  .hero-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  /* Section padding for small screens */
+  .section {
+    padding-block: 40px;
+  }
+
+  .section-sm {
+    padding-block: 32px;
+  }
+
+  .section-lg {
+    padding-block: 56px;
+  }
+
+  /* Typography scaling */
+  .heading-display {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+  }
+
+  .heading-xl {
+    font-size: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .heading-lg {
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+  }
+
+  .heading-md {
+    font-size: 1.1rem;
+  }
+
+  .heading-sm {
+    font-size: 1rem;
+  }
+
+  .body-lg {
+    font-size: 1rem;
+  }
+
+  /* Button sizing */
+  .btn {
+    height: 44px;
+    padding-inline: 16px;
+    font-size: 0.875rem;
+  }
+
+  .btn-lg {
+    height: 48px;
+    padding-inline: 20px;
+    font-size: 0.9375rem;
+  }
+
+  /* Form elements */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    height: 44px;
+    font-size: 16px;
+    padding-inline: 12px;
+  }
+
+  .form-group {
+    gap: 4px;
+  }
+
+  /* Card styling */
+  .card,
+  .card-surface,
+  .vehicle-card {
+    border-radius: var(--radius-md);
+  }
+
+  .card-body,
+  .vehicle-card-body {
+    padding: 16px;
+  }
+
+  .vehicle-card-image {
+    aspect-ratio: 16/9;
+  }
+
+  /* Grid adjustments */
+  .vehicle-card-price {
+    font-size: 1.1rem;
+  }
+
+  /* Site header adjustments */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  /* Improve link tap target size on mobile */
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  button {
+    min-height: 44px;
+  }
+
+  /* Mobile-friendly modals/drawers */
+  .mobile-drawer-panel {
+    width: min(100%, 85vw);
+  }
+
+  /* Reduce animations on low-end devices */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ============================================================
+   ULTRA-MOBILE OPTIMIZATION (max-width: 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+  .container,
+  .container-wide {
+    width: min(100%, calc(100% - 24px));
+  }
+
+  .hero {
+    padding: 32px 0;
+  }
+
+  .hero-title {
+    font-size: clamp(1.25rem, 4vw, 2rem);
+    line-height: 1.2;
+  }
+
+  .section {
+    padding-block: 32px;
+  }
+
+  .section-header {
+    margin-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .eyebrow::before {
+    width: 16px;
+  }
+
+  /* Smaller buttons on very small screens */
+  .btn {
+    height: 40px;
+    padding-inline: 12px;
+    font-size: 0.8125rem;
+  }
+
+  .btn-sm {
+    height: 36px;
+    padding-inline: 12px;
+  }
+
+  .btn-lg {
+    height: 44px;
+    padding-inline: 16px;
+  }
+
+  /* Form elements */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .form-label {
+    font-size: 0.8125rem;
+  }
+
+  /* Card padding */
+  .card-body {
+    padding: 12px;
+  }
+
+  /* Vehicle cards */
+  .vehicle-card-body {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .vehicle-card-price {
+    font-size: 1rem;
+  }
+
+  .vehicle-card-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+  }
+
+  /* Hide less important elements */
+  .hidden-sm {
+    display: none !important;
+  }
+
+  /* Spacing adjustments */
+  .mobile-drawer-panel {
+    width: min(100%, 90vw);
+  }
+
+  /* Footer adjustments */
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  footer {
+    padding: 24px 0;
+  }
+}
+
+/* ============================================================
+   PORTRAIT ORIENTATION ADJUSTMENTS
+   ============================================================ */
+@media (max-width: 768px) and (orientation: portrait) {
+  /* Reduce vertical padding in portrait */
+  .section {
+    padding-block: 40px;
+  }
+
+  .hero {
+    min-height: 500px;
+  }
+}
+
+/* ============================================================
+   LANDSCAPE MOBILE ADJUSTMENTS
+   ============================================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .section {
+    padding-block: 24px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-block: 24px;
+  }
+
+  .hero-title {
+    margin-bottom: 8px;
+  }
+
+  .hero-subtitle {
+    display: none;
+  }
+}
+
+
+/* ============================================================
+   HEADER/NAV MOBILE ADJUSTMENTS
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Hide announcement bar on tablets and below */
+  .site-header + div[style*="background: var(--charcoal)"] {
+    display: none;
+  }
+
+  /* Compact header for mobile */
+  .site-header .container {
+    gap: 12px;
+    height: auto;
+    padding-block: 8px;
+  }
+
+  /* Logo adjustments */
+  .site-header .container > a {
+    gap: 6px;
+  }
+
+  .site-header .container > a > div:first-child {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  /* Reduce nav button sizes */
+  .site-header button,
+  .site-header a[aria-label] {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Reduce icon sizes */
+  .site-header svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Further compress header on small phones */
+  .site-header .container {
+    gap: 8px;
+    padding-block: 6px;
+  }
+
+  /* Hide logo text on very small screens */
+  .site-header .container > a > div:last-child {
+    display: none;
+  }
+
+  /* Header button spacing */
+  .site-header button,
+  .site-header a[aria-label] {
+    width: 28px;
+    height: 28px;
+  }
+
+  .site-header button svg,
+  .site-header a[aria-label] svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Minimal header for ultra-small screens */
+  .site-header .container {
+    gap: 6px;
+    padding-block: 4px;
+  }
+
+  .site-header .container > a > div:first-child {
+    width: 24px;
+    height: 24px;
+    font-size: 0.65rem;
+  }
+
+  .site-header button,
+  .site-header a[aria-label] {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ============================================================
+   ANNOUNCEMENT BAR MOBILE
+   ============================================================ */
+@media (max-width: 1024px) {
+  /* Hide announcement text on medium screens */
+  .announcement-text-full {
+    display: none;
+  }
+
+  .announcement-text-compact {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Hide most announcement bar content on small phones */
+  .announcement-bar {
+    font-size: 0.65rem;
+    padding: 4px 0;
+  }
+
+  .announcement-bar span:not(:first-child) {
+    display: none;
+  }
+}
