@@ -2,34 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { Car, Zap, Wrench, ChevronRight, Clock } from "lucide-react";
 
-// ── Icons ──────────────────────────────────────────────────────────────────────
-function ArrowRight() {
+// ── Auction Countdown Timer ────────────────────────────────────────────────────
+function LiveIndicator() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
-function ClockIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-    </svg>
-  );
-}
-function StarIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-}
-function LiveIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-      <circle cx="12" cy="12" r="4" />
-    </svg>
+    <span style={{
+      display: "inline-block",
+      width: "8px",
+      height: "8px",
+      borderRadius: "50%",
+      background: "var(--red-accent)",
+      animation: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+    }} />
   );
 }
 
@@ -52,10 +37,11 @@ function AuctionCountdown({ hours = 2, minutes = 45, seconds = 30 }) {
   }, []);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 700, color: "var(--red-accent)" }}>
-      <ClockIcon />
+    <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.85rem", fontWeight: 700, color: "var(--red-accent)" }}>
+      <Clock size={16} />
       <span>{String(time.h).padStart(2, '0')}:{String(time.m).padStart(2, '0')}:{String(time.s).padStart(2, '0')}</span>
-      <LiveIcon />
+      <LiveIndicator />
+      <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>Live</span>
     </div>
   );
 }
@@ -71,9 +57,9 @@ function HeroFunnel() {
   });
 
   const tabs = [
-    { id: "buy", label: "Buy Cars", icon: "car" },
-    { id: "auction", label: "Live Auctions", icon: "bolt" },
-    { id: "service", label: "Book Service", icon: "wrench" },
+    { id: "buy" as const, label: "Buy Cars", icon: Car },
+    { id: "auction" as const, label: "Live Auctions", icon: Zap },
+    { id: "service" as const, label: "Book Service", icon: Wrench },
   ];
 
   return (
@@ -129,31 +115,34 @@ function HeroFunnel() {
               display: "flex",
               borderBottom: "2px solid var(--surface)",
             }}>
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  style={{
-                    flex: 1,
-                    padding: "20px",
-                    background: activeTab === tab.id ? "white" : "var(--surface)",
-                    border: "none",
-                    fontSize: "0.95rem",
-                    fontWeight: 600,
-                    color: activeTab === tab.id ? "var(--charcoal)" : "var(--text-secondary)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "8px",
-                    borderBottom: activeTab === tab.id ? "3px solid var(--red-accent)" : "3px solid transparent",
-                    transition: "all 200ms ease",
-                  }}
-                >
-                  <span style={{ fontSize: "1.2rem" }}>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
+              {tabs.map(tab => {
+                const IconComponent = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    style={{
+                      flex: 1,
+                      padding: "20px",
+                      background: activeTab === tab.id ? "white" : "var(--surface)",
+                      border: "none",
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                      color: activeTab === tab.id ? "var(--charcoal)" : "var(--text-secondary)",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "10px",
+                      borderBottom: activeTab === tab.id ? "3px solid var(--red-accent)" : "3px solid transparent",
+                      transition: "all 200ms ease",
+                    }}
+                  >
+                    <IconComponent size={20} strokeWidth={2} />
+                    {tab.label}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Search Form */}
