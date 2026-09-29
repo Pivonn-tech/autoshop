@@ -10,7 +10,9 @@
     "build": "./build.sh",
     "build:frontend": "cd frontend && npm run build",
     "build:backend": "cd backend && npm run build",
-    "start": "npm run dev",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd frontend && npm run start",
+    "start:backend": "cd backend && npm run start",
     "setup": "npm install && npm install -C frontend && npm install -C backend"
   },
   "keywords": [

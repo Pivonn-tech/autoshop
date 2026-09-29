@@ -1,9 +1,8 @@
 {
   "pages/_app.tsx -> ../components/SiteHeader": {
-    "id": 5512,
+    "id": "pages/_app.tsx -> ../components/SiteHeader",
     "files": [
-      "static/chunks/664-5843271e801388d2.js",
-      "static/chunks/512.f785ffe8979438de.js"
+      "static/chunks/components_SiteHeader_tsx.js"
     ]
   }
 }
