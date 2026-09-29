@@ -63,9 +63,9 @@ const securityHeaders = [
       // Fonts
       "font-src 'self' https://fonts.gstatic.com",
       // Images: self + backend API + data URIs
-      `img-src 'self' data: blob: http://localhost:3001 ${process.env.NEXT_PUBLIC_CDN_URL || ""}`,
-      // API calls: self + backend
-      `connect-src 'self' http://localhost:3001 ${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}`,
+      `img-src 'self' data: blob: http://localhost:3001 https://autoshop-fj4r.onrender.com ${process.env.NEXT_PUBLIC_CDN_URL || ""}`,
+      // API calls: self + backend (local dev + Render production)
+      `connect-src 'self' http://localhost:3001 https://autoshop-fj4r.onrender.com ${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}`,
       // Media
       "media-src 'none'",
       // No plugins
