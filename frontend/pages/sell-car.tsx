@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -90,9 +90,10 @@ interface FormData {
 }
 
 export default function SellCar() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -112,9 +113,27 @@ export default function SellCar() {
     county: "", town: "", specificLocation: ""
   });
 
-  // Redirect to login if not authenticated
+  // Handle authentication check on client side only
+  useEffect(() => {
+    setIsMounted(true);
+    if (status === "unauthenticated") {
+      router.push('/auth/login?callbackUrl=' + encodeURIComponent('/sell-car'));
+    }
+  }, [status, router]);
+
+  // Show loading state while checking authentication
+  if (!isMounted || status === "loading") {
+    return (
+      <div style={{ background: "var(--bg)", minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ color: "var(--text-secondary)" }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect not needed here since useEffect handles it
   if (!session) {
-    router.push('/auth/login?callbackUrl=' + encodeURIComponent('/sell-car'));
     return null;
   }
 
