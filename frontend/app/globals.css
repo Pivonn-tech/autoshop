@@ -31,6 +31,7 @@
   --light-gray:    #F3F4F6;
   --charcoal:      #1A1E24;
   --red-accent:    #E51B24;
+  --amber:         #E51B24;
   
   /* Legacy navy kept for gradients/accents but reduced usage */
   --navy:          #1A1E24;
@@ -89,26 +90,26 @@
 
 /* Dark theme */
 .dark {
-  --bg:            #0C1220;
-  --surface:       #131d30;
-  --surface-2:     #1a2640;
-  --border:        #1f3050;
-  --border-strong: #2a3f60;
-  --text:          #F1F5F9;
-  --text-secondary:#94A3B8;
-  --text-muted:    #475569;
+  --bg:            #0B0F1A;
+  --surface:       #131823;
+  --surface-2:     #1A2235;
+  --border:        #2A3654;
+  --border-strong: #364763;
+  --text:          #F0F4F8;
+  --text-secondary:#CBD5E1;
+  --text-muted:    #94A3B8;
   --navy:          #1A1E24;
   --navy-light:    #2a3540;
 
   --accent-color:       var(--red-accent);
-  --accent-color-10:    rgba(229,27,36,0.10);
-  --accent-color-20:    rgba(229,27,36,0.20);
+  --accent-color-10:    rgba(229,27,36,0.12);
+  --accent-color-20:    rgba(229,27,36,0.24);
   --bg-color:           var(--bg);
   --text-color:         var(--text);
   --surface-color:      var(--surface);
   --surface-strong-color: var(--surface-2);
   --text-secondary-color: var(--text-secondary);
-  --text-secondary-color-40: rgba(148,163,184,0.4);
+  --text-secondary-color-40: rgba(203,213,225,0.4);
 
   color-scheme: dark;
 }
