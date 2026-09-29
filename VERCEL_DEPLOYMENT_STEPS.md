@@ -35,12 +35,14 @@ On the Import dialog:
 
 **Framework Preset**: Should auto-detect as **Next.js** ✓
 
-**Root Directory**: 
+**Root Directory**:
+
 - Click **"Edit"** if needed
 - Set to: `frontend`
 - Click **"Save"**
 
 **Build and Output Settings**:
+
 - These should auto-populate with Next.js defaults
 - Build Command: `npm run build`
 - Output Directory: `.next`
@@ -56,12 +58,12 @@ On the same import dialog, scroll down to **"Environment Variables"** section.
 
 Add these variables:
 
-| Key | Value |
-|-----|-------|
-| `NEXT_PUBLIC_API_URL` | `https://autoshop-fj4r.onrender.com/api` |
-| `NEXTAUTH_URL` | (Will be your Vercel URL - update after deployment) |
-| `NEXTAUTH_SECRET` | `59vkebXTZW7FhKq5Yw/QjpSFW5gMaOiMb/616nen5wI=` |
-| `NEXT_PUBLIC_SITE_URL` | `https://autofixkenya.co.ke` |
+| Key                    | Value                                               |
+| ---------------------- | --------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`  | `https://autoshop-fj4r.onrender.com/api`            |
+| `NEXTAUTH_URL`         | (Will be your Vercel URL - update after deployment) |
+| `NEXTAUTH_SECRET`      | ` 59vkebXTZW7FhKq5Yw/QjpSFW5gMaOiMb/616nen5wI=`     |
+| `NEXT_PUBLIC_SITE_URL` | `https://autofixkenya.co.ke`                        |
 
 **Note**: You can add more environment variables after deployment. The most important one is `NEXT_PUBLIC_API_URL`.
 
@@ -130,10 +132,12 @@ Vercel will automatically redeploy with the updated variable.
 2. Should see your AutoShop homepage
 
 **Check the browser console** (press F12):
+
 - Should NOT see CORS errors
 - Should NOT see "Cannot reach backend" errors
 
 If you see errors:
+
 - Wait 2-3 minutes for Render to redeploy with new CORS_ORIGIN
 - Hard refresh: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
 - Check browser cache: `Ctrl+Shift+Delete` → Clear all
@@ -145,15 +149,16 @@ If you see errors:
 Open browser console (F12) and run:
 
 ```javascript
-fetch('https://autoshop-fj4r.onrender.com/api/cart')
-  .then(r => r.json())
-  .then(data => console.log('API Response:', data))
-  .catch(e => console.error('Error:', e))
+fetch("https://autoshop-fj4r.onrender.com/api/cart")
+  .then((r) => r.json())
+  .then((data) => console.log("API Response:", data))
+  .catch((e) => console.error("Error:", e));
 ```
 
 Should see: `API Response: []` or `API Response: {object}`
 
 If error, check:
+
 - CORS_ORIGIN in Render matches your Vercel URL
 - Wait for Render to redeploy (watch the Render logs)
 - Browser cache cleared
@@ -163,6 +168,7 @@ If error, check:
 ## Step 11: Test End-to-End
 
 Navigate through your app:
+
 - Load home page ✓
 - Browse products/listings ✓
 - Add to cart ✓
@@ -179,6 +185,7 @@ If everything works → **Deployment complete!** 🎉
 **Problem**: Frontend can't communicate with backend
 
 **Solution**:
+
 1. Verify `NEXT_PUBLIC_API_URL` in Vercel settings
 2. Verify `CORS_ORIGIN` in Render settings includes your Vercel URL
 3. Wait 2-3 minutes for Render to redeploy
@@ -190,6 +197,7 @@ If everything works → **Deployment complete!** 🎉
 **Problem**: Deployment failed
 
 **Solution**:
+
 1. Check Vercel build logs (Vercel Dashboard → Project → Deployments)
 2. Common issues:
    - TypeScript errors: Fix in code
@@ -201,6 +209,7 @@ If everything works → **Deployment complete!** 🎉
 **Problem**: Page loads but shows nothing
 
 **Solution**:
+
 1. Check browser console (F12) for errors
 2. Check Vercel function logs (Vercel Dashboard → Project → Runtime Logs)
 3. Check if API is reachable (see Step 10 above)
@@ -258,4 +267,3 @@ Database (External):  postgresql://autoshop:***@dpg-datpsspsrm7s739lju1g-a.singa
 - **Next.js Docs**: https://nextjs.org/docs
 
 Good luck with your deployment! 🚀
-
