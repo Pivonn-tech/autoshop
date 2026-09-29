@@ -560,7 +560,7 @@ export default function SiteHeader() {
             <button
               onClick={() => setDrawerOpen(true)}
               aria-label="Open menu"
-              className="show-mobile"
+              className="visible-mobile"
               style={{
                 width: 36,
                 height: 36,
@@ -568,7 +568,6 @@ export default function SiteHeader() {
                 border: "1.5px solid var(--border)",
                 background: "transparent",
                 color: "var(--text)",
-                display: "none",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
