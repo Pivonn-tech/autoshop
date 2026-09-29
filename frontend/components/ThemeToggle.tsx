@@ -49,18 +49,15 @@ export default function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     try {
+      // Default to light mode - only use dark if explicitly stored
       const stored = localStorage.getItem("theme");
-      if (stored === "dark" || stored === "light") {
-        setTheme(stored);
-        document.documentElement.classList.toggle("dark", stored === "dark");
-      } else {
-        const prefersDark =
-          window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        setTheme(prefersDark ? "dark" : "light");
-        document.documentElement.classList.toggle("dark", prefersDark);
-      }
+      const currentTheme = stored === "dark" ? "dark" : "light";
+      setTheme(currentTheme);
+      document.documentElement.classList.toggle("dark", currentTheme === "dark");
+      document.documentElement.style.colorScheme = currentTheme;
     } catch (e) {
-      // ignore
+      // ignore - default to light
+      setTheme("light");
     }
   }, []);
 
@@ -73,6 +70,7 @@ export default function ThemeToggle() {
       // ignore
     }
     document.documentElement.classList.toggle("dark", next === "dark");
+    document.documentElement.style.colorScheme = next;
   };
 
   if (!mounted) return null;

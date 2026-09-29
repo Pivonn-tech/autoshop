@@ -3,9 +3,16 @@ import { Html, Head, Main, NextScript } from "next/document";
 const themeScript = `
   (() => {
     try {
+      // Default to light mode, respect user preference only if explicitly set
       const stored = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.classList.toggle("dark", stored ? stored === "dark" : prefersDark);
+      if (stored === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        // Default: light mode (remove dark class if it somehow exists)
+        document.documentElement.classList.remove("dark");
+      }
+      // Set color-scheme to match theme
+      document.documentElement.style.colorScheme = stored === "dark" ? "dark" : "light";
     } catch (_) {}
   })();
 `;
