@@ -71,90 +71,117 @@ function ProductCard({ product, view }: { product: Product; view: "grid" | "list
   const [hovered, setHovered] = useState(false);
   const img = getProductCardImage(product.id);
 
-  if (view === "list") {
+  // Mobile-optimized card
+  if (view === "grid") {
     return (
       <Link href={`/product/${product.id}`} style={{ textDecoration: "none" }}>
         <div
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           style={{
-            display: "flex", gap: 0, background: "var(--bg)",
+            background: "var(--bg)",
             border: `1px solid ${hovered ? "var(--amber)" : "var(--border)"}`,
             borderRadius: 12, overflow: "hidden",
-            boxShadow: hovered ? "var(--shadow-lg)" : "var(--shadow-sm)",
-            transition: "all 220ms ease",
+            boxShadow: hovered ? "var(--shadow-xl)" : "var(--shadow-sm)",
+            transform: hovered ? "translateY(-4px)" : "none",
+            transition: "all 220ms ease", display: "flex", flexDirection: "column",
           }}
         >
-          <div style={{ width: 260, flexShrink: 0, position: "relative", overflow: "hidden" }}>
+          {/* Image with badges */}
+          <div style={{ position: "relative", aspectRatio: "16/10", background: "var(--surface)", overflow: "hidden" }}>
             <Image src={img} alt={product.name} fill style={{ objectFit: "cover", transition: "transform 400ms ease", transform: hovered ? "scale(1.05)" : "scale(1)" }} />
-          </div>
-          <div style={{ flex: 1, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 10, justifyContent: "center" }}>
-            <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase" }}>{product.category}</div>
-            <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.2rem", fontWeight: 700, color: "var(--text)", margin: 0 }}>{product.name}</h3>
-            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.6, maxWidth: 520 }}>{product.description}</p>
+            
+            {/* Top badges */}
+            <div style={{ position: "absolute", top: 12, left: 12, right: 12, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+              <div style={{ background: "var(--navy)", color: "white", fontSize: "0.68rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                {product.category}
+              </div>
+              {product.stock !== undefined && product.stock < 3 && (
+                <div style={{ background: "#DC2626", color: "white", fontSize: "0.68rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20 }}>
+                  {product.stock} left
+                </div>
+              )}
+            </div>
 
-            {/* Spec pills */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {/* Rating overlay - bottom right */}
+            <div style={{ position: "absolute", bottom: 12, right: 12, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)", padding: "6px 10px", borderRadius: 16, display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ display: "flex", gap: 2, color: "#FBBF24" }}>
+                {[1,2,3,4,5].map(s => <StarFill key={s} />)}
+              </div>
+              <span style={{ color: "white", fontSize: "0.65rem", fontWeight: 600 }}>(12)</span>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div style={{ padding: "16px", flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+            {/* Make and name */}
+            <div>
+              <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
+                {product.make || "Vehicle"}
+              </div>
+              <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1rem", fontWeight: 700, color: "var(--text)", margin: 0, lineHeight: 1.3 }}>
+                {product.name}
+              </h3>
+            </div>
+
+            {/* Quick specs - horizontal scrollable on mobile */}
+            <div style={{ display: "flex", gap: 6, overflowX: "auto", overflowY: "hidden", scrollBehavior: "smooth", paddingBottom: 4 }}>
               {[
-                product.make && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>, val: product.make },
                 product.year && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, val: String(product.year) },
                 product.condition && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, val: product.condition.charAt(0).toUpperCase() + product.condition.slice(1) },
                 product.engineSize && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>, val: product.engineSize },
-                product.payload && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>, val: product.payload },
                 product.fuelType && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 00-2-2H6a2 2 0 00-2 2v18"/><path d="M14 13h2a2 2 0 012 2v2a2 2 0 002 2h0a2 2 0 002-2V9.83a2 2 0 00-.59-1.42L18 5"/></svg>, val: product.fuelType },
               ].filter(Boolean).map((item: any, i: number) => (
-                <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.72rem", fontWeight: 600, padding: "3px 9px", background: "var(--surface-2, rgba(0,0,0,0.04))", border: "1px solid var(--border)", borderRadius: 20, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: "0.7rem", fontWeight: 600, padding: "3px 8px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: 16, color: "var(--text-secondary)", whiteSpace: "nowrap", flexShrink: 0 }}>
                   <span style={{ color: "var(--text-muted)", display: "flex", alignItems: "center" }}>{item.icon}</span>{item.val}
                 </span>
               ))}
             </div>
 
-            <div style={{ display: "flex", gap: 3, color: "#FBBF24", marginTop: 2 }}>{[1,2,3,4,5].map(s => <StarFill key={s} />)}<span style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginLeft: 4 }}>(12)</span></div>
-          </div>
-          <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", gap: 16, flexShrink: 0 }}>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>From</div>
-              <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.4rem", fontWeight: 700, color: "var(--navy)" }}>{FORMAT(product.price)}</div>
+            {/* Description - truncated */}
+            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+              {product.description}
+            </p>
+
+            {/* Price and CTA */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+              <div>
+                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600 }}>From</div>
+                <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.1rem", fontWeight: 700, color: "var(--navy)" }}>
+                  {FORMAT(product.price)}
+                </div>
+              </div>
+              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, background: hovered ? "var(--amber)" : "var(--navy)", color: "white", borderRadius: 8, fontSize: "1rem", fontWeight: 600, transition: "background 180ms ease", flexShrink: 0 }}>
+                →
+              </span>
             </div>
-            {product.stock !== undefined && product.stock < 3 && (
-              <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#DC2626", background: "rgba(220,38,38,0.08)", padding: "3px 10px", borderRadius: 20 }}>{product.stock} left</div>
-            )}
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", background: hovered ? "var(--amber)" : "var(--navy)", color: "white", borderRadius: 8, fontSize: "0.85rem", fontWeight: 600, transition: "background 180ms ease" }}>
-              View Details <ArrowRight />
-            </span>
           </div>
         </div>
       </Link>
     );
   }
 
+  // List view - full width horizontal card
   return (
     <Link href={`/product/${product.id}`} style={{ textDecoration: "none" }}>
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
-          background: "var(--bg)",
+          display: "flex", gap: 0, background: "var(--bg)",
           border: `1px solid ${hovered ? "var(--amber)" : "var(--border)"}`,
           borderRadius: 12, overflow: "hidden",
-          boxShadow: hovered ? "var(--shadow-xl)" : "var(--shadow-sm)",
-          transform: hovered ? "translateY(-4px)" : "none",
-          transition: "all 220ms ease", display: "flex", flexDirection: "column",
+          boxShadow: hovered ? "var(--shadow-lg)" : "var(--shadow-sm)",
+          transition: "all 220ms ease",
         }}
       >
-        <div style={{ position: "relative", aspectRatio: "16/10", background: "var(--surface)", overflow: "hidden" }}>
+        <div style={{ width: 260, flexShrink: 0, position: "relative", overflow: "hidden" }}>
           <Image src={img} alt={product.name} fill style={{ objectFit: "cover", transition: "transform 400ms ease", transform: hovered ? "scale(1.05)" : "scale(1)" }} />
-          <div style={{ position: "absolute", top: 12, left: 12, background: "var(--navy)", color: "white", fontSize: "0.68rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20, letterSpacing: "0.06em", textTransform: "uppercase" }}>{product.category}</div>
-          {product.stock !== undefined && product.stock < 3 && (
-            <div style={{ position: "absolute", top: 12, right: 12, background: "#DC2626", color: "white", fontSize: "0.68rem", fontWeight: 700, padding: "4px 10px", borderRadius: 20 }}>{product.stock} left</div>
-          )}
         </div>
-          <div style={{ padding: 20, flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div>
-            <div style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Melvin Vehicles</div>
-            <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1rem", fontWeight: 700, color: "var(--text)", margin: 0, lineHeight: 1.3 }}>{product.name}</h3>
-          </div>
-          <p style={{ fontSize: "0.835rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.55, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{product.description}</p>
+        <div style={{ flex: 1, padding: "24px 28px", display: "flex", flexDirection: "column", gap: 10, justifyContent: "center" }}>
+          <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--amber)", letterSpacing: "0.1em", textTransform: "uppercase" }}>{product.category}</div>
+          <h3 style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.2rem", fontWeight: 700, color: "var(--text)", margin: 0 }}>{product.name}</h3>
+          <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", margin: 0, lineHeight: 1.6, maxWidth: 520 }}>{product.description}</p>
 
           {/* Spec pills */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -164,23 +191,27 @@ function ProductCard({ product, view }: { product: Product; view: "grid" | "list
               product.condition && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, val: product.condition.charAt(0).toUpperCase() + product.condition.slice(1) },
               product.engineSize && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M22 12h-2M4 12H2M12 22v-2M12 4V2"/></svg>, val: product.engineSize },
               product.payload && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>, val: product.payload },
+              product.fuelType && { icon: <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 00-2-2H6a2 2 0 00-2 2v18"/><path d="M14 13h2a2 2 0 012 2v2a2 2 0 002 2h0a2 2 0 002-2V9.83a2 2 0 00-.59-1.42L18 5"/></svg>, val: product.fuelType },
             ].filter(Boolean).map((item: any, i: number) => (
-              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.7rem", fontWeight: 600, padding: "3px 8px", background: "var(--surface-2, rgba(0,0,0,0.04))", border: "1px solid var(--border)", borderRadius: 20, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
+              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.72rem", fontWeight: 600, padding: "3px 9px", background: "var(--surface-2, rgba(0,0,0,0.04))", border: "1px solid var(--border)", borderRadius: 20, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
                 <span style={{ color: "var(--text-muted)", display: "flex", alignItems: "center" }}>{item.icon}</span>{item.val}
               </span>
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: 3, color: "#FBBF24" }}>{[1,2,3,4,5].map(s => <StarFill key={s} />)}<span style={{ color: "var(--text-muted)", fontSize: "0.72rem", marginLeft: 4 }}>(12)</span></div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: 12, borderTop: "1px solid var(--border)" }}>
-            <div>
-              <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>From</div>
-              <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.2rem", fontWeight: 700, color: "var(--navy)" }}>{FORMAT(product.price)}</div>
-            </div>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "8px 14px", background: hovered ? "var(--amber)" : "var(--navy)", color: "white", borderRadius: 7, fontSize: "0.78rem", fontWeight: 600, transition: "background 180ms ease" }}>
-              View <ArrowRight />
-            </span>
+          <div style={{ display: "flex", gap: 3, color: "#FBBF24", marginTop: 2 }}>{[1,2,3,4,5].map(s => <StarFill key={s} />)}<span style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginLeft: 4 }}>(12)</span></div>
+        </div>
+        <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", gap: 16, flexShrink: 0 }}>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>From</div>
+            <div style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontSize: "1.4rem", fontWeight: 700, color: "var(--navy)" }}>{FORMAT(product.price)}</div>
           </div>
+          {product.stock !== undefined && product.stock < 3 && (
+            <div style={{ fontSize: "0.72rem", fontWeight: 700, color: "#DC2626", background: "rgba(220,38,38,0.08)", padding: "3px 10px", borderRadius: 20 }}>{product.stock} left</div>
+          )}
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", background: hovered ? "var(--amber)" : "var(--navy)", color: "white", borderRadius: 8, fontSize: "0.85rem", fontWeight: 600, transition: "background 180ms ease" }}>
+            View Details <ArrowRight />
+          </span>
         </div>
       </div>
     </Link>
@@ -261,10 +292,12 @@ export default function Inventory() {
       </div>
 
       {/* Main layout */}
-      <div className="container" style={{ paddingBlock: 40, display: "grid", gridTemplateColumns: "260px 1fr", gap: 32, alignItems: "start" }}>
+      <div className="container inventory-layout" style={{
+        paddingBlock: 40, display: "grid", gridTemplateColumns: "260px 1fr", gap: 32, alignItems: "start",
+      }}>
 
-        {/* ── Sidebar Filters ── */}
-        <aside style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, position: "sticky", top: 90, boxShadow: "var(--shadow-sm)" }}>
+        {/* ── Sidebar Filters (Hidden on mobile, shown with toggle) ── */}
+        <aside className="inventory-sidebar" style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, position: "sticky", top: 90, boxShadow: "var(--shadow-sm)" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
             <span style={{ fontFamily: "var(--font-space-grotesk, sans-serif)", fontWeight: 700, fontSize: "1rem", color: "var(--text)" }}>Filters</span>
             <button onClick={resetFilters} style={{ fontSize: "0.78rem", color: "var(--amber)", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
@@ -354,7 +387,7 @@ export default function Inventory() {
 
           {/* Results */}
           {loading || !filtersReady ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: view === "grid" ? "repeat(2, 1fr)" : "1fr", gap: 24 }}>
               {[1,2,3,4].map(i => <SkeletonCard key={i} />)}
             </div>
           ) : filtered.length === 0 ? (
@@ -370,7 +403,7 @@ export default function Inventory() {
               </button>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: view === "grid" ? "repeat(2, minmax(0,1fr))" : "1fr", gap: view === "grid" ? 24 : 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: view === "grid" ? "repeat(auto-fill, minmax(clamp(200px, 50vw, 280px), 1fr))" : "1fr", gap: view === "grid" ? 20 : 16 }}>
               {filtered.map(p => <ProductCard key={p.id} product={p} view={view} />)}
             </div>
           )}
@@ -378,11 +411,37 @@ export default function Inventory() {
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
-          .container > div[style*="grid-template-columns: 260px"] {
-            grid-template-columns: 1fr !important;
+        /* Mobile responsive grid */
+        @media (max-width: 1024px) {
+          .inventory-layout {
+            grid-template-columns: 1fr;
           }
-          aside[style*="sticky"] { position: static !important; }
+          
+          .inventory-sidebar {
+            display: none;
+          }
+        }
+
+        /* Mobile view optimizations */
+        @media (max-width: 768px) {
+          .inventory-layout {
+            gap: 24px;
+            padding-block: 24px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .inventory-layout {
+            gap: 16px;
+            padding-block: 16px;
+          }
+        }
+
+        /* Grid auto-fit for mobile */
+        @media (max-width: 480px) {
+          .inventory-layout main {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </div>
