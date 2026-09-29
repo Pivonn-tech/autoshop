@@ -441,9 +441,9 @@ export default function SiteHeader() {
                 width: 36,
                 height: 36,
                 borderRadius: "var(--radius-md)",
-                border: "1.5px solid var(--border)",
+                border: "1.5px solid rgba(255, 255, 255, 0.2)",
                 background: "transparent",
-                color: "var(--text-secondary)",
+                color: "rgba(255, 255, 255, 0.7)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -451,12 +451,12 @@ export default function SiteHeader() {
                 cursor: "pointer",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--navy)";
-                (e.currentTarget as HTMLElement).style.color = "var(--navy)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255, 255, 255, 0.5)";
+                (e.currentTarget as HTMLElement).style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255, 255, 255, 0.2)";
+                (e.currentTarget as HTMLElement).style.color = "rgba(255, 255, 255, 0.7)";
               }}
             >
               <SearchIcon />
@@ -470,9 +470,9 @@ export default function SiteHeader() {
                 width: 36,
                 height: 36,
                 borderRadius: "var(--radius-md)",
-                border: "1.5px solid var(--border)",
+                border: "1.5px solid rgba(255, 255, 255, 0.2)",
                 background: "transparent",
-                color: "var(--text-secondary)",
+                color: "rgba(255, 255, 255, 0.7)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -481,12 +481,12 @@ export default function SiteHeader() {
                 transition: "all var(--transition)",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--navy)";
-                (e.currentTarget as HTMLElement).style.color = "var(--navy)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255, 255, 255, 0.5)";
+                (e.currentTarget as HTMLElement).style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255, 255, 255, 0.2)";
+                (e.currentTarget as HTMLElement).style.color = "rgba(255, 255, 255, 0.7)";
               }}
             >
               <CartIcon />
@@ -524,9 +524,9 @@ export default function SiteHeader() {
                 width: 36,
                 height: 36,
                 borderRadius: "var(--radius-md)",
-                border: "1.5px solid var(--border)",
+                border: "1.5px solid rgba(255, 255, 255, 0.2)",
                 background: "transparent",
-                color: "var(--text-secondary)",
+                color: "rgba(255, 255, 255, 0.7)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -534,12 +534,12 @@ export default function SiteHeader() {
                 transition: "all var(--transition)",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--navy)";
-                (e.currentTarget as HTMLElement).style.color = "var(--navy)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255, 255, 255, 0.5)";
+                (e.currentTarget as HTMLElement).style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255, 255, 255, 0.2)";
+                (e.currentTarget as HTMLElement).style.color = "rgba(255, 255, 255, 0.7)";
               }}
             >
               <UserIcon />
@@ -565,9 +565,9 @@ export default function SiteHeader() {
                 width: 36,
                 height: 36,
                 borderRadius: "var(--radius-md)",
-                border: "1.5px solid var(--border)",
+                border: "1.5px solid rgba(255, 255, 255, 0.2)",
                 background: "transparent",
-                color: "var(--text)",
+                color: "rgba(255, 255, 255, 0.85)",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
