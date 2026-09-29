@@ -1717,3 +1717,223 @@ input, select, textarea {
     display: none;
   }
 }
+
+
+/* ============================================================
+   VEHICLE LISTING PAGE MOBILE OPTIMIZATION
+   ============================================================ */
+
+/* Desktop: 2-3 column grid */
+@media (min-width: 1200px) {
+  main[style*="grid"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 24px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  main[style*="grid"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px;
+  }
+}
+
+/* Tablet: Single column or 1.5x */
+@media (max-width: 768px) {
+  main[style*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  /* Vehicle cards on mobile */
+  .vehicle-card,
+  a[href*="/product/"] > div {
+    border-radius: 10px;
+  }
+
+  /* Card image optimization */
+  [style*="aspectRatio: 16/10"] {
+    aspect-ratio: 16/9;
+  }
+
+  /* Reduce spec pills on mobile */
+  [style*="gap: 6"][style*="flexWrap: wrap"] {
+    gap: 4px;
+  }
+
+  /* Price text on mobile */
+  [style*="1.1rem"][style*="color: var(--navy)"] {
+    font-size: 1rem;
+  }
+}
+
+/* Small phones: Single column, optimized spacing */
+@media (max-width: 480px) {
+  main[style*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* Compact vehicle cards */
+  a[href*="/product/"] > div {
+    border-radius: 8px;
+  }
+
+  /* Card padding on small screens */
+  [style*="padding: 16px"],
+  [style*="padding: 20px"] {
+    padding: 12px !important;
+  }
+
+  /* Reduce gaps in card content */
+  [style*="gap: 10"][style*="flex-direction: column"] {
+    gap: 6px;
+  }
+
+  /* Spec pill sizing */
+  [style*="padding: 3px 8px"] {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+
+  /* Price sizing */
+  [style*="font-size: 1.1rem"] {
+    font-size: 0.95rem;
+  }
+
+  /* CTA button sizing */
+  [style*="width: 40px"][style*="height: 40px"] {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Description truncation */
+  p[style*="WebkitLineClamp: 1"] {
+    font-size: 0.75rem;
+  }
+}
+
+/* Ultra-compact phones (< 360px) */
+@media (max-width: 360px) {
+  main[style*="grid"] {
+    gap: 8px;
+  }
+
+  [style*="padding: 12px"] {
+    padding: 8px !important;
+  }
+
+  [style*="gap: 6"][style*="flexWrap"] {
+    gap: 2px;
+  }
+
+  /* Reduce card header size */
+  [style*="fontSize: 0.68rem"][style*="textTransform: uppercase"] {
+    font-size: 0.6rem;
+  }
+
+  /* Reduce title size */
+  [style*="fontSize: 1rem"][style*="fontFamily"][style*="fontWeight: 700"] {
+    font-size: 0.9rem;
+  }
+}
+
+/* Grid layout fixes for inventory page */
+.inventory-layout {
+  display: grid;
+  gap: 32px;
+}
+
+@media (max-width: 1024px) {
+  .inventory-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .inventory-sidebar {
+    display: none;
+  }
+
+  .inventory-layout main {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .inventory-layout {
+    gap: 16px;
+    padding: 16px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-layout {
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  /* Toolbar adjustments */
+  .inventory-layout main > div:nth-child(3) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+/* Search bar mobile optimization */
+input[placeholder*="Search vehicles"] {
+  font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+  input[placeholder*="Search vehicles"] {
+    font-size: 16px;
+  }
+}
+
+/* Toolbar responsive */
+@media (max-width: 480px) {
+  [style*="justify-content: space-between"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  [style*="display: flex"][style*="alignItems: center"][style*="gap: 8"] {
+    width: 100%;
+  }
+}
+
+/* Loading skeleton mobile */
+@media (max-width: 768px) {
+  [style*="grid-template-columns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Image optimization for vehicle cards */
+img[alt*="vehicle"],
+img[alt*="Vehicle"],
+img[alt*="car"],
+img[alt*="Car"] {
+  object-fit: cover;
+  object-position: center;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent layout shift on image load */
+[style*="aspectRatio"] img {
+  display: block;
+}
+
+/* Star rating mobile */
+@media (max-width: 480px) {
+  [style*="color: #FBBF24"] {
+    gap: 1px;
+  }
+
+  [style*="width: 12px"][style*="height: 12px"] {
+    width: 10px;
+    height: 10px;
+  }
+}
