@@ -39,12 +39,36 @@ app.use(
 app.use(pinoHttp({ logger, autoLogging: { ignore: (req) => req.url === "/health" } }));
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN || (IS_PROD ? false : "*"),
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = (process.env.CORS_ORIGIN || "")
+      .split(",")
+      .map(o => o.trim())
+      .filter(Boolean);
+    
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (IS_PROD && allowedOrigins.length > 0) {
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS not allowed from ${origin}`));
+      }
+    } else if (!IS_PROD) {
+      // Allow all in development
+      callback(null, true);
+    } else {
+      callback(new Error("CORS origin not configured"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "2mb" }));
 
