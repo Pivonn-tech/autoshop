@@ -71,9 +71,9 @@ function HeroFunnel() {
   });
 
   const tabs = [
-    { id: "buy", label: "Buy Cars", icon: "🚗" },
-    { id: "auction", label: "Live Auctions", icon: "⚡" },
-    { id: "service", label: "Book Service", icon: "🔧" },
+    { id: "buy", label: "Buy Cars", icon: "car" },
+    { id: "auction", label: "Live Auctions", icon: "bolt" },
+    { id: "service", label: "Book Service", icon: "wrench" },
   ];
 
   return (
@@ -1252,11 +1252,11 @@ export default function HomePage() {
             marginBottom: "48px",
           }}>
             {[
-              { label: "SUVs & 4x4s", count: "328", icon: "🚙" },
-              { label: "Sedans", count: "195", icon: "🚗" },
-              { label: "Pickup Trucks", count: "142", icon: "🛻" },
-              { label: "Luxury Vehicles", count: "78", icon: "🏎️" },
-              { label: "Commercial", count: "56", icon: "🚐" },
+              { label: "SUVs & 4x4s", count: "328", icon: "truck" },
+              { label: "Sedans", count: "195", icon: "car" },
+              { label: "Pickup Trucks", count: "142", icon: "truck" },
+              { label: "Luxury Vehicles", count: "78", icon: "sport-car" },
+              { label: "Commercial", count: "56", icon: "van" },
             ].map((category, index) => (
               <div
                 key={index}

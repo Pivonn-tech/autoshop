@@ -422,7 +422,7 @@ export default function Appointments() {
 
                   <div style={{ marginTop: 4, padding: 16, background: "rgba(5,150,105,0.06)", border: "1px solid rgba(5,150,105,0.2)", borderRadius: 10 }}>
                     <div style={{ fontSize: "0.875rem", color: "#059669", fontWeight: 600, lineHeight: 1.6 }}>
-                      ✓ By confirming, you agree to our service terms. You'll receive a confirmation SMS & email.
+                      By confirming, you agree to our service terms. You'll receive a confirmation SMS & email.
                     </div>
                   </div>
                 </div>
@@ -447,7 +447,7 @@ export default function Appointments() {
                 </button>
               ) : (
                 <button onClick={submit} disabled={submitting} style={{ display: "flex", alignItems: "center", gap: 8, height: 48, paddingInline: 28, background: "#059669", color: "white", border: "none", borderRadius: 8, fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer", opacity: submitting ? 0.7 : 1, fontSize: "0.9rem" }}>
-                  {submitting ? "Confirming…" : "Confirm Booking ✓"}
+                  {submitting ? "Confirming…" : "Confirm Booking"}
                 </button>
               )}
             </div>

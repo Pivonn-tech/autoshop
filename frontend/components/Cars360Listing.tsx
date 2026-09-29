@@ -298,10 +298,10 @@ function ProductCard({ product, isSponsor = false }: { product: Product; isSpons
         {/* Additional Services */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
           {[
-            "💰 Apply for Financing",
-            "🔍 Get Inspection",
-            "⏱️ Mileage Verification",
-            "🛡️ Get Insurance",
+            "Apply for Financing",
+            "Get Inspection",
+            "Mileage Verification",
+            "Get Insurance",
           ].map((service, i) => (
             <button
               key={i}
@@ -633,7 +633,7 @@ export default function Cars360Listing() {
                   }}
                   className="mobile-filter-btn"
                 >
-                  🔍 Filters
+                  Filters
                 </button>
 
                 {/* Sort Dropdown */}
