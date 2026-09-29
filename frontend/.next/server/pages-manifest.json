@@ -1,5 +1,6 @@
 {
   "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/admin": "pages/admin.js",
   "/ai-assistant": "pages/ai-assistant.js",
@@ -22,7 +23,6 @@
   "/product/[id]": "pages/product/[id].js",
   "/service-history": "pages/service-history.js",
   "/services": "pages/services.js",
-  "/_error": "pages/_error.js",
   "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
   "/sell-car": "pages/sell-car.js"
 }
