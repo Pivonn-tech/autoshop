@@ -18,6 +18,7 @@ import {
   validate,
 } from "./lib/schemas.js";
 import { sendAppointmentConfirmation, sendOrderReceipt } from "./lib/mailer.js";
+import { maintenanceMiddleware } from "./middleware/maintenance.js";
 import carListingsRouter from "./routes/carListings.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +72,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "2mb" }));
+
+// ── Maintenance mode middleware ───────────────────────────────────────────────
+app.use(maintenanceMiddleware);
 
 // ── Rate limiters ─────────────────────────────────────────────────────────────
 const generalLimiter = rateLimit({

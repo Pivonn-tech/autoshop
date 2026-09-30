@@ -13,7 +13,11 @@
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "cd frontend && npm run start",
     "start:backend": "cd backend && npm run start",
-    "setup": "npm install && npm install -C frontend && npm install -C backend"
+    "setup": "npm install && npm install -C frontend && npm install -C backend",
+    "maintenance:on": "node scripts/maintenance.js on",
+    "maintenance:off": "node scripts/maintenance.js off",
+    "maintenance:status": "node scripts/maintenance.js status",
+    "maintenance:set": "node scripts/maintenance.js set"
   },
   "keywords": [
     "auto-shop",
